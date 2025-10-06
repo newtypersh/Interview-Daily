@@ -258,133 +258,135 @@ export default function Settings() {
     const isChoiceMode = selectionMode === 'choice';
 
     return (
-      <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
-        <CardContent>
-          <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-            {title}
-          </Typography>
+      <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3, bgcolor: 'white' }}>
+        <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+          {title}
+        </Typography>
 
-          <Stack spacing={2}>
-            {questionSets[category].map((set, index) => {
-              const isSelected =
-                selectedQuestionSet.category === category &&
-                selectedQuestionSet.setId === set.id;
+        <Stack spacing={2}>
+          {questionSets[category].map((set, index) => {
+            const isSelected =
+              selectedQuestionSet.category === category &&
+              selectedQuestionSet.setId === set.id;
 
-              return (
-                <Card key={set.id} variant="outlined" sx={{ bgcolor: '#fafafa' }}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                      <Typography sx={{ width: 32, color: 'text.secondary' }}>
-                        {index + 1}.
-                      </Typography>
-                      <TextField
-                        value={set.name}
-                        size="small"
-                        fullWidth
-                        slotProps={{
-                          input: {
-                            readOnly: true,
-                          },
-                        }}
-                        sx={{ bgcolor: 'white' }}
-                      />
-                      {isChoiceMode && (
-                        <Chip
-                          label={isSelected ? '선택됨' : '선택'}
-                          onClick={() => handleQuestionSetSelect(category, set.id)}
-                          color={isSelected ? 'warning' : 'default'}
-                          icon={isSelected ? <CheckIcon /> : undefined}
-                          sx={{
-                            minWidth: 90,
-                            fontWeight: 500,
-                            cursor: 'pointer',
-                            '&:hover': {
-                              bgcolor: isSelected ? 'warning.main' : 'action.hover',
-                            },
-                          }}
-                        />
-                      )}
-                      <IconButton
-                        onClick={() => handleToggleExpand(category, set.id)}
-                        sx={{
-                          transform: set.expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.3s',
-                        }}
-                      >
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    </Box>
+            return (
+              <Box
+                key={set.id}
+                sx={{
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 1,
+                  p: 2,
+                  bgcolor: 'white',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Typography sx={{ width: 32, color: 'text.secondary' }}>
+                    {index + 1}.
+                  </Typography>
+                  <TextField
+                    value={set.name}
+                    size="small"
+                    fullWidth
+                    slotProps={{
+                      input: {
+                        readOnly: true,
+                      },
+                    }}
+                  />
+                  {isChoiceMode && (
+                    <Chip
+                      label={isSelected ? '선택됨' : '선택'}
+                      onClick={() => handleQuestionSetSelect(category, set.id)}
+                      color={isSelected ? 'warning' : 'default'}
+                      icon={isSelected ? <CheckIcon /> : undefined}
+                      sx={{
+                        minWidth: 90,
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        '&:hover': {
+                          bgcolor: isSelected ? 'warning.main' : 'action.hover',
+                        },
+                      }}
+                    />
+                  )}
+                  <IconButton
+                    onClick={() => handleToggleExpand(category, set.id)}
+                    sx={{
+                      transform: set.expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s',
+                    }}
+                  >
+                    <ExpandMoreIcon />
+                  </IconButton>
+                </Box>
 
-                    <Collapse in={set.expanded}>
-                      <Divider sx={{ mb: 2 }} />
+                <Collapse in={set.expanded}>
+                  <Divider sx={{ mb: 2 }} />
 
-                      {/* 질문 목록 */}
-                      <Stack spacing={1.5}>
-                        {set.questions.map((question, qIndex) => (
-                          <Box key={question.id} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-                            <Typography sx={{ minWidth: 24, pt: 1, color: 'text.secondary', fontSize: '0.875rem' }}>
-                              {qIndex + 1}.
-                            </Typography>
-                            <TextField
-                              value={question.text}
-                              onChange={(e) =>
-                                handleQuestionTextChange(category, set.id, question.id, e.target.value)
-                              }
-                              placeholder="질문을 입력하세요"
-                              size="small"
-                              fullWidth
-                              multiline
-                              sx={{ bgcolor: 'white' }}
-                            />
-                            <IconButton
-                              size="small"
-                              onClick={() => handleDeleteQuestion(category, set.id, question.id)}
-                              sx={{ mt: 0.5 }}
-                            >
-                              <DeleteIcon fontSize="small" />
-                            </IconButton>
-                          </Box>
-                        ))}
-                        <Button
-                          variant="outlined"
+                  {/* 질문 목록 */}
+                  <Stack spacing={1.5}>
+                    {set.questions.map((question, qIndex) => (
+                      <Box key={question.id} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+                        <Typography sx={{ minWidth: 24, pt: 1, color: 'text.secondary', fontSize: '0.875rem' }}>
+                          {qIndex + 1}.
+                        </Typography>
+                        <TextField
+                          value={question.text}
+                          onChange={(e) =>
+                            handleQuestionTextChange(category, set.id, question.id, e.target.value)
+                          }
+                          placeholder="질문을 입력하세요"
                           size="small"
-                          startIcon={<AddIcon />}
-                          onClick={() => handleAddQuestion(category, set.id)}
-                          sx={{
-                            borderStyle: 'dashed',
-                            mt: 1,
-                          }}
+                          fullWidth
+                          multiline
+                        />
+                        <IconButton
+                          size="small"
+                          onClick={() => handleDeleteQuestion(category, set.id, question.id)}
+                          sx={{ mt: 0.5 }}
                         >
-                          질문 추가
-                        </Button>
-                      </Stack>
-                    </Collapse>
-                  </CardContent>
-                </Card>
-              );
-            })}
-            <Button
-              variant="outlined"
-              fullWidth
-              startIcon={<AddIcon />}
-              onClick={() => handleAddQuestionSet(category)}
-              sx={{
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    ))}
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<AddIcon />}
+                      onClick={() => handleAddQuestion(category, set.id)}
+                      sx={{
+                        borderStyle: 'dashed',
+                        mt: 1,
+                      }}
+                    >
+                      질문 추가
+                    </Button>
+                  </Stack>
+                </Collapse>
+              </Box>
+            );
+          })}
+          <Button
+            variant="outlined"
+            fullWidth
+            startIcon={<AddIcon />}
+            onClick={() => handleAddQuestionSet(category)}
+            sx={{
+              borderStyle: 'dashed',
+              borderWidth: 2,
+              color: 'text.secondary',
+              borderColor: 'divider',
+              '&:hover': {
                 borderStyle: 'dashed',
                 borderWidth: 2,
-                color: 'text.secondary',
-                borderColor: 'divider',
-                '&:hover': {
-                  borderStyle: 'dashed',
-                  borderWidth: 2,
-                  borderColor: 'text.secondary',
-                },
-              }}
-            >
-              질문세트 추가하기
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
+                borderColor: 'text.secondary',
+              },
+            }}
+          >
+            질문세트 추가하기
+          </Button>
+        </Stack>
+      </Box>
     );
   };
 
