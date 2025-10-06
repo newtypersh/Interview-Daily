@@ -1,80 +1,172 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Container,
+  Divider,
+  Button,
+} from '@mui/material';
+import {
+  Psychology as PsychologyIcon,
+  AccountCircle as AccountCircleIcon,
+  History as HistoryIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  Login as LoginIcon,
+} from '@mui/icons-material';
+import LoginModal from '../auth/LoginModal';
 
 interface HeaderProps {
   isLoggedIn: boolean;
   onLogout: () => void;
+  onLogin: () => void;
 }
 
-export default function Header({ isLoggedIn, onLogout }: HeaderProps) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+export default function Header({ isLoggedIn, onLogout, onLogin }: HeaderProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleLogout = () => {
     onLogout();
-    setDropdownOpen(false);
+    handleMenuClose();
     navigate('/');
   };
 
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    handleMenuClose();
+  };
+
+  const handleLoginClick = () => {
+    setLoginModalOpen(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setLoginModalOpen(false);
+    onLogin();
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="text-xl font-bold text-gray-900">
-            Interview Daily
-          </Link>
+    <>
+      <AppBar
+        position="fixed"
+        sx={{
+          bgcolor: 'white',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <PsychologyIcon
+              sx={{
+                display: 'flex',
+                mr: 1,
+                color: '#667eea',
+                fontSize: 32,
+              }}
+            />
+            <Typography
+              variant="h6"
+              component={RouterLink}
+              to="/"
+              sx={{
+                mr: 2,
+                display: 'flex',
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textDecoration: 'none',
+                flexGrow: 1,
+              }}
+            >
+              Interview Daily
+            </Typography>
 
-          {isLoggedIn && (
-            <div className="relative">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              >
-                <span>로그아웃</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {isLoggedIn ? (
+              <Box>
+                <IconButton
+                  size="large"
+                  onClick={handleMenuOpen}
+                  sx={{
+                    color: '#667eea',
+                  }}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
+                  <AccountCircleIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  sx={{
+                    mt: 1,
+                  }}
+                >
+                  <MenuItem onClick={() => handleNavigate('/history')}>
+                    <HistoryIcon sx={{ mr: 1.5, color: '#667eea' }} />
+                    기록 보기
+                  </MenuItem>
+                  <MenuItem onClick={() => handleNavigate('/settings')}>
+                    <SettingsIcon sx={{ mr: 1.5, color: '#667eea' }} />
+                    설정
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>
+                    <LogoutIcon sx={{ mr: 1.5, color: '#667eea' }} />
+                    로그아웃
+                  </MenuItem>
+                </Menu>
+              </Box>
+            ) : (
+              <Button
+                variant="outlined"
+                startIcon={<LoginIcon />}
+                onClick={handleLoginClick}
+                sx={{
+                  borderColor: '#667eea',
+                  color: '#667eea',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#667eea',
+                    bgcolor: 'rgba(102, 126, 234, 0.04)',
+                  },
+                }}
+              >
+                로그인
+              </Button>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBar>
 
-              {dropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setDropdownOpen(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
-                    <Link
-                      to="/history"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      기록 보기
-                    </Link>
-                    <Link
-                      to="/settings"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      설정
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    >
-                      로그아웃
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </header>
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onLogin={handleLoginSuccess}
+      />
+    </>
   );
 }

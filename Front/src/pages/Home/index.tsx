@@ -55,9 +55,6 @@ export default function Home({ isLoggedIn, onLogin }: HomeProps) {
             >
               Interview Daily
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ mt: 2 }}>
-              매일 성장하는 당신의 면접 파트너
-            </Typography>
           </Box>
         ) : (
           <Box
@@ -67,16 +64,6 @@ export default function Home({ isLoggedIn, onLogin }: HomeProps) {
           >
             <Stack spacing={4} alignItems="center">
               <PsychologyIcon sx={{ fontSize: 100, color: '#667eea' }} />
-              <Typography
-                variant="h3"
-                component="h1"
-                sx={{
-                  fontWeight: 700,
-                  color: '#1f2937',
-                }}
-              >
-                오늘의 면접을 시작해보세요
-              </Typography>
               <Button
                 variant="contained"
                 size="large"

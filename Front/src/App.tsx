@@ -21,7 +21,7 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} onLogin={handleLogin} />
         <div className="pt-16">
           <Routes>
             <Route path="/" element={<Home isLoggedIn={isLoggedIn} onLogin={handleLogin} />} />
