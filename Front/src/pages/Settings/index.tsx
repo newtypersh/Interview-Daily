@@ -1,9 +1,42 @@
 import { useState } from 'react';
+import {
+  Box,
+  Container,
+  Paper,
+  Tabs,
+  Tab,
+  Typography,
+  TextField,
+  Button,
+  Chip,
+  Stack,
+  Card,
+  CardContent,
+  Collapse,
+  IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
+  Divider,
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Check as CheckIcon,
+  ExpandMore as ExpandMoreIcon,
+  Delete as DeleteIcon,
+  Shuffle as ShuffleIcon,
+  TouchApp as TouchAppIcon,
+} from '@mui/icons-material';
+
+interface Question {
+  id: string;
+  text: string;
+}
 
 interface QuestionSetSelection {
   id: string;
   name: string;
-  selected: boolean;
+  questions: Question[];
+  expanded?: boolean;
 }
 
 interface FeedbackTemplate {
@@ -15,16 +48,59 @@ interface FeedbackTemplate {
 // Mock data
 const initialQuestionSets = {
   job_competency: [
-    { id: '1', name: '질문세트1', selected: true },
-    { id: '2', name: '질문세트2', selected: false },
+    {
+      id: '1',
+      name: '질문세트1',
+      questions: [
+        { id: '1-1', text: '1분 자기소개 시작해주세요' },
+        { id: '1-2', text: '방금 1분 자기소개에서 말한 1번째 경험을 어떻게 진행했나요?' },
+      ],
+      expanded: false,
+    },
+    {
+      id: '2',
+      name: '질문세트2',
+      questions: [
+        { id: '2-1', text: '본인의 강점을 설명해주세요' },
+      ],
+      expanded: false,
+    },
   ],
   personality: [
-    { id: '3', name: '질문세트1', selected: false },
-    { id: '4', name: '질문세트2', selected: false },
+    {
+      id: '3',
+      name: '질문세트1',
+      questions: [
+        { id: '3-1', text: '팀원과 갈등이 있었던 경험을 말씀해주세요' },
+      ],
+      expanded: false,
+    },
+    {
+      id: '4',
+      name: '질문세트2',
+      questions: [
+        { id: '4-1', text: '스트레스를 어떻게 해소하시나요?' },
+      ],
+      expanded: false,
+    },
   ],
   motivation: [
-    { id: '5', name: '질문세트1', selected: false },
-    { id: '6', name: '질문세트2', selected: false },
+    {
+      id: '5',
+      name: '질문세트1',
+      questions: [
+        { id: '5-1', text: '우리 회사에 지원한 이유는 무엇인가요?' },
+      ],
+      expanded: false,
+    },
+    {
+      id: '6',
+      name: '질문세트2',
+      questions: [
+        { id: '6-1', text: '5년 후 본인의 모습은 어떨 것 같나요?' },
+      ],
+      expanded: false,
+    },
   ],
 };
 
@@ -49,18 +125,31 @@ const initialTemplates: FeedbackTemplate[] = [
 export default function Settings() {
   const [questionSets, setQuestionSets] = useState(initialQuestionSets);
   const [templates, setTemplates] = useState(initialTemplates);
-  const [activeTab, setActiveTab] = useState<'questions' | 'templates'>('questions');
+  const [activeTab, setActiveTab] = useState(0);
+  // 전체 질문세트 중 선택 모드 및 선택된 질문세트
+  const [selectionMode, setSelectionMode] = useState<'random' | 'choice'>('choice');
+  const [selectedQuestionSet, setSelectedQuestionSet] = useState<{
+    category: keyof typeof questionSets | null;
+    setId: string | null;
+  }>({
+    category: 'job_competency',
+    setId: '1',
+  });
 
-  const handleQuestionSetToggle = (
+  const handleQuestionSetSelect = (
     category: keyof typeof questionSets,
     id: string
   ) => {
-    setQuestionSets({
-      ...questionSets,
-      [category]: questionSets[category].map((set) =>
-        set.id === id ? { ...set, selected: !set.selected } : set
-      ),
-    });
+    if (selectionMode === 'choice') {
+      // 선택 모드: 전체에서 하나만 선택 가능
+      // 같은 질문세트를 다시 클릭하면 선택 해제
+      if (selectedQuestionSet.category === category && selectedQuestionSet.setId === id) {
+        setSelectedQuestionSet({ category: null, setId: null });
+      } else {
+        setSelectedQuestionSet({ category, setId: id });
+      }
+    }
+    // random 모드에서는 선택 불가
   };
 
   const handleTemplateChange = (type: FeedbackTemplate['type'], content: string) => {
@@ -71,6 +160,14 @@ export default function Settings() {
     );
   };
 
+  const handleSelectionModeChange = (mode: 'random' | 'choice') => {
+    setSelectionMode(mode);
+    // 랜덤 모드로 변경하면 선택 해제
+    if (mode === 'random') {
+      setSelectedQuestionSet({ category: null, setId: null });
+    }
+  };
+
   const handleAddQuestionSet = (category: keyof typeof questionSets) => {
     const newId = String(Date.now());
     const newSetNumber = questionSets[category].length + 1;
@@ -78,164 +175,302 @@ export default function Settings() {
       ...questionSets,
       [category]: [
         ...questionSets[category],
-        { id: newId, name: `질문세트${newSetNumber}`, selected: false },
+        {
+          id: newId,
+          name: `질문세트${newSetNumber}`,
+          questions: [],
+          expanded: false,
+        },
       ],
     });
   };
 
+  const handleToggleExpand = (category: keyof typeof questionSets, id: string) => {
+    setQuestionSets({
+      ...questionSets,
+      [category]: questionSets[category].map((set) =>
+        set.id === id ? { ...set, expanded: !set.expanded } : set
+      ),
+    });
+  };
+
+  const handleAddQuestion = (category: keyof typeof questionSets, setId: string) => {
+    const newQuestionId = `${setId}-${Date.now()}`;
+    setQuestionSets({
+      ...questionSets,
+      [category]: questionSets[category].map((set) =>
+        set.id === setId
+          ? {
+              ...set,
+              questions: [
+                ...set.questions,
+                { id: newQuestionId, text: '' },
+              ],
+            }
+          : set
+      ),
+    });
+  };
+
+  const handleDeleteQuestion = (
+    category: keyof typeof questionSets,
+    setId: string,
+    questionId: string
+  ) => {
+    setQuestionSets({
+      ...questionSets,
+      [category]: questionSets[category].map((set) =>
+        set.id === setId
+          ? {
+              ...set,
+              questions: set.questions.filter((q) => q.id !== questionId),
+            }
+          : set
+      ),
+    });
+  };
+
+  const handleQuestionTextChange = (
+    category: keyof typeof questionSets,
+    setId: string,
+    questionId: string,
+    text: string
+  ) => {
+    setQuestionSets({
+      ...questionSets,
+      [category]: questionSets[category].map((set) =>
+        set.id === setId
+          ? {
+              ...set,
+              questions: set.questions.map((q) =>
+                q.id === questionId ? { ...q, text } : q
+              ),
+            }
+          : set
+      ),
+    });
+  };
+
+  const renderQuestionCategory = (
+    category: keyof typeof questionSets,
+    title: string
+  ) => {
+    const isChoiceMode = selectionMode === 'choice';
+
+    return (
+      <Card elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+        <CardContent>
+          <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+            {title}
+          </Typography>
+
+          <Stack spacing={2}>
+            {questionSets[category].map((set, index) => {
+              const isSelected =
+                selectedQuestionSet.category === category &&
+                selectedQuestionSet.setId === set.id;
+
+              return (
+                <Card key={set.id} variant="outlined" sx={{ bgcolor: '#fafafa' }}>
+                  <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                      <Typography sx={{ width: 32, color: 'text.secondary' }}>
+                        {index + 1}.
+                      </Typography>
+                      <TextField
+                        value={set.name}
+                        size="small"
+                        fullWidth
+                        slotProps={{
+                          input: {
+                            readOnly: true,
+                          },
+                        }}
+                        sx={{ bgcolor: 'white' }}
+                      />
+                      {isChoiceMode && (
+                        <Chip
+                          label={isSelected ? '선택됨' : '선택'}
+                          onClick={() => handleQuestionSetSelect(category, set.id)}
+                          color={isSelected ? 'warning' : 'default'}
+                          icon={isSelected ? <CheckIcon /> : undefined}
+                          sx={{
+                            minWidth: 90,
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            '&:hover': {
+                              bgcolor: isSelected ? 'warning.main' : 'action.hover',
+                            },
+                          }}
+                        />
+                      )}
+                      <IconButton
+                        onClick={() => handleToggleExpand(category, set.id)}
+                        sx={{
+                          transform: set.expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s',
+                        }}
+                      >
+                        <ExpandMoreIcon />
+                      </IconButton>
+                    </Box>
+
+                    <Collapse in={set.expanded}>
+                      <Divider sx={{ mb: 2 }} />
+
+                      {/* 질문 목록 */}
+                      <Stack spacing={1.5}>
+                        {set.questions.map((question, qIndex) => (
+                          <Box key={question.id} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+                            <Typography sx={{ minWidth: 24, pt: 1, color: 'text.secondary', fontSize: '0.875rem' }}>
+                              {qIndex + 1}.
+                            </Typography>
+                            <TextField
+                              value={question.text}
+                              onChange={(e) =>
+                                handleQuestionTextChange(category, set.id, question.id, e.target.value)
+                              }
+                              placeholder="질문을 입력하세요"
+                              size="small"
+                              fullWidth
+                              multiline
+                              sx={{ bgcolor: 'white' }}
+                            />
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDeleteQuestion(category, set.id, question.id)}
+                              sx={{ mt: 0.5 }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ))}
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          startIcon={<AddIcon />}
+                          onClick={() => handleAddQuestion(category, set.id)}
+                          sx={{
+                            borderStyle: 'dashed',
+                            mt: 1,
+                          }}
+                        >
+                          질문 추가
+                        </Button>
+                      </Stack>
+                    </Collapse>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<AddIcon />}
+              onClick={() => handleAddQuestionSet(category)}
+              sx={{
+                borderStyle: 'dashed',
+                borderWidth: 2,
+                color: 'text.secondary',
+                borderColor: 'divider',
+                '&:hover': {
+                  borderStyle: 'dashed',
+                  borderWidth: 2,
+                  borderColor: 'text.secondary',
+                },
+              }}
+            >
+              질문세트 추가하기
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="flex">
-              <button
-                onClick={() => setActiveTab('questions')}
-                className={`flex-1 py-4 px-6 text-center font-semibold transition-colors ${
-                  activeTab === 'questions'
-                    ? 'bg-red-500 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                질문 설정
-              </button>
-              <button
-                onClick={() => setActiveTab('templates')}
-                className={`flex-1 py-4 px-6 text-center font-semibold transition-colors ${
-                  activeTab === 'templates'
-                    ? 'bg-red-500 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                피드백 템플릿 설정
-              </button>
-            </nav>
-          </div>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5', py: 8 }}>
+      <Container maxWidth="lg">
+        <Paper elevation={3} sx={{ borderRadius: 3, overflow: 'hidden' }}>
+          <Tabs
+            value={activeTab}
+            onChange={(_, newValue) => setActiveTab(newValue)}
+            variant="fullWidth"
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider',
+              '& .MuiTab-root': {
+                py: 2,
+                fontSize: '1rem',
+                fontWeight: 600,
+              },
+            }}
+          >
+            <Tab label="질문 설정" />
+            <Tab label="피드백 템플릿 설정" />
+          </Tabs>
 
-          {/* Content */}
-          <div className="p-8 md:p-12">
-            {activeTab === 'questions' ? (
-              <div className="space-y-8">
-                {/* Job Competency */}
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">직무 역량 면접</h2>
-                  <div className="space-y-3">
-                    {questionSets.job_competency.map((set, index) => (
-                      <div key={set.id} className="flex items-center gap-3">
-                        <span className="text-gray-600 w-8">{index + 1}.</span>
-                        <input
-                          type="text"
-                          value={set.name}
-                          readOnly
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                        />
-                        <button
-                          onClick={() => handleQuestionSetToggle('job_competency', set.id)}
-                          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                            set.selected
-                              ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900'
-                              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                          }`}
-                        >
-                          {set.selected ? '선택됨' : '선택'}
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => handleAddQuestionSet('job_competency')}
-                      className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
-                    >
-                      + 추가하기
-                    </button>
-                  </div>
-                </div>
+          <Box sx={{ p: { xs: 3, md: 6 } }}>
+            {activeTab === 0 ? (
+              <>
+                {/* 전체 질문 선택 방식 */}
+                <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
+                  <ToggleButtonGroup
+                    value={selectionMode}
+                    exclusive
+                    onChange={(_, newMode) => {
+                      if (newMode !== null) {
+                        handleSelectionModeChange(newMode);
+                      }
+                    }}
+                    size="medium"
+                  >
+                    <ToggleButton value="choice" sx={{ px: 4 }}>
+                      <TouchAppIcon sx={{ mr: 1 }} />
+                      선택
+                    </ToggleButton>
+                    <ToggleButton value="random" sx={{ px: 4 }}>
+                      <ShuffleIcon sx={{ mr: 1 }} />
+                      랜덤
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
 
-                {/* Personality */}
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">인성면접</h2>
-                  <div className="space-y-3">
-                    {questionSets.personality.map((set, index) => (
-                      <div key={set.id} className="flex items-center gap-3">
-                        <span className="text-gray-600 w-8">{index + 1}.</span>
-                        <input
-                          type="text"
-                          value={set.name}
-                          readOnly
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                        />
-                        <button
-                          onClick={() => handleQuestionSetToggle('personality', set.id)}
-                          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                            set.selected
-                              ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900'
-                              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                          }`}
-                        >
-                          {set.selected ? '선택됨' : '선택'}
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => handleAddQuestionSet('personality')}
-                      className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
-                    >
-                      + 추가하기
-                    </button>
-                  </div>
-                </div>
-
-                {/* Motivation */}
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">지원동기 면접</h2>
-                  <div className="space-y-3">
-                    {questionSets.motivation.map((set, index) => (
-                      <div key={set.id} className="flex items-center gap-3">
-                        <span className="text-gray-600 w-8">{index + 1}.</span>
-                        <input
-                          type="text"
-                          value={set.name}
-                          readOnly
-                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                        />
-                        <button
-                          onClick={() => handleQuestionSetToggle('motivation', set.id)}
-                          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                            set.selected
-                              ? 'bg-yellow-400 hover:bg-yellow-500 text-gray-900'
-                              : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                          }`}
-                        >
-                          {set.selected ? '선택됨' : '선택'}
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => handleAddQuestionSet('motivation')}
-                      className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
-                    >
-                      + 추가하기
-                    </button>
-                  </div>
-                </div>
-              </div>
+                <Stack spacing={4}>
+                  {renderQuestionCategory('job_competency', '직무 역량 면접')}
+                  {renderQuestionCategory('personality', '인성면접')}
+                  {renderQuestionCategory('motivation', '지원동기 면접')}
+                </Stack>
+              </>
             ) : (
-              <div className="space-y-8">
+              <Stack spacing={4}>
                 {templates.map((template) => (
-                  <div key={template.type}>
-                    <h2 className="text-xl font-bold text-gray-900 mb-4">{template.title}</h2>
-                    <textarea
-                      value={template.content}
-                      onChange={(e) => handleTemplateChange(template.type, e.target.value)}
-                      className="w-full min-h-[200px] px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent resize-none font-mono text-sm"
-                    />
-                  </div>
+                  <Card key={template.type} elevation={0} sx={{ border: '1px solid #e0e0e0' }}>
+                    <CardContent>
+                      <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+                        {template.title}
+                      </Typography>
+                      <TextField
+                        multiline
+                        rows={10}
+                        fullWidth
+                        value={template.content}
+                        onChange={(e) => handleTemplateChange(template.type, e.target.value)}
+                        sx={{
+                          '& .MuiInputBase-root': {
+                            fontFamily: 'monospace',
+                            fontSize: '0.875rem',
+                          },
+                        }}
+                      />
+                    </CardContent>
+                  </Card>
                 ))}
-              </div>
+              </Stack>
             )}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 }
