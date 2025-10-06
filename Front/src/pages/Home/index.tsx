@@ -23,7 +23,7 @@ export default function Home({ isLoggedIn, onLogin }: HomeProps) {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {!isLoggedIn ? (
-          <div className="min-h-[calc(100vh-200px)] relative">
+          <div className="h-[calc(100vh-200px)] relative">
             {/* Top-right login button: fixed to viewport top-right for consistent placement */}
             <div className="fixed top-6 right-6 z-50">
               <button
@@ -44,7 +44,7 @@ export default function Home({ isLoggedIn, onLogin }: HomeProps) {
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-center min-h-[calc(100vh-200px)]">
+          <div className="flex items-center justify-center h-[calc(100vh-200px)]">
             <div className="text-center">
               <h1 className="text-4xl font-bold text-gray-900 mb-12">
                 오늘의 면접을 시작해보세요
@@ -53,7 +53,7 @@ export default function Home({ isLoggedIn, onLogin }: HomeProps) {
                 onClick={handleDailyInterviewClick}
                 className="bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-4 px-12 rounded-lg transition-colors text-lg"
               >
-                데일리 면접뷰
+                데일리 인터뷰
               </button>
             </div>
           </div>
