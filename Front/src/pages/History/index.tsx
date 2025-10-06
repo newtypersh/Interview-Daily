@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { InterviewSession } from '../../types';
+import type { InterviewSession } from '../../types';
 
 // Mock data
 const mockHistory: InterviewSession[] = [

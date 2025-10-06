@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Question } from '../../types';
+import type { Question } from '../../types';
 
 // Mock data
 const mockQuestions: Question[] = [

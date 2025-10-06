@@ -1,23 +1,23 @@
-export interface User {
+export type User = {
   id: string;
   name: string;
   email: string;
 }
 
-export interface Question {
+export type Question = {
   id: string;
   content: string;
   order: number;
 }
 
-export interface QuestionSet {
+export type QuestionSet = {
   id: string;
   name: string;
   type: 'job_competency' | 'personality' | 'motivation';
   questions: Question[];
 }
 
-export interface Answer {
+export type Answer = {
   id: string;
   questionId: string;
   content: string;
@@ -25,14 +25,14 @@ export interface Answer {
   createdAt: string;
 }
 
-export interface Feedback {
+export type Feedback = {
   id: string;
   answerId: string;
   satisfaction: 'satisfied' | 'unsatisfied';
   content: string;
 }
 
-export interface InterviewSession {
+export type InterviewSession = {
   id: string;
   date: string;
   questionSetId: string;
