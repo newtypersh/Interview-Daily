@@ -27,18 +27,18 @@ const googleVerify = async (profile) => {
 
   const user = await prisma.user.findFirst({ where: { google_id: googleId } });
   if (user !== null) {
-    return { id: user.id, google_id: user.google_id, nickname: user.nickname };
+    return { id: user.id, google_id: user.google_id, name: user.name };
   }
 
   const now = new Date();
   const created = await prisma.user.create({
     data: {
       google_id: googleId,
-      nickname: profile.displayName?.slice(0, 32) ?? "구글유저",
+      name: profile.displayName?.slice(0, 32) ?? "구글유저",
       created_at: now,
       updated_at: now,
     },
   });
 
-  return { id: created.id, google_id: created.google_id, nickname: created.nickname };
+  return { id: created.id, google_id: created.google_id, name: created.name };
 };
