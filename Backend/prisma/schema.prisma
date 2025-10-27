@@ -5,11 +5,142 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.VarChar(512)
+  expiresAt DateTime @map("expires_at")
+
+  @@map("session")
+}
+
+model user {
+  id                BigInt             @id @default(autoincrement())
+  email         String            @db.VarChar(40)
+  name          String             @db.VarChar(32)
+  created_at        DateTime           @db.Timestamp(6)
+  updated_at        DateTime           @db.Timestamp(6)
+  // Relations
+  interviews        interview[]
+  questionSets      questionSet[]
+  feedbackTemplates feedbackTemplate[]
+}
+
+model interview {
+  id              BigInt         @id @default(autoincrement())
+  user_id         BigInt
+  question_set_id BigInt
+  interviewed_at  DateTime
+  mode            InterviewMode?
+  created_at      DateTime
+  updated_at      DateTime
+
+  user        user              @relation(fields: [user_id], references: [id])
+  questionSet questionSet       @relation(fields: [question_set_id], references: [id])
+  answers     interviewAnswer[]
+
+  @@index([user_id])
+  @@index([question_set_id])
+}
+
+model questionSet {
+  id         BigInt           @id @default(autoincrement())
+  user_id    BigInt
+  name       String           @db.VarChar(20)
+  category   QuestionCategory
+  created_at DateTime
+  updated_at DateTime
+
+  user       user              @relation(fields: [user_id], references: [id])
+  interviews interview[]
+  questions  question[]
+  answers    interviewAnswer[]
+  feedbacks  feedback[]
+
+  @@index([user_id])
+}
+
+model interviewAnswer {
+  id              BigInt   @id @default(autoincrement())
+  interview_id    BigInt
+  question_set_id BigInt
+  sequence        Int
+  audio_url       String   @db.VarChar(256)
+  created_at      DateTime
+  updated_at      DateTime
+
+  interview   interview   @relation(fields: [interview_id], references: [id])
+  questionSet questionSet @relation(fields: [question_set_id], references: [id])
+  feedbacks   feedback[]
+
+  @@index([interview_id])
+  @@index([question_set_id])
+}
+
+model question {
+  id              BigInt   @id @default(autoincrement())
+  question_set_id BigInt
+  content         String?  @db.Text
+  order           Int?
+  enabled         Boolean  @default(true)
+  created_at      DateTime
+  updated_at      DateTime
+
+  questionSet questionSet @relation(fields: [question_set_id], references: [id])
+
+  @@index([question_set_id])
+}
+
+model feedback {
+  id                  BigInt   @id @default(autoincrement())
+  interview_answer_id BigInt
+  question_set_id     BigInt
+  rating              Int
+  feedback_text       String?  @db.Text
+  created_at          DateTime
+  updated_at          DateTime
+
+  interviewAnswer interviewAnswer @relation(fields: [interview_answer_id], references: [id])
+  questionSet     questionSet     @relation(fields: [question_set_id], references: [id])
+
+  @@index([interview_answer_id])
+  @@index([question_set_id])
+}
+
+model feedbackTemplate {
+  id            BigInt           @id @default(autoincrement())
+  user_id       BigInt
+  category      FeedbackCategory
+  template_text String?          @db.Text
+  created_at    DateTime
+  updated_at    DateTime
+
+  user user @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+enum InterviewMode {
+  선택
+  랜덤
+}
+
+enum QuestionCategory {
+  직무역량
+  인성
+  지원동기
+}
+
+enum FeedbackCategory {
+  직무역량
+  인성
+  지원동기
 }
