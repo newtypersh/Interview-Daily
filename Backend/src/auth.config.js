@@ -4,6 +4,9 @@ import { prisma } from "./db.config.js";
 
 dotenv.config();
 
+// googleStarategy(Options 객체, VerifyCallback 함수)
+// Options 객체: clientID, clientSecret, callbackURL, scope
+// VerifyCallback 함수: (accessToken, refreshToken, profile, cb)
 export const googleStrategy = new GoogleStrategy(
   {
     clientID: process.env.PASSPORT_GOOGLE_CLIENT_ID,
@@ -20,25 +23,29 @@ export const googleStrategy = new GoogleStrategy(
 );
 
 const googleVerify = async (profile) => {
-  const googleId = profile.id;
-  if (!googleId) {
-    throw new Error(`profile.id was not found: ${profile}`);
+  const email = profile.emails?.[0]?.value;
+  if (!email) {
+    throw new Error(`profile.email was not found: ${JSON.stringify(profile)}`);
   }
 
-  const user = await prisma.user.findFirst({ where: { google_id: googleId } });
+  const user = await prisma.user.findFirst({ where: { email } });
   if (user !== null) {
-    return { id: user.id, google_id: user.google_id, name: user.name };
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { updated_at: new Date() },
+    });
+    return { id: user.id, email: user.email, name: user.name };
   }
 
   const now = new Date();
   const created = await prisma.user.create({
     data: {
-      google_id: googleId,
+      email,
       name: profile.displayName?.slice(0, 32) ?? "구글유저",
       created_at: now,
       updated_at: now,
     },
   });
 
-  return { id: created.id, google_id: created.google_id, name: created.name };
+  return { id: created.id, email: created.email, name: created.name };
 };
