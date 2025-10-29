@@ -1,6 +1,6 @@
+import "dotenv/config";
 import cors from 'cors'
 import { prisma } from './db.config.js'
-import dotenv from 'dotenv'
 import express from 'express'          // -> ES Module
 import swaggerAutogen from 'swagger-autogen'
 import swaggerUiExpress from 'swagger-ui-express'
@@ -8,12 +8,24 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 import passport from "passport";
 import { googleStrategy } from "./auth.config.js";
-
-dotenv.config();
+import authRouter from './routes/auth.routes.js';
 
 passport.use(googleStrategy);
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+// store only user id in session to keep session small and avoid leaking sensitive data
+passport.serializeUser((user, done) => {
+  const id = user?.id ?? null;
+  done(null, id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    if (!id) return done(null, null);
+    const user = await prisma.user.findUnique({ where: { id } });
+    return done(null, user ?? null);
+  } catch (err) {
+    return done(err);
+  }
+});
 
 const app = express();
 const port = process.env.PORT;
@@ -97,15 +109,8 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.get("/oauth2/login/google", passport.authenticate("google"));
-app.get(
-  "/oauth2/callback/google",
-  passport.authenticate("google", {
-    failureRedirect: "/oauth2/login/google",
-    failureMessage: true,
-  }),
-  (req, res) => res.redirect("/")
-);
+// use centralized auth routes
+app.use('/oauth2', authRouter);
 
 // 전역 오류를 처리하기 위한 미들웨어
 app.use((err, req, res, next) => {
