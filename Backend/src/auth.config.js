@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { prisma } from "./db.config.js";
-
-dotenv.config();
+import { createUserAndDefaults } from "./services/user.service.js";
 
 // googleStarategy(Options 객체, VerifyCallback 함수)
 // Options 객체: clientID, clientSecret, callbackURL, scope
@@ -37,15 +35,11 @@ const googleVerify = async (profile) => {
     return { id: user.id, email: user.email, name: user.name };
   }
 
-  const now = new Date();
-  const created = await prisma.user.create({
-    data: {
-      email,
-      name: profile.displayName?.slice(0, 32) ?? "구글유저",
-      created_at: now,
-      updated_at: now,
-    },
+  // 신규 사용자 생성 + 기본 세트 생성 (서비스에 위임)
+  const createdUser = await createUserAndDefaults({
+    email,
+    name: profile.displayName?.slice(0, 32) ?? "구글유저",
   });
 
-  return { id: created.id, email: created.email, name: created.name };
+  return { id: createdUser.id, email: createdUser.email, name: createdUser.name };
 };
