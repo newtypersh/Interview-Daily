@@ -24,8 +24,8 @@ model session {
 
 model user {
   id                BigInt             @id @default(autoincrement())
-  email             String             @db.VarChar(40)
-  name              String             @db.VarChar(32)
+  email             String             @unique @db.VarChar(255)
+  name              String             @db.VarChar(64)
   created_at        DateTime           @db.Timestamp(6)
   updated_at        DateTime           @db.Timestamp(6)
   
@@ -40,7 +40,6 @@ model interview {
   user_id         BigInt
   question_set_id BigInt
   interviewed_at  DateTime
-  mode            InterviewMode?
   created_at      DateTime
   updated_at      DateTime
 
@@ -63,8 +62,6 @@ model questionSet {
   user       user              @relation(fields: [user_id], references: [id])
   interviews interview[]
   questions  question[]
-  answers    interviewAnswer[]
-  feedbacks  feedback[]
 
   @@index([user_id])
 }
@@ -72,18 +69,18 @@ model questionSet {
 model interviewAnswer {
   id              BigInt   @id @default(autoincrement())
   interview_id    BigInt
-  question_set_id BigInt
+  question_id     BigInt
   sequence        Int
   audio_url       String   @db.VarChar(256)
   created_at      DateTime
   updated_at      DateTime
 
   interview   interview   @relation(fields: [interview_id], references: [id])
-  questionSet questionSet @relation(fields: [question_set_id], references: [id])
+  question    question    @relation(fields: [question_id], references: [id])
   feedbacks   feedback[]
 
   @@index([interview_id])
-  @@index([question_set_id])
+  @@index([question_id])
 }
 
 model question {
@@ -91,11 +88,13 @@ model question {
   question_set_id BigInt
   content         String?  @db.Text
   order           Int?
-  enabled         Boolean  @default(true)
   created_at      DateTime
   updated_at      DateTime
 
   questionSet questionSet @relation(fields: [question_set_id], references: [id])
+
+  interviewAnswers interviewAnswer[] 
+  feedbacks        feedback[]
 
   @@index([question_set_id])
 }
@@ -103,17 +102,17 @@ model question {
 model feedback {
   id                  BigInt   @id @default(autoincrement())
   interview_answer_id BigInt
-  question_set_id     BigInt
+  question_id         BigInt
   rating              Int
   feedback_text       String?  @db.Text
   created_at          DateTime
   updated_at          DateTime
 
   interviewAnswer interviewAnswer @relation(fields: [interview_answer_id], references: [id])
-  questionSet     questionSet     @relation(fields: [question_set_id], references: [id])
+  question        question        @relation(fields: [question_id], references: [id])
 
   @@index([interview_answer_id])
-  @@index([question_set_id])
+  @@index([question_id])
 }
 
 model feedbackTemplate {
@@ -129,19 +128,14 @@ model feedbackTemplate {
   @@index([user_id])
 }
 
-enum InterviewMode {
-  선택
-  랜덤
-}
-
 enum QuestionCategory {
-  직무역량
-  인성
-  지원동기
+  JOB         @map("직무역량")
+  PERSONAL    @map("인성")
+  MOTIVATION  @map("지원동기")
 }
 
 enum FeedbackCategory {
-  직무역량
-  인성
-  지원동기
+  JOB         @map("직무역량")
+  PERSONAL    @map("인성")
+  MOTIVATION  @map("지원동기")
 }
