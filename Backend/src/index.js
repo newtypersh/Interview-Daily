@@ -8,7 +8,9 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 import passport from "passport";
 import { googleStrategy } from "./auth.config.js";
+
 import authRouter from './routes/auth.routes.js';
+import questionSetRouter from "./routes/questionSet.routes.js";
 
 passport.use(googleStrategy);
 // store only user id in session to keep session small and avoid leaking sensitive data
@@ -92,8 +94,8 @@ app.get("/openapi.json", async (req, res, next) => {
   const routes = ["./src/index.js"];
   const doc = {
     info: {
-      title: "UMC 7th",
-      description: "UMC 7th Node.js 테스트 프로젝트입니다.",
+      title: "Interview Daily",
+      description: "Interview Daily 테스트 입니다.",
     },
     host: "localhost:3000",
   };
@@ -111,6 +113,7 @@ app.get('/', (req, res) => {
 
 // use centralized auth routes
 app.use('/oauth2', authRouter);
+app.use("/api/question-sets", questionSetRouter);
 
 // 전역 오류를 처리하기 위한 미들웨어
 app.use((err, req, res, next) => {
