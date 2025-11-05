@@ -13,16 +13,20 @@ import authRouter from './routes/auth.routes.js';
 import questionSetRouter from "./routes/questionSet.routes.js";
 
 passport.use(googleStrategy);
-// store only user id in session to keep session small and avoid leaking sensitive data
 passport.serializeUser((user, done) => {
-  const id = user?.id ?? null;
-  done(null, id);
+  try {
+    const id = user?.id != null ? String(user.id) : null; // BigInt -> string
+    return done(null, id);
+  } catch (err) {
+    return done(err);
+  }
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
     if (!id) return done(null, null);
-    const user = await prisma.user.findUnique({ where: { id } });
+    const idBig = BigInt(id); // string -> BigInt for Prisma
+    const user = await prisma.user.findUnique({ where: { id: idBig } });
     return done(null, user ?? null);
   } catch (err) {
     return done(err);
@@ -49,10 +53,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({
-  origin: ['http://localhost:3000'], // 허용할 출처
-  credentials: true,                 // 쿠키 허용
-})); // cors 방식 허용
+app.use(cors()); // cors 방식 허용
 app.use(express.static('public')); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
@@ -104,9 +105,6 @@ app.get("/openapi.json", async (req, res, next) => {
   res.json(result ? result.data : null);
 });
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -114,6 +112,9 @@ app.get('/', (req, res) => {
 // use centralized auth routes
 app.use('/oauth2', authRouter);
 app.use("/api/question-sets", questionSetRouter);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // 전역 오류를 처리하기 위한 미들웨어
 app.use((err, req, res, next) => {
