@@ -74,6 +74,9 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(
   "/docs",
   swaggerUiExpress.serve,
@@ -113,8 +116,7 @@ app.get('/', (req, res) => {
 app.use('/oauth2', authRouter);
 app.use("/api/question-sets", questionSetRouter);
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 // 전역 오류를 처리하기 위한 미들웨어
 app.use((err, req, res, next) => {
