@@ -67,3 +67,39 @@ export const create = async (req, res, next) => {
     next(err);
   }
 };
+
+// POST /api/question-sets/:setId/questions
+export const createQuestion = async (req, res, next) => {
+  try {
+    const user = req.user;
+    if(!user || !user.id) {
+      return res.error({ errorCode: "unauthorized", reason: "로그인이 필요합니다." });
+    }
+
+    const setIdRaw = req.params.setId;
+    if(!setIdRaw) {
+      return res.error({ errorCode: "invalid_param", reason: "setId가 필요합니다." });
+    }
+
+    const content = req.body?.content;
+    if (!content || typeof content !== "string" || content.trim().length === 0) {
+      return res.error({ errorCode: "invalid_param", reason: "content가 필요합니다." });
+    }
+
+    const orderRaw = req.body?.order;
+    const order = orderRaw == null ? null : Number(orderRaw);
+    if (orderRaw != null && Number.isNaN(order)) {
+      return res.error({ errorCode: "invalid_param", reason: "order는 숫자여야 합니다." });
+    }
+
+    const created = await service.createQuestion(setIdRaw, {
+      content: content.trim(),
+      order,
+      createdBy: user.id,
+    });
+
+    return res.success({ question: toQuestionItem(created) });
+  } catch (err) {
+    next(err);
+  }
+};

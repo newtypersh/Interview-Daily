@@ -11,3 +11,7 @@ export async function listQuestions(setId) {
 export async function createQuestionSet({ userId, name, category }) {
   return repo.createQuestionSet({ userId, name, category });
 }
+
+export async function createQuestion(setId, { content, order = null, createdBy = null}) {
+  return repo.createQuestion(setId, { content, order, createdBy });
+}
