@@ -113,6 +113,7 @@ app.get('/', (req, res) => {
 });
 
 // use centralized auth routes
+app.use('/auth', authRouter);
 app.use('/oauth2', authRouter);
 app.use("/api/question-sets", questionSetRouter);
 
