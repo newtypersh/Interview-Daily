@@ -37,3 +37,33 @@ export const listQuestions = async (req, res, next) => {
     next(err);
   }
 };
+
+// POST /api/question-sets 
+export const create = async (req, res, next) => {
+  try {
+    const user = req.user;
+    if(!user || !user.id) {
+      return res.error({ errorCode: "unauthorized", reason: "로그인이 필요합니다." });
+    }
+
+    const { name, category } = req.body ?? {};
+    if (!name || typeof name !== "string" || name.trim().length === 0) {
+      return res.error({ errorCode: "invalid_param", reason: "name(1~20자)이 필요합니다." });
+    }
+    const trimmedName = name.trim();
+    if (trimmedName.length > 20) {
+      return res.error({ errorCode: "invalid_param", reason: "name은 최대 20자입니다." });
+    }
+
+    const allowedCategories = ["JOB", "PERSONAL", "MOTIVATION"];
+    if (!category || !allowedCategories.includes(category)) {
+      return res.error({ errorCode: "invalid_param", reason: `category는 ${allowedCategories.join(", ")} 중 하나여야 합니다.` });
+    }
+
+    const created = await service.createQuestionSet({ userId: user.id, name: trimmedName, category });
+
+    return res.success({ questionSet: toListItem(created) });
+  } catch (err) {
+    next(err);
+  }
+};

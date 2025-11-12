@@ -1,21 +1,22 @@
 export function toListItem(row) {
-    return {
-        id: Number(row.id),
-        userId: Number(row.userId),
-        name: row.name,
-        category: row.category,
-        created_at: row.created_at ? row.created_at.toISOString() : null,
-        updated_at: row.updated_at ? row.updated_at.toISOString() : null,  
-    };
+  return {
+    id: row.id != null ? String(row.id) : null,
+    userId: row.user_id != null ? String(row.user_id) : null,
+    name: row.name ?? null,
+    category: row.category ?? null,
+    questionCount: row._count?.questions ?? 0,
+    created_at: row.created_at ? row.created_at.toISOString() : null,
+    updated_at: row.updated_at ? row.updated_at.toISOString() : null,
+  };
 }
 
 export function toQuestionItem(row) {
-    return {
-        id: Number(row.id),
-        question_set_id: Number(row.question_set_id),
-        content: row.content,
-        order: row.order,
-        created_at: row.created_at ? row.created_at.toISOString() : null,
-        updated_at: row.updated_at ? row.updated_at.toISOString() : null,
-    };
+  return {
+    id: row.id != null ? String(row.id) : null,
+    questionSetId: row.question_set_id != null ? String(row.question_set_id) : null,
+    content: row.content ?? null,
+    order: row.order ?? null,
+    created_at: row.created_at ? row.created_at.toISOString() : null,
+    updated_at: row.updated_at ? row.updated_at.toISOString() : null,
+  };
 }

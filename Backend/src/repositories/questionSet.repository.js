@@ -30,3 +30,29 @@ export async function findQuestionsBySet(setId) {
 
   return { items, total };
 }
+
+export async function createQuestionSet({ userId, name, category }) {
+  const userUdBig = typeof userId === "bigint" ? userId : BigInt(userId);
+
+  const now = new Date();
+  const created = await prisma.questionSet.create({
+    data: {
+      user_id: userUdBig,
+      name,
+      category,
+      created_at: now,
+      updated_at: now,
+    },
+    select: {
+      id: true,
+      user_id: true,
+      name: true,
+      category: true,
+      created_at: true,
+      updated_at: true,
+      _count: { select: { questions: true } },
+    },
+  });
+
+  return created;
+}
