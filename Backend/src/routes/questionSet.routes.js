@@ -19,6 +19,9 @@ router.post("/:setId/questions", ensureAuth, ctrl.createQuestion);
 // PATCH /api/question-sets/:setId (질문세트 수정)
 router.patch("/:setId", ensureAuth, ctrl.updateQuestionSet);
 
+// PATCH /api/question-sets/:setId/questions/:questionId (개별 질문 수정)
+router.patch("/:setId/questions/:questionId", ensureAuth, ctrl.updateQuestion);
+
 // DELETE /api/question-sets/:setId (질문세트 삭제)
 router.delete("/:setId", ensureAuth, ctrl.deleteQuestionSet);
 
