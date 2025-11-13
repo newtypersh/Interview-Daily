@@ -7,4 +7,7 @@ const router = express.Router();
 // GET /api/feedback-templates
 router.get('/feedback-templates', ensureAuth, ctrl.getFeedbackTemplates);
 
+// PATCH /api/feedback-templates/:templateId
+router.patch('/feedback-templates/:templateId', ensureAuth, ctrl.updateFeedbackTemplate);
+
 export default router;
