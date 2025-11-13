@@ -1,0 +1,15 @@
+import * as service from '../services/feedbackTemplate.service.js';
+import { toFeedbackTemplateDto } from '../dtos/feedbackTemplate.dto.js';
+
+// GET /api/feedback-templates
+export const listFeedbackTemplates = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (!user || !user.id) return res.error({ errorCode: "unauthorized", reason: "로그인이 필요합니다." });
+
+        const items = await service.listFeedbackTemplates(user.id);
+        return res.success({ templates: items.map(toFeedbackTemplateDto) });
+    } catch (error) {
+        return next(error);
+    }
+};

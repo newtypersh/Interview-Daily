@@ -11,6 +11,7 @@ import { googleStrategy } from "./auth.config.js";
 
 import authRouter from './routes/auth.routes.js';
 import questionSetRouter from "./routes/questionSet.routes.js";
+import feedbackTemplateRouter from "./routes/feedbackTemplate.routes.js";
 
 passport.use(googleStrategy);
 passport.serializeUser((user, done) => {
@@ -116,8 +117,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/oauth2', authRouter);
 app.use("/api/question-sets", questionSetRouter);
-
-
+app.use("/api/feedback-templates", feedbackTemplateRouter);
 
 // 전역 오류를 처리하기 위한 미들웨어
 app.use((err, req, res, next) => {
