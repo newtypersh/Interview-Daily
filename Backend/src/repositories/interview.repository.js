@@ -35,7 +35,7 @@ export async function createInterview({ userId, questionSetId, day, createQuesti
         if (createQuestionsFromSet) {
             const questions = await tx.question.findMany({
                 where: { question_set_id: q },
-                orderBy: { sequence: "asc" },
+                orderBy: { order: "asc" },
             });
 
             for (let i = 0; i < questions.length; i++) {
@@ -58,4 +58,42 @@ export async function createInterview({ userId, questionSetId, day, createQuesti
             include: { answers: { orderBy: { sequence: "asc" } } },
         });
     });
+}
+
+export async function upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url }) {
+    const iId = toBigInt(interviewId);
+    const uId = toBigInt(userId);
+
+    const iv = await prisma.interview.findUnique({ where: { id: iId }, select: { user_id: true, question_set_id: true } });
+    if (!iv) { const e = new Error("interview not found"); e.statusCode = 404; throw e; }
+    if (iv.user_id !== uId) { const e = new Error("forbidden"); e.statusCode = 403; throw e; }
+
+    if (interviewAnswerId) {
+        const aId = toBigInt(interviewAnswerId);
+        const existing = await prisma.interviewAnswer.findUnique({ where: { id: aId }, select: { interview_id: true } });
+        if (!existing || existing.interview_id !== iId) { const e = new Error("answer not found or mismatch"); e.statusCode = 404; throw e; }
+
+        const updated = await prisma.interviewAnswer.update({
+            where: { id: aId },
+            data: {
+                sequence: sequence ?? undefined,
+                audio_url: audio_url ?? undefined,
+                updated_at: new Date(),
+            },
+        });
+        return updated;
+    } else {
+        const qId = toBigInt(questionId);
+        const created = await prisma.interviewAnswer.create({
+            data: {
+                interview_id: iId,
+                question_id: qId,
+                sequence: sequence ?? 1,
+                audio_url: audio_url ?? null,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        });
+        return created;
+    }
 }

@@ -6,7 +6,7 @@ export async function startInterview({ userId, strategy = "random" }) {
     const now = new Date();
     const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
-    const existing = await repo.findInterviewByUserAndDate(userId, day);
+    const existing = await repo.findInterviewByUserAndDay(userId, day);
     if (existing) return existing;
 
     const questionSet = await repo.pickQuestionSetForUser(userId, {strategy});
@@ -27,3 +27,7 @@ export async function startInterview({ userId, strategy = "random" }) {
         throw err;
     }
 };
+
+export async function upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url }) {
+    return repo.upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url });
+}
