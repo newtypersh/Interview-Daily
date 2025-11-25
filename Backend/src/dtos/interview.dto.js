@@ -40,6 +40,32 @@ export function toCreateQuestionSetRequest(req) {
   return { userId, name: trimmedName,  category };
 }
 
+// POST /api/question-sets/:setId/questions
+export function toCreateQuestionRequest(req) {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new UnauthorizedError();
+  }
+
+  const setId = Number(req.params.setId);
+  if (Number.isNaN(setId)) {
+    throw new BadRequestError("setId는 숫자여야 합니다.", { setId: req.params.setId });
+  }
+
+  const content = req.body?.content;
+  if (!content || typeof content !== "string" || content.trim().length === 0) {
+    throw new BadRequestError("content가 필요합니다.");
+  }
+
+  const orderRaw = req.body?.order;
+  const order = orderRaw == null ? null : Number(orderRaw);
+  if (orderRaw != null && Number.isNaN(order)) {
+    throw new BadRequestError("order는 숫자여야 합니다.");
+  }
+
+  return { userId, setId, content: content.trim(), order };
+}
+
 export function toInterviewAnswerDto(a) {
     if (!a) return null;
     return {
