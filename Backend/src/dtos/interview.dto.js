@@ -164,6 +164,25 @@ export function toDeleteQuestionSetRequest(req) {
   return { userId, setId };
 }
 
+export function toDeleteQuestionRequest(req) {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new UnauthorizedError();
+  }
+
+  const setId = Number(req.params.setId);
+  const questionId = Number(req.params.questionId);
+
+  if (Number.isNaN(setId) || Number.isNaN(questionId)) {
+    throw new BadRequestError("setId와 questionId는 숫자여야 합니다", {
+      setId: req.params.setId,
+      questionId: req.params.questionId,
+    });
+  }
+
+  return { userId, setId, questionId };
+}
+
 export function toInterviewAnswerDto(a) {
     if (!a) return null;
     return {
