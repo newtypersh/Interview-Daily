@@ -150,6 +150,20 @@ export function toUpdateQuestionRequest(req) {
   return { userId, setId, questionId, data };
 }
 
+export function toDeleteQuestionSetRequest(req) {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new UnauthorizedError();
+  }
+
+  const setId = Number(req.params.setId);
+  if (Number.isNaN(setId)) {
+    throw new BadRequestError("setId는 숫자여야 합니다.", { setId: req.params.setId });
+  }
+
+  return { userId, setId };
+}
+
 export function toInterviewAnswerDto(a) {
     if (!a) return null;
     return {

@@ -5,6 +5,7 @@ import {
   toCreateQuestionRequest,
   toUpdateQuestionSetRequest,
   toUpdateQuestionRequest,
+  toDeleteQuestionSetRequest,
   toListItem, 
   toQuestionItem 
 } from "../dtos/questionSet.dto.js";
@@ -98,14 +99,10 @@ export const updateQuestion = async (req, res, next) => {
 // DELETE /api/question-sets/:setId
 export const deleteQuestionSet = async (req, res, next) => {
   try {
-    const user = req.user;
-    if (!user || !user.id) return res.error({ errorCode: "unauthorized", reason: "로그인이 필요합니다." });
-
-    const { setId } = req.params;
-    if (!setId) return res.error({ errorCode: "invalid_param", reason: "setId가 필요합니다." });
-
-    await service.deleteQuestionSet(setId, user.id);
-    return res.success(null);
+    const opts = toDeleteQuestionSetRequest(req);
+    await service.deleteQuestionSet(opts);
+    
+    return res.status(StatusCodes.OK).success(null);
   } catch (err) {
     next(err);
   }
