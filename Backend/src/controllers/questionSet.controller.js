@@ -3,6 +3,7 @@ import {
   toListQuestionsRequest, 
   toCreateQuestionSetRequest,
   toCreateQuestionRequest,
+  toUpdateQuestionSetRequest,
   toListItem, 
   toQuestionItem 
 } from "../dtos/questionSet.dto.js";
@@ -67,28 +68,12 @@ export const createQuestion = async (req, res, next) => {
 // PATCH /api/question-sets/:setId
 export const updateQuestionSet = async (req, res, next) => {
   try {
-    const user = req.user;
-    if(!user || !user.id) return res.error({ errorCode: "unauthorized", reason: "로그인이 필요합니다." });
+    const opts = toUpdateQuestionSetRequest(req);
+    const updated = await service.updateQuestionSet(opts);
 
-    const setId = req.params.setId;
-    if(!setId) return res.error({ errorCode: "invalid_param", reason: "setId가 필요합니다." });
-
-    const { name, category } = req.body ?? {};
-    const data = {};
-    if (name != null) {
-      const t = String(name).trim();
-      if(t.length === 0 || t.length > 20) return res.error({ errorCode: "invalid_param", reason: "name은 1~20자 사이여야 합니다." });
-      data.name = t;
-    }
-    if (category != null) {
-      const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
-      if (!allowed.includes(category)) return res.error({ errorCode: "invalid_param", reason: `category는 ${allowed.join(", ")} 중 하나여야 합니다.` });
-      data.category = category;
-    }
-    if (Object.keys(data).length === 0) return res.error({ errorCode: "invalid_param", reason: "수정할 필드를 하나 이상 제공하세요." });
-
-    const updated = await service.updateQuestionSet(setId, { userId: user.id, ...data });
-    return res.success({ questionSet: toListItem(updated) });
+    return res.status(StatusCodes.OK).success({ 
+      questionSet: toListItem(updated),
+    });
   } catch(err) {
     next(err);
   }

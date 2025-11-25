@@ -66,6 +66,47 @@ export function toCreateQuestionRequest(req) {
   return { userId, setId, content: content.trim(), order };
 }
 
+// PATCH /api/question-sets/:setId
+export function toUpdateQuestionSetRequest(req) {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new UnauthorizedError();
+  }
+
+  const setId = Number(req.params.setId);
+  if (Number.isNaN(setId)) {
+    throw new BadRequestError("setId는 숫자여야 합니다.", { setId: req.params.setId });
+  }
+
+  const { name, category } = req.body ?? {};
+  const data = {};
+
+  if (name != null) {
+    const t = String(name).trim();
+    if (t.length === 0 || t.length > 20) {
+      throw new BadRequestError("name은 1~20자 사이여야 합니다.", { name });
+    }
+    data.name = t;
+  }
+
+  if (category != null) {
+    const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
+    if (!allowed.includes(category)) {
+      throw new BadRequestError(
+        `category는 ${allowed.join(", ")} 중 하나여야 합니다.`,
+        { category, allowed }
+      );
+    }
+    data.category = category;
+  }
+
+  if (Object.keys(data).length === 0) {
+    throw new BadRequestError("수정할 필드를 하나 이상 제공하세요.");
+  }
+
+  return { userId, setId, data };
+}
+
 export function toInterviewAnswerDto(a) {
     if (!a) return null;
     return {
