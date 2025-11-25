@@ -1,20 +1,40 @@
 import * as service from '../services/feedbackTemplate.service.js';
 import { toFeedbackTemplateDto } from '../dtos/feedbackTemplate.dto.js';
+import {
+    GetFeedbackTemplatesRequestDto,
+    UpdateFeedbackTemplateRequestDto
+} from '../dtos/feedbackTemplate.request.dto.js';
+import { StatusCodes } from 'http-status-codes';
 
 // GET /api/feedback-templates
-export const listFeedbackTemplates = async (req, res, next) => {
+export const getFeedbackTemplates = async (req, res, next) => {
     try {
-        const user = req.user;
-        if (!user || !user.id) return res.error({ errorCode: "unauthorized", reason: "로그인이 필요합니다." });
+        // DTO 생성
+        const requestDto = new GetFeedbackTemplatesRequestDto(req);
 
-        const { category } = req.query ?? {};
-        const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
-        if (category != null && !allowed.includes(String(category).toUpperCase())) {
-            return res.status(400).json({ error: "invalid_category", message: `category must be one of ${allowed.join(", ")}` });
-        }
+        // 서비스 호출
+        const { userId, category } = requestDto.toServicePayload();
+        const items = await service.getFeedbackTemplates({ userId, category });
+        
+        return res.status(StatusCodes.OK).success({ 
+            templates: items.map(toFeedbackTemplateDto) 
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
 
-        const items = await service.listFeedbackTemplates(user.id, category ? String(category).toUpperCase() : undefined);
-        return res.success({ templates: items.map(toFeedbackTemplateDto) });
+// PATCH /api/feedback-templates/:templateId
+export const updateFeedbackTemplate = async (req, res, next) => {
+    try {
+        const requestDto = new UpdateFeedbackTemplateRequestDto(req);
+        
+        const payload = requestDto.toServicePayload();
+        const updated = await service.updateFeedbackTemplate(payload);
+        
+        return res.status(StatusCodes.OK).success({ 
+            template: toFeedbackTemplateDto(updated) 
+        });
     } catch (error) {
         return next(error);
     }

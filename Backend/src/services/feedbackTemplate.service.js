@@ -5,8 +5,8 @@ import * as repo from "../repositories/feedbackTemplate.repository.js";
  * @param {string|number} userId
  * @param {string|undefined} category
  */
-export async function listTemplates(userId, category = undefined) {
-    return repo.findFeedbackTemplatesByUser(userId, category);
+export async function getFeedbackTemplates({ userId, category }) {
+    return repo.findFeedbackTemplatesByUser({ userId, category });
 }
 
 /**

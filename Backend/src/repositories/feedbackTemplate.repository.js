@@ -16,17 +16,27 @@ function toBigInt(v) {
  * @param {number | string | bigint} userId
  * @param {string|undefined} category
  */
-export async function findFeedbackTemplatesByUser(userId, category = undefined) {
+export async function findFeedbackTemplatesByUser({ userId, category }) {
     const userIdBig = toBigInt(userId);
+
     const where = { user_id: userIdBig };
+    
     if (category !== undefined && category !== null) {
         where.category = category;
     }
-    const rows = await prisma.feedbackTemplate.findMany({
+    
+    return await prisma.feedbackTemplate.findMany({
         where,
         orderBy: { created_at: "desc" },
+        select: {
+            id: true,
+            user_id: true,
+            category: true,
+            content: true,
+            created_at: true,
+            updated_at: true,
+        }
     });
-    return rows;
 }
 
 /**
