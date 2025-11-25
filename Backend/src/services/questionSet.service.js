@@ -4,8 +4,8 @@ export async function listQuestionSets(userId) {
   return repo.findQuestionSets(userId);
 }   
 
-export async function listQuestions(setId) {
-  return repo.findQuestionsBySet(setId);
+export async function listQuestions({userId, setId}) {
+  return repo.findQuestionsBySet({userId, setId});
 }
 
 export async function createQuestionSet({ userId, name, category }) {

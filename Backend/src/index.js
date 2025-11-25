@@ -12,27 +12,12 @@ import { googleStrategy } from "./auth.config.js";
 import authRouter from './routes/auth.routes.js';
 import questionSetRouter from "./routes/questionSet.routes.js";
 import feedbackTemplateRouter from "./routes/feedbackTemplate.routes.js";
+import historyRouter from "./routes/history.routes.js";
+import interviewRouter from "./routes/interview.routes.js";
 
 passport.use(googleStrategy);
-passport.serializeUser((user, done) => {
-  try {
-    const id = user?.id != null ? String(user.id) : null; // BigInt -> string
-    return done(null, id);
-  } catch (err) {
-    return done(err);
-  }
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    if (!id) return done(null, null);
-    const idBig = BigInt(id); // string -> BigInt for Prisma
-    const user = await prisma.user.findUnique({ where: { id: idBig } });
-    return done(null, user ?? null);
-  } catch (err) {
-    return done(err);
-  }
-});
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
 const app = express();
 const port = process.env.PORT;
@@ -113,11 +98,11 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-// use centralized auth routes
-app.use('/auth', authRouter);
 app.use('/oauth2', authRouter);
 app.use("/api/question-sets", questionSetRouter);
 app.use("/api/feedback-templates", feedbackTemplateRouter);
+app.use("/api/history", historyRouter);
+app.use("/api/interviews", interviewRouter);
 
 // 전역 오류를 처리하기 위한 미들웨어
 app.use((err, req, res, next) => {

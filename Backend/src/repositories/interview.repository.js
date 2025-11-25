@@ -97,3 +97,183 @@ export async function upsertInterviewAnswer({ interviewId, userId, interviewAnsw
         return created;
     }
 }
+
+export async function findInterviewById(interviewId, userId) {
+    const iId = toBigInt(interviewId);
+    const uId = toBigInt(userId);
+
+    const interview = await prisma.interview.findUnique({
+        where: { id: iId },
+        include: {
+            answers: {
+                orderBy: { sequence: "asc" },
+                include: { 
+                    question: true,
+                    feedback: true,
+                },
+            }
+        }
+    });
+
+    if (!interview) {
+        const e = new Error("Interview not found");
+        e.statusCode = 404;
+        throw e;
+    }
+    if (interview.user_id !== uId) {
+        const e = new Error("Forbidden");
+        e.statusCode = 403;
+        throw e;
+    }
+    return interview;
+}
+
+export async function findInterviewAnswers(interviewId, userId) {
+    const iId = toBigInt(interviewId);
+    const uId = toBigInt(userId);
+
+    const interview = await prisma.interview.findUnique({ 
+        where: { id: iId }, 
+        include: {
+            answers: {
+                orderBy: { sequence: "asc" },
+                include: { question: true },
+            }
+        }
+    });
+
+    if (!interview) {
+    const e = new Error("Interview not found");
+    e.statusCode = 404;
+    throw e;
+  }
+  if (interview.user_id !== uId) {
+    const e = new Error("Forbidden");
+    e.statusCode = 403;
+    throw e;
+  }
+  return interview;
+}
+
+export async function findFeedbackTemplatesForInterview(interviewId, userId) {
+    const iId = toBigInt(interviewId);
+    const uId = toBigInt(userId);
+
+    // 인터뷰 존재 및 소유자 확인, question_set_id 확보
+    const iv = await prisma.interview.findUnique({
+        where: { id: iId },
+        select: { id: true, user_id: true, question_set_id: true },
+    });
+    if (!iv) { const e = new Error("Interview not found"); e.statusCode = 404; throw e; }
+    if (iv.user_id !== uId) { const e = new Error("Forbidden"); e.statusCode = 403; throw e; }
+
+    // questionSet에서 카테고리 확인
+    const qset = await prisma.questionSet.findUnique({
+        where: { id: iv.question_set_id },
+        select: { id: true, category: true },
+    });
+    if (!qset) return [];
+
+    // 해당 카테고리 템플릿 조회 (필요하면 user specific 조건 추가)
+    const templates = await prisma.feedbackTemplate.findMany({
+        where: { category: qset.category },
+        orderBy: { created_at: "desc" },
+    });
+    
+    return templates;
+};
+
+export async function findInterviewsByUserPaginated(userId, { limit = 20, cursorCreatedAt = null, cursorId = null }) {
+    const uId = toBigInt(userId);
+    const take = Number(limit) + 1;
+
+    const where = { user_id: uId };
+
+    if (cursorCreatedAt && cursorId) {
+        const cursorDate = new Date(cursorCreatedAt);
+        where.OR = [
+            { created_at: { lt: cursorDate } },
+            { AND: [ { created_at: cursorDate }, { id: { lt: toBigInt(cursorId) } } ] },
+        ];
+    }
+
+    const rows = await prisma.interview.findMany({
+        where,
+        orderBy: [ { created_at: "desc" }, { id: "desc" } ],
+        take,
+        select: {
+            id: true,
+            user_id: true,
+            question_set_id: true,
+            day: true,
+            interviewed_at: true,
+            day: true,
+            interviewed_at: true,
+            created_at: true,
+            updated_at: true,
+            _count: { select: {answers: true} },
+        },
+    });
+
+    let nextCursor = null;
+    let items = rows;
+    if (rows.length === take) {
+        const last = rows[rows.length - 1];
+
+        items = rows.slice(0, -1);
+        nextCursor = { createdAt: last.created_at.toISOString(), id: String(last.id) };
+    }
+
+    return { items, nextCursor };
+}
+
+export async function assertInterviewAndAnswerOwnership({ interviewId, answerId, userId }) {
+  const aId = toBigInt(answerId);
+  const iId = toBigInt(interviewId);
+  const uId = toBigInt(userId);
+
+  const answer = await prisma.interviewAnswer.findUnique({
+    where: { id: aId },
+    select: {
+      id: true,
+      interview_id: true,
+      interview: { select: { user_id: true } },
+    },
+  });
+
+  if (!answer) {
+    const e = new Error("answer not found");
+    e.statusCode = 404;
+    throw e;
+  }
+
+  if (answer.interview_id !== iId || answer.interview.user_id !== uId) {
+    const e = new Error("forbidden");
+    e.statusCode = 403;
+    throw e;
+  }
+
+  return true;
+}
+
+export async function updateInterviewAnswerAudio({ answerId, audioUrl, size }) {
+  const aId = toBigInt(answerId);
+  return prisma.interviewAnswer.update({
+    where: { id: aId },
+    data: {
+      audio_url: audioUrl,
+      updated_at: new Date(),
+    },
+  });
+}
+
+export async function updateInterviewAnswerTranscriptText({ answerId, transcriptText }) {
+  const aId = toBigInt(answerId);
+  return prisma.interviewAnswer.update({
+    where: { id: aId },
+    data: {
+      transcript_text: transcriptText,
+      updated_at: new Date(),
+    },
+  });
+}

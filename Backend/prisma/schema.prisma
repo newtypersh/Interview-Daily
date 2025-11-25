@@ -57,6 +57,7 @@ model InterviewAnswer {
   question_id     BigInt
   sequence        Int
   audio_url       String?  @db.VarChar(256)
+  transcript_text  String?  @db.Text
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 

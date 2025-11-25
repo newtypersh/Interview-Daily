@@ -1,4 +1,5 @@
 import * as repo from "../repositories/interview.repository.js";
+import { enqueueTranscription } from "../workers/transcription.worker.js";
 
 export async function startInterview({ userId, strategy = "random" }) {
     if (!userId) throw Object.assign(new Error("unauthorized"), { statusCode: 401 });
@@ -30,4 +31,32 @@ export async function startInterview({ userId, strategy = "random" }) {
 
 export async function upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url }) {
     return repo.upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url });
+}
+
+export async function getInterviewById({ interviewId, userId }) {
+    return repo.getInterviewById({ interviewId, userId });
+}
+
+export async function getInterviewAnswers({ interviewId, userId }) {
+    return repo.getInterviewAnswers({ interviewId, userId });
+}
+
+export async function getFeedbackTemplatesForInterview({ interviewId, userId }) {
+    return repo.getFeedbackTemplatesForInterview( interviewId, userId );
+}
+
+
+
+export async function updateAnswerAudio({ interviewId, answerId, userId, audioUrl }) {
+  // 소유자 & 일치 검증
+  await repo.assertInterviewAndAnswerOwnership({ interviewId, answerId, userId });
+  
+  // DB의 interviewAnswer 레코드에 audio_url 저장
+  const updated = await repo.updateInterviewAnswerAudio({ answerId, audioUrl });
+  
+  setImmediate(() => {
+    enqueueTranscription(String(answerId), audioUrl).catch(err => console.error("enqueueTranscription failed:", err));
+  });
+
+  return updated;
 }

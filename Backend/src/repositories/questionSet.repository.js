@@ -1,4 +1,5 @@
 import { prisma } from "../db.config.js";
+import { NotFoundError, ForbiddenError } from "../errors.js";
 
 /**
  * 유효한 id(string|number|bigint)를 BigInt로 변환
@@ -29,7 +30,6 @@ const QUESTION_SET_SELECT = {
   category: true,
   created_at: true,
   updated_at: true,
-  _count: { select: { questions: true } },
 };
 
 const QUESTION_SELECT = {
@@ -48,17 +48,12 @@ const QUESTION_SELECT = {
  */
 export async function findQuestionSets(userId) {
   const userIdBig = toBigInt(userId);
-
-  const [items, total] = await Promise.all([
-    prisma.questionSet.findMany({
-      where: { user_id: userIdBig },
-      orderBy: { created_at: "desc" },
-      select: QUESTION_SET_SELECT,
-    }),
-    prisma.questionSet.count({ where: { user_id: userIdBig } }),
-  ]);
-
-  return { items, total };
+  
+  return prisma.questionSet.findMany({
+    where: { user_id: userIdBig },
+    orderBy: { created_at: "desc" },
+    select: QUESTION_SET_SELECT,
+  });
 }
 
 /**
@@ -79,19 +74,30 @@ export async function findQuestionSetById(setId) {
  * @param {string|number|bigint} setId
  * @returns {Promise<{items: Array, total: number}>}
  */
-export async function findQuestionsBySet(setId) {
+export async function findQuestionsBySet({userId, setId}) {
   const setIdBig = toBigInt(setId);
+  const userIdBig = toBigInt(userId);
 
-  const [items, total] = await Promise.all([
-    prisma.question.findMany({
-      where: { question_set_id: setIdBig },
-      orderBy: { order: "asc" },
-      select: QUESTION_SELECT,
-    }),
-    prisma.question.count({ where: { question_set_id: setIdBig } }),
-  ]);
+  // 1. 세트 존재 & 소유권 확인
+  const set = await prisma.questionSet.findUnique({
+    where: { id: setIdBig },
+    select: { id: true, user_id: true },
+  });
 
-  return { items, total };
+  if (!set) {
+    throw new NotFoundError("질문 세트를 찾을 수 없습니다.", { setId });
+  }
+
+  if (set.user_id !== userIdBig) {
+    throw new ForbiddenError("해당 질문 세트에 접근할 권한이 없습니다.", { setId, userId });
+  }
+
+  // 2. 권한 확인 후 질문 조회
+  return prisma.question.findMany({
+    where: { question_set_id: setIdBig },
+    orderBy: { order: "asc" },
+    select: QUESTION_SELECT,
+  });
 }
 
 /**

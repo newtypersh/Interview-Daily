@@ -1,22 +1,27 @@
 import express from 'express';
 import passport from 'passport';
-import * as authCtrl from '../controllers/auth.controller.js';
-import { oauthCallbackHandler } from '../controllers/auth.controller.js';
 import { ensureAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/login/google', passport.authenticate('google'));
+router.get('/oauth2/login/google', passport.authenticate('google'));
 
 router.get(
-  '/callback/google',
+  '/oauth2/callback/google',
   passport.authenticate('google', {
     failureRedirect: '/oauth2/login/google',
     failureMessage: true,
   }),
-  oauthCallbackHandler,
+  (req, res) => {
+    res.redirect('/');
+  }
 );
 
-router.post("/logout", ensureAuth, authCtrl.logout);
+router.post("/oauth2/logout", ensureAuth, function (req, res, next) {
+  req.logout(function (err) {
+    if (err) return next(err);
+    res.redirect('/');
+  });
+});
 
 export default router;
