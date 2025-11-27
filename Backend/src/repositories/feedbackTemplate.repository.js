@@ -31,6 +31,28 @@ export async function findFeedbackTemplatesByUser({ userId }) {
 }
 
 /**
+ * 사용자의 특정 카테고리 템플릿 조회
+ * @param {string|number} userId
+ * @param {string} category
+ */
+export async function findFeedbackTemplatesByUserAndCategory({ userId, category }) {
+    return await prisma.feedbackTemplate.findMany({
+        where: { 
+            user_id: toBigInt(userId),
+            category: category,
+        },
+        select: {
+            id: true,
+            user_id: true,
+            category: true,
+            content: true,
+            created_at: true,
+            updated_at: true,
+        }
+    });
+}
+
+/**
  * 템플릿 업데이트 (소유자 검증 포함)
  * @param {string|number} templateId
  * @param {string|number} userId

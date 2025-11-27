@@ -2,6 +2,7 @@ import * as service from '../services/feedbackTemplate.service.js';
 import { toFeedbackTemplateDto } from '../dtos/feedbackTemplate.dto.js';
 import {
     GetFeedbackTemplatesRequestDto,
+    GetFeedbackTemplatesByCategoryRequestDto,
     UpdateFeedbackTemplateRequestDto
 } from '../dtos/feedbackTemplate.request.dto.js';
 import { StatusCodes } from 'http-status-codes';
@@ -27,9 +28,9 @@ export const getFeedbackTemplates = async (req, res, next) => {
 // GET /api/feedback-templates/:category
 export const getFeedbackTemplatesByCategory = async (req, res, next) => {
     try {
-        const requestDto = new GetFeedbackTemplatesRequestDto(req);
+        const requestDto = new GetFeedbackTemplatesByCategoryRequestDto(req);
         const { userId, category } = requestDto.toServicePayload();
-        const items = await service.getFeedbackTemplates({ userId, category });
+        const items = await service.getFeedbackTemplatesByCategory({ userId, category });
         
         return res.status(StatusCodes.OK).success({ 
             templates: items.map(toFeedbackTemplateDto) 

@@ -10,7 +10,7 @@ export class GetFeedbackTemplatesRequestDto {
     
     // 유효성 검증 및 정규화 실행
     this.validate();
-  }
+  } 
 
 
   //유효성 검증
@@ -34,6 +34,37 @@ export class GetFeedbackTemplatesRequestDto {
 export class GetFeedbackTemplatesByCategoryRequestDto extends GetFeedbackTemplatesRequestDto {
   constructor(req) {
     super(req);
+    this.category = req.params?.category;
+    
+    this.validateCategory();
+    this.normalize();
+  }
+
+  validateCategory() {
+    if (!this.category) {
+      throw new BadRequestError("category가 필요합니다.", { path: this.path });
+    }
+
+    const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
+    const upperCategory = String(this.category).toUpperCase();
+
+    if (!allowed.includes(upperCategory)) {
+      throw new BadRequestError(
+        `category는 (${allowed.join(", ")}) 중 하나여야 합니다.`, 
+        { category: this.category, allowed }
+      );
+    }
+  }
+
+  normalize() {
+    this.category = String(this.category).toUpperCase();
+  }
+
+  toServicePayload() {
+    return {
+      userId: this.userId,
+      category: this.category,
+    };
   }
 }
 
@@ -52,12 +83,19 @@ export class UpdateFeedbackTemplateRequestDto {
     // 인증 확인
     if (!this.userId) throw new UnauthorizedError("로그인이 필요합니다.");
     
+    // 2. 카테고리 존재 여부 확인 (추가됨)
+    if (!this.category) {
+        throw new BadRequestError("category 파라미터가 필요합니다.");
+    }
 
     // 카테고리 검즘
     const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
     const upperCategory = String(this.category).toUpperCase();
     if (!allowed.includes(upperCategory)) {
-      throw new BadRequestError(`유효하지 않은 카테고리입니다. (${allowed.join(", ")})`);
+      throw new BadRequestError(
+        `유효하지 않은 카테고리입니다. (${allowed.join(", ")})`,
+        { category: this.category, allowed: allowed }
+      );
     }
 
     // content 확인
