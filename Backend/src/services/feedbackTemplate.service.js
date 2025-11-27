@@ -15,6 +15,6 @@ export async function getFeedbackTemplates({ userId, category }) {
  * @param {Object} data 
  * @returns 
  */
-export async function updateTemplate(templateId, userId, data) {
-    return repo.updateFeedbackTemplate(templateId, userId, data);
+export async function updateTemplate({ userId, category, content }) {
+    return repo.updateFeedbackTemplate(userId, category, content);
 }

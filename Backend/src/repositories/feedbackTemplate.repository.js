@@ -45,32 +45,28 @@ export async function findFeedbackTemplatesByUser({ userId, category }) {
  * @param {string|number} userId
  * @param {Object} data
  */
-export async function updateFeedbackTemplate(templateId, userId, data) {
-    const tId = toBigInt(templateId);
-    const uId = toBigInt(userId);
+export async function updateFeedbackTemplate({ userId, category, content }) {
+    const userIdBig = toBigInt(userId);
 
-    const existing = await prisma.feedbackTemplate.findUnique({
-        where: { id: tId },
-        select: { id: true, user_id: true },
+    return await prisma.feedbackTemplate.update({
+        where: { 
+            user_id_category: {
+                user_id: userIdBig,
+                category: category,
+            
+            },
+        },
+        data: {
+            content: content,
+            updated_at: new Date(),
+        },
+        select: { 
+            id: true, 
+            user_id: true,
+            category: true,
+            content: true,
+            created_at: true,
+            updated_at: true,
+        },
     });
-
-    if (!existing) {
-        const err = new Error("Feedback template not found");
-        err.statusCode = 404;
-        throw err;
-    }
-    if (existing.user_id !== uId) {
-        const err = new Error("Forbidden");
-        err.statusCode = 403;
-        throw err;
-    }
-
-    const updateData = {  ...data, updated_at: new Date() };
-
-    const updated = await prisma.feedbackTemplate.update({
-        where: { id: tId },
-        data: updateData,
-    });
-
-    return updated;
 }

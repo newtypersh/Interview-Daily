@@ -24,7 +24,22 @@ export const getFeedbackTemplates = async (req, res, next) => {
     }
 };
 
-// PATCH /api/feedback-templates/:templateId
+// GET /api/feedback-templates/:category
+export const getFeedbackTemplatesByCategory = async (req, res, next) => {
+    try {
+        const requestDto = new GetFeedbackTemplatesRequestDto(req);
+        const { userId, category } = requestDto.toServicePayload();
+        const items = await service.getFeedbackTemplates({ userId, category });
+        
+        return res.status(StatusCodes.OK).success({ 
+            templates: items.map(toFeedbackTemplateDto) 
+        });
+    } catch (error) {
+        return next(error);
+    }
+};
+
+// PATCH /api/feedback-templates/:category
 export const updateFeedbackTemplate = async (req, res, next) => {
     try {
         const requestDto = new UpdateFeedbackTemplateRequestDto(req);

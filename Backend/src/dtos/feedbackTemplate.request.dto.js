@@ -55,11 +55,18 @@ export class GetFeedbackTemplatesRequestDto {
   }
 }
 
-// PATCH /api/feedback-templates/:templateId 요청 DTO
+// GET /api/feedback-templates/:category 요청 DTO
+export class GetFeedbackTemplatesByCategoryRequestDto extends GetFeedbackTemplatesRequestDto {
+  constructor(req) {
+    super(req);
+  }
+}
+
+// PATCH /api/feedback-templates/:category 요청 DTO
 export class UpdateFeedbackTemplateRequestDto {
   constructor(req) {
     this.userId = req.user?.id;
-    this.templateId = req.params?.templateId;
+    this.category = req.params?.category;
     this.content = req.body?.content;
     
     this.validate();
@@ -68,16 +75,14 @@ export class UpdateFeedbackTemplateRequestDto {
 
   validate() {
     // 인증 확인
-    if (!this.userId) {
-      throw new UnauthorizedError("로그인이 필요합니다.");
-    }
+    if (!this.userId) throw new UnauthorizedError("로그인이 필요합니다.");
+    
 
-    // templateId 확인
-    const id = Number(this.templateId);
-    if (Number.isNaN(id)) {
-      throw new BadRequestError("templateId는 숫자여야 합니다.", { 
-        templateId: this.templateId 
-      });
+    // 카테고리 검즘
+    const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
+    const upperCategory = String(this.category).toUpperCase();
+    if (!allowed.includes(upperCategory)) {
+      throw new BadRequestError(`유효하지 않은 카테고리입니다. (${allowed.join(", ")})`);
     }
 
     // content 확인
@@ -101,17 +106,14 @@ export class UpdateFeedbackTemplateRequestDto {
   }
 
   normalize() {
-    // templateId를 숫자로 변환
-    this.templateId = Number(this.templateId);
-    
-    // content trim
+    this.category = String(this.category).toUpperCase();
     this.content = this.content.trim();
   }
 
   toServicePayload() {
     return {
       userId: this.userId,
-      templateId: this.templateId,
+      category: this.category,
       content: this.content,
     };
   }
