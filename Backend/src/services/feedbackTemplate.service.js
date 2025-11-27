@@ -1,9 +1,8 @@
 import * as repo from "../repositories/feedbackTemplate.repository.js";
 
 /**
- * 사용자의 템플릿 목록 조회 (선택적으로 카테고리 필터)
+ * 사용자의 템플릿 목록 조회
  * @param {string|number} userId
- * @param {string|undefined} category
  */
 export async function getFeedbackTemplates({ userId }) {
     return repo.findFeedbackTemplatesByUser({ userId });

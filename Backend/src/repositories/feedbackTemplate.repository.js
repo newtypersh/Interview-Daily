@@ -16,12 +16,8 @@ function toBigInt(v) {
  * @param {number | string | bigint} userId
  */
 export async function findFeedbackTemplatesByUser({ userId }) {
-    const userIdBig = toBigInt(userId);
-
-    const where = { user_id: userIdBig };
-    
     return await prisma.feedbackTemplate.findMany({
-        where,
+        where: { user_id: toBigInt(userId) },
         orderBy: { created_at: "desc" },
         select: {
             id: true,
