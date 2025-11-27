@@ -12,18 +12,13 @@ function toBigInt(v) {
 }
 
 /**
- * 사용자의 피드백 템플릿 조회 (category optional)
+ * 사용자의 피드백 템플릿 조회
  * @param {number | string | bigint} userId
- * @param {string|undefined} category
  */
-export async function findFeedbackTemplatesByUser({ userId, category }) {
+export async function findFeedbackTemplatesByUser({ userId }) {
     const userIdBig = toBigInt(userId);
 
     const where = { user_id: userIdBig };
-    
-    if (category !== undefined && category !== null) {
-        where.category = category;
-    }
     
     return await prisma.feedbackTemplate.findMany({
         where,

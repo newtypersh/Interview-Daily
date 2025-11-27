@@ -13,8 +13,8 @@ export const getFeedbackTemplates = async (req, res, next) => {
         const requestDto = new GetFeedbackTemplatesRequestDto(req);
 
         // 서비스 호출
-        const { userId, category } = requestDto.toServicePayload();
-        const items = await service.getFeedbackTemplates({ userId, category });
+        const { userId } = requestDto.toServicePayload();
+        const items = await service.getFeedbackTemplates({ userId });
         
         return res.status(StatusCodes.OK).success({ 
             templates: items.map(toFeedbackTemplateDto) 

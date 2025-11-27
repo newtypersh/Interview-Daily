@@ -6,12 +6,10 @@ export class GetFeedbackTemplatesRequestDto {
   constructor(req) {
     // raw 데이터 추출
     this.userId = req.user?.id;
-    this.category = req.query?.category;
     this.path = req.path;
     
     // 유효성 검증 및 정규화 실행
     this.validate();
-    this.normalize();
   }
 
 
@@ -21,36 +19,13 @@ export class GetFeedbackTemplatesRequestDto {
     if (!this.userId) {
       throw new UnauthorizedError("로그인이 필요합니다.", { path: this.path });
     }
-
-    // 2. category 검증 (선택적 필드)
-    if (this.category != null) {
-      const allowed = ["JOB", "PERSONAL", "MOTIVATION"];
-      const upperCategory = String(this.category).toUpperCase();
-      
-      if (!allowed.includes(upperCategory)) {
-        throw new BadRequestError(
-          `category는 ${allowed.join(", ")} 중 하나여야 합니다.`,
-          { category: this.category, allowed }
-        );
-      }
-    }
-
     return true;
-  }
-
-  // 데이터 정규화
-  normalize() {
-    // category를 대문자로 변환 (있는 경우만)
-    if (this.category != null) {
-      this.category = String(this.category).toUpperCase();
-    }
   }
 
   // 서비스 레이어로 전달할 payload 변환   
   toServicePayload() {
     return {
       userId: this.userId,
-      category: this.category ?? undefined, // null이면 undefined로
     };
   }
 }
