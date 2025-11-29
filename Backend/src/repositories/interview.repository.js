@@ -41,36 +41,48 @@ export async function pickQuestionSetForUser(userId, { strategy }) {
     return sets[Math.floor(Math.random() * sets.length)];
 }
 
-export async function createInterview({ userId, questionSetId, day, createQuestionsFromSet = false }) {
+export async function createInterview({ userId, questionSetId, day }) {
+    // 1. ID 변환 (BigInt 처리)
     const u = toBigInt(userId);
     const q = toBigInt(questionSetId);
 
+    // 2. 트랜잭션 시작: 모든 작업이 성공하거나, 하나라도 실패하면 모두 취소됨 
     return prisma.$transaction(async (tx) => {
+        // [Step A] 면접(Interview) 메인 레코드 생성
         const createdInterview = await tx.interview.create({
-            data: { user_id: u, question_set_id: q, day, created_at: new Date(), updated_at: new Date() },
+            data: { 
+                user_id: u, 
+                question_set_id: q, 
+                day, 
+                created_at: new Date(), 
+                updated_at: new Date() 
+            },
         });
 
-        if (createQuestionsFromSet) {
-            const questions = await tx.question.findMany({
-                where: { question_set_id: q },
-                orderBy: { order: "asc" },
+        // [Step B] 질문 세트의 질문들을 복사하여 답변 슬롯 미리 생성 (옵션)
+        // B-1. 원본 질문 세트에서 질문 목록 조회
+        const questions = await tx.question.findMany({
+            where: { question_set_id: q },
+            orderBy: { order: "asc" },
+        });
+
+        // B-2. 각 질문에 대해 빈 답변 레코드 생성
+        for (let i = 0; i < questions.length; i++) {
+            const qrow = questions[i];
+            await tx.interviewAnswer.create({
+                data: {
+                    interview_id: createdInterview.id,
+                    question_id: qrow.id,
+                    sequence: i + 1,
+                    audio_url: null,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                },
             });
-
-            for (let i = 0; i < questions.length; i++) {
-                const qrow = questions[i];
-                await tx.interviewAnswer.create({
-                    data: {
-                        interview_id: createdInterview.id,
-                        question_id: qrow.id,
-                        sequence: i + 1,
-                        audio_url: null,
-                        created_at: new Date(),
-                        updated_at: new Date(),
-                    },
-                });
-            }
         }
+        
 
+        // [Step C] 최종 결과 반환 (생성된 면접 + 답변 목록 포함)
         return tx.interview.findUnique({
             where: { id: createdInterview.id },
             include: { answers: { orderBy: { sequence: "asc" } } },

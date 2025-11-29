@@ -3,30 +3,30 @@ import { enqueueTranscription } from "../workers/transcription.worker.js";
 import { ConflictError } from "../errors.js";
 
 export async function startInterview({ userId, strategy = "random" }) {
-    if (!userId) throw Object.assign(new Error("unauthorized"), { statusCode: 401 });
-
+    // 1. 날짜 정규화 (UTC 기준)
     const now = new Date();
     const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
+    // 2. 오늘의 면접이 이미 존재하는지 확인 (1차 체크)
     const existing = await repo.findInterviewByUserAndDay(userId, day);
     if (existing) {
         throw new ConflictError("오늘의 면접이 이미 생성되었습니다.");
     } 
 
+    // 3. 질문 세트 선정
     const questionSet = await repo.pickQuestionSetForUser(userId, {strategy});
 
+    // 4. 면접 생성 및 동시성 제어 (2차 체크)
     try {
         const created = await repo.createInterview({
             userId,
             questionSetId: questionSet.id,
             day,
-            createQuestionsFromSet: true,
         });
         return created;
     } catch (err) {
         if (err?.code === "P2002" || (err?.message && err.message.includes("Duplicate"))) {
-            const retry = await repo.findInterviewByUserAndDay(userId, day);
-            if (retry) return retry;
+            throw new ConflictError("오늘의 면접이 이미 생성되었습니다.");
         }
         throw err;
     }
