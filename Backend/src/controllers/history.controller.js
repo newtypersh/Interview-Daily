@@ -1,32 +1,17 @@
+import { getInterviewHistoryRequestDto } from "../dtos/history.request.dto.js";
+import { toHistoryResponseDto } from "../dtos/history.response.dto.js";
 import * as service from "../services/history.service.js";
-import { toInterviewDto } from "../dtos/interview.dto.js";
+import { StatusCodes } from "http-status-codes";
 
-/**
- * GET /api/history/interviews
- * query:
- *  - limit (optional, default 20)
- *  - cursorCreatedAt (optional, ISO)
- *  - cursorId (optional, string)
-*/
-export const getInterviewHistory = async (req, res, next) => {
+export const getHistory = async (req, res, next) => {
     try {
-        const userId = req.user?.id;
-        if (!userId) return res.status(401).json({ isSuccess: false, code: "COMMIN401", message: "로그인 필요", result: null });
+        const requestDto = getInterviewHistoryRequestDto(req);
+        const payload = requestDto.toServicePayload();
 
-        const limit = Math.min(100, Number(req.query,limit || 20));
-        const cursorCreatedAt = req.query.cursorCreatedAt ?? null;
-        const cursorId = req.query.cursorId ?? null;
+        const interviews = await service.getInterviewHistory(payload);
 
-        const { items , nextCursor } = await service.getInterviewHistory({ userId, limit, cursorCreatedAt, cursorId });
-
-        return res.status(200).json({
-            isSuccess: true,
-            code: "COMMON200",
-            message: "성공입니다.",
-            result: {
-                items: items.map(i => toInterviewDto(i)),
-                nextCursor, // { createdAt: ISOString, id: string } or null
-            },
+        return res.status(StatusCodes.OK).success({
+            histories: interviews.map(toHistoryResponseDto)
         });
     } catch (err) {
         next(err);

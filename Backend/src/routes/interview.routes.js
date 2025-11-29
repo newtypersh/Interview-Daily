@@ -14,9 +14,6 @@ router.get("/:interviewId/", ensureAuth, ctrl.getInterview);
 // GET /api/interviews/:interviewId/answers
 router.get("/:interviewId/answers", ensureAuth, ctrl.getInterviewAnswers);
 
-// GET /api/interviews/:interviewId/feedback-templates
-router.get("/:interviewId/feedback-templates", ensureAuth, ctrl.getInterviewFeedbackTemplates);
-
 // POST /api/interviews/:interviewId/feedbacks
 router.post("/:interviewId/feedbacks", ensureAuth, ctrl.postFeedbacksForInterview);
 

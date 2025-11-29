@@ -1,5 +1,6 @@
 import * as repo from "../repositories/interview.repository.js";
 import { enqueueTranscription } from "../workers/transcription.worker.js";
+import { ConflictError } from "../errors.js";
 
 export async function startInterview({ userId, strategy = "random" }) {
     if (!userId) throw Object.assign(new Error("unauthorized"), { statusCode: 401 });
@@ -8,7 +9,9 @@ export async function startInterview({ userId, strategy = "random" }) {
     const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
     const existing = await repo.findInterviewByUserAndDay(userId, day);
-    if (existing) return existing;
+    if (existing) {
+        throw new ConflictError("오늘의 면접이 이미 생성되었습니다.");
+    } 
 
     const questionSet = await repo.pickQuestionSetForUser(userId, {strategy});
 
@@ -40,11 +43,6 @@ export async function getInterviewById({ interviewId, userId }) {
 export async function getInterviewAnswers({ interviewId, userId }) {
     return repo.getInterviewAnswers({ interviewId, userId });
 }
-
-export async function getFeedbackTemplatesForInterview({ interviewId, userId }) {
-    return repo.getFeedbackTemplatesForInterview( interviewId, userId );
-}
-
 
 
 export async function updateAnswerAudio({ interviewId, answerId, userId, audioUrl }) {

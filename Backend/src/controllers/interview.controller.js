@@ -63,30 +63,7 @@ export const getInterviewAnswers = async (req, res, next) => {
     }
 };
 
-export const getInterviewFeedbackTemplates = async (req, res, next) => {
-    try {
-        const userId = req.user?.id;
-        if (!userId) return res.status(401).error({ isSuccess: false, code: "COMMON401", message: "로그인이 필요합니다.", result: null });
 
-        const { interviewId } = req.params;
-        const templates = await service.getFeedbackTemplatesForInterview({ interviewId, userId });
-
-        return res.status(200).json({ 
-            isSuccess: true, 
-            code: "COMMON200", 
-            message: "성공입니다.", 
-            result: { templates: templates.map(t => ({
-                id: t.id != null ? String(t.id) : null,
-                category: t.category ?? null,
-                title: t.title ?? null,
-                templatesText: t.templates_text ?? t.templatesText ?? null,
-                createdAt: t.created_at ? t.created_at.toISOString() : null,
-            }))} 
-        });
-    } catch (err) {
-        next(err);
-    }
-};
 
 export const uploadAnswerAudio = async (req, res, next) => {
     try {
