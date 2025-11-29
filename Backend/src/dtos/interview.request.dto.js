@@ -65,7 +65,7 @@ export class UploadAnswerAudioRequestDto {
             userId: this.userId,
             interviewId: this.interviewId,
             answerId: this.answerId,
-            file: this.file.location, // S3 업로드 후 반환된 URL
+            audioUrl: this.file.location, // S3 업로드 후 반환된 URL
         };
     }
 }
