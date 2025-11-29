@@ -76,11 +76,12 @@ export const uploadAnswerAudio = async (req, res, next) => {
         // 2. 서비스 호출
         const updated = await service.updateAnswerAudio(payload);
 
+        // 3. 응답 반환
         return res.status(200).json({
-            isSuccess: true,
-            code: "COMMON200",
-            message: "성공입니다.",
-            result: { answer: { id: String(updated.id), audioUrl } }
+            answer: {
+                id: String(updated.id),
+                audioUrl: payload.audioUrl,
+            }
         });
     } catch (err) {
         next(err);
