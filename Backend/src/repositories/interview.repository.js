@@ -1,4 +1,5 @@
 import { prisma } from "../db.config.js";
+import { BadRequestError, NotFoundError, ForbiddenError } from "../errors.js";
 
 function toBigInt(v) {
     if (typeof v === "bigint") return v;
@@ -17,9 +18,23 @@ export async function findInterviewByUserAndDay(userId, day) {
 
 export async function pickQuestionSetForUser(userId, { strategy }) {
     const u = toBigInt(userId);
+    let where = {};
 
-    const sets = await prisma.questionSet.findMany({ where: { user_id: u } });
-    if (!sets || sets.length === 0) throw Object.assign(new Error("no question sets"), { statusCode: 400 });
+    // 1. 전략에 따른 조건 설정
+    if (strategy === "random") {
+        where = { user_id: u };
+    } else {
+        throw new BadRequestError(`지원하지 않는 전략입니다: ${strategy}`, { strategy });
+    }
+
+    // 2. 조건에 맞는 세트 조회
+    const sets = await prisma.questionSet.findMany({ where });
+    
+    if (!sets || sets.length === 0) {
+        throw new NotFoundError("사용 가능한 질문 세트가 없습니다.");
+    }
+
+    // 3. 랜덤 선택 후 반환
     return sets[Math.floor(Math.random() * sets.length)];
 }
 
