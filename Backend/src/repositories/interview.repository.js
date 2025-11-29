@@ -9,7 +9,10 @@ function toBigInt(v) {
 }
 
 export async function findInterviewByUserAndDay(userId, day) {
+    // 1. ID 변환
     const u = toBigInt(userId);
+    
+    // 2. DB 조회: interview 테이블에서 user_id, day 기준으로 조회
     return prisma.interview.findFirst({
         where: { user_id: u, day },
         include: { answers: { orderBy: { sequence: "asc" } } },
