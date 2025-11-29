@@ -46,14 +46,18 @@ export async function getInterviewAnswers({ interviewId, userId }) {
 
 
 export async function updateAnswerAudio({ interviewId, answerId, userId, audioUrl }) {
-  // 소유자 & 일치 검증
+  // 1. 소유자 & 일치 검증
   await repo.assertInterviewAndAnswerOwnership({ interviewId, answerId, userId });
   
-  // DB의 interviewAnswer 레코드에 audio_url 저장
+  // 2. DB 업데이트 (audio_url 저장)
   const updated = await repo.updateInterviewAnswerAudio({ answerId, audioUrl });
   
+  // 3. STT 작업 큐에 추가 (Non-blocking)
   setImmediate(() => {
-    enqueueTranscription(String(answerId), audioUrl).catch(err => console.error("enqueueTranscription failed:", err));
+    enqueueTranscription(String(answerId), audioUrl)
+        .catch(err => {
+            console.error(`[STT Error] AnswerID: ${answerId}, AudioURL: ${audioUrl}`, err)
+        });
   });
 
   return updated;
