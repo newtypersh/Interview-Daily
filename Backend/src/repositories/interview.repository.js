@@ -272,15 +272,11 @@ export async function assertInterviewAndAnswerOwnership({ interviewId, answerId,
   });
 
   if (!answer) {
-    const e = new Error("answer not found");
-    e.statusCode = 404;
-    throw e;
+    throw new NotFoundError("답변을 찾을 수 없습니다.");
   }
 
   if (answer.interview_id !== iId || answer.interview.user_id !== uId) {
-    const e = new Error("forbidden");
-    e.statusCode = 403;
-    throw e;
+    throw new ForbiddenError("권한이 없습니다.");
   }
 
   return true;

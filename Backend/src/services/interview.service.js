@@ -44,7 +44,6 @@ export async function getInterviewAnswers({ interviewId, userId }) {
     return repo.getInterviewAnswers({ interviewId, userId });
 }
 
-
 export async function updateAnswerAudio({ interviewId, answerId, userId, audioUrl }) {
   // 1. 소유자 & 일치 검증
   await repo.assertInterviewAndAnswerOwnership({ interviewId, answerId, userId });
