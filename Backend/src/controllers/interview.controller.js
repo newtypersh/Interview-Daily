@@ -1,11 +1,12 @@
 import * as service from "../services/interview.service.js";
 import { toInterviewDto } from "../dtos/interview.dto.js";
-import { startInterviewRequestDto } from "../dtos/interview.request.dto.js";
+import { StartInterviewRequestDto, UploadAnswerAudioRequestDto } from "../dtos/interview.request.dto.js";
 import { StatusCodes } from "http-status-codes";
 
+// POST /api/interviews/start
 export const startInterview = async (req, res, next) => {
     try {
-        const requestDto = new startInterviewRequestDto(req.body);
+        const requestDto = new StartInterviewRequestDto(req.body);
         const payload = requestDto.toServicePayload();
 
         const session = await service.startInterview(payload);
@@ -65,20 +66,15 @@ export const getInterviewAnswers = async (req, res, next) => {
     }
 };
 
-
-
+// POST /api/interviews/:interviewId/answers/:answerId/audio
 export const uploadAnswerAudio = async (req, res, next) => {
     try {
-        const userId = req.user?.id;
-        if (!userId) return res.status(401).json({ isSuccess: false, code: "COMMON401", message: "로그인이 필요합니다.", result: null });
-
-        const { interviewId, answerId } = req.params;
-        if (!req.file) return res.status(400).json({ isSuccess: false, code: "INVALID_PAYLOAD", message: "파일이 필요합니다.", result: null });
-
-        const audioUrl = req.file.location;
-        const size = req.file.size;
-
-        const updated = await service.updateAnswerAudio({ interviewId, answerId, userId, audioUrl });
+        // 1. DTO를 통한 검증 및 데이터 추출
+        const requestDto = new UploadAnswerAudioRequestDto(req);
+        const payload = requestDto.toServicePayload();
+        
+        // 2. 서비스 호출
+        const updated = await service.updateAnswerAudio(payload);
 
         return res.status(200).json({
             isSuccess: true,
