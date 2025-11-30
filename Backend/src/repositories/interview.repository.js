@@ -282,7 +282,7 @@ export async function assertInterviewAndAnswerOwnership({ interviewId, answerId,
   return true;
 }
 
-export async function updateInterviewAnswerAudio({ answerId, audioUrl, size }) {
+export async function updateInterviewAnswerAudio({ answerId, audioUrl }) {
   const aId = toBigInt(answerId);
   return prisma.interviewAnswer.update({
     where: { id: aId },
@@ -291,6 +291,17 @@ export async function updateInterviewAnswerAudio({ answerId, audioUrl, size }) {
       updated_at: new Date(),
     },
   });
+}
+
+export async function updateInterviewAnswerContent({ answerId, transcriptText }) {
+    const aId = toBigInt(answerId);
+    return prisma.interviewAnswer.update({
+        where: { id: aId },
+        data: {
+            transcript_text: transcriptText,
+            updated_at: new Date(),
+        },
+    });
 }
 
 export async function updateInterviewAnswerTranscriptText({ answerId, transcriptText }) {
