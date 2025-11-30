@@ -60,7 +60,7 @@ export async function updateAnswerAudio({ interviewId, answerId, userId, audioUr
     transcript = "변환에 실패했습니다.";
   }
 
-  const updatedAnswer = await repo.updateInterviewAnswerTranscriptText({ 
+  const updatedAnswer = await repo.updateInterviewAnswerContent({ 
     answerId, transcriptText: transcript 
 });
 
