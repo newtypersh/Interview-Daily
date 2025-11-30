@@ -35,6 +35,7 @@ model Interview {
   id              BigInt            @id @default(autoincrement())
   user_id         BigInt
   question_set_id BigInt
+  status          InterviewStatus   @default(IN_PROGRESS)
   interviewed_at  DateTime?         // 완료 시점
   day             DateTime          // UTC 날짜 00:00 (오늘 인터뷰 제약용)
   created_at      DateTime          @default(now())
@@ -131,6 +132,11 @@ model FeedbackTemplate {
 
   @@index([user_id, category])
   @@map("feedbackTemplate")
+}
+
+enum InterviewStatus {
+  IN_PROGRESS  
+  COMPLETED    
 }
 
 enum QuestionCategory {
