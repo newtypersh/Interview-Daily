@@ -304,25 +304,42 @@ export async function updateInterviewAnswerContent({ answerId, transcriptText })
     });
 }
 
-export async function updateInterviewAnswerTranscriptText({ answerId, transcriptText }) {
-  const aId = toBigInt(answerId);
-  return prisma.interviewAnswer.update({
-    where: { id: aId },
-    data: {
-      transcript_text: transcriptText,
-      updated_at: new Date(),
-    },
-  });
-}
-
 export async function updateInterviewStatus({ interviewId, status }) {
     const iId = toBigInt(interviewId);
 
+    const data = {
+        status: status,
+        updated_at: new Date(),
+    };
+
+    if (status === "COMPLETED") {
+        data.interviewed_at = new Date();
+    }
+
     return prisma.interview.update({
         where: { id: iId },
-        data: {
-            status: status,
-            updated_at: new Date(),
+        data: data,
+        include: {
+            questionSet: {
+                select: { category: true } // 카테고리 정보 필요
+            },
+            answers: {
+                orderBy: { sequence: "asc" },
+                include: {
+                    question: { select: { content: true } } // 질문 내용 필요
+                }
+            }
+        }
+    });
+}
+
+export async function findFeedbackTemplate(userId, category) {
+    const uId = toBigInt(userId);
+
+    return prisma.feedbackTemplate.findFirst({
+        where: { 
+            user_id: uId,
+            category: category
         },
     });
 }

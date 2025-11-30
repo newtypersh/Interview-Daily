@@ -32,16 +32,12 @@ export async function startInterview({ userId, strategy = "random" }) {
     }
 };
 
-export async function upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url }) {
-    return repo.upsertInterviewAnswer({ interviewId, userId, interviewAnswerId, questionId, sequence, audio_url });
-}
-
 export async function getInterviewById({ interviewId, userId }) {
-    return repo.getInterviewById({ interviewId, userId });
+    return repo.findInterviewById({ interviewId, userId });
 }
 
 export async function getInterviewAnswers({ interviewId, userId }) {
-    return repo.getInterviewAnswers({ interviewId, userId });
+    return repo.findInterviewAnswers({ interviewId, userId });
 }
 
 export async function updateAnswerAudio({ interviewId, answerId, userId, audioUrl }) {
@@ -68,17 +64,35 @@ export async function updateAnswerAudio({ interviewId, answerId, userId, audioUr
 }
 
 export async function completeInterview({ interviewId, userId }) {
-    // 1. 면접 존재 여부 및 소유자 확인
-    const interview = await repo.getInterviewById({ interviewId, userId });
+    // 1. 면접 존재 및 소유자 확인
+    const existing = await repo.findInterviewById(interviewId, userId);
 
-    // 2. 이미 완료된 경우 중복 처리 방지
-    if (interview.status === "COMPLETED") {
-        throw interview;
-    }
+    // 2. 상태 업데이트 (IN_PROGRESS -> COMPLETED)
+    // 중복 로직 제거: 이미 완료되었더라도 데이터를 받아오기 위해 update를 호출합니다.
+    const interview = await repo.updateInterviewStatus({ interviewId, status: 'COMPLETED' });
 
-    // 3. 상태 업데이트 (IN_PROGRESS -> COMPLETED)
-    return repo.updateInterviewStatus({
-        interviewId,
-        status: "COMPLETED",
-    });
+    // 3. 해당 면접의 카테고리 추출
+    const category = interview.questionSet.category;
+
+    // 4. 카테고리에 맞는 피드백 템플릿 조회 (단일 객체 반환)
+    const template = await repo.findFeedbackTemplate(userId, category);
+
+    // 5. 프론트엔드에 필요한 데이터 구조로 조합하여 반환
+    return {
+        id: interview.id,
+        status: interview.status,
+        category: category,
+        answers: interview.answers.map(ans => ({
+            id: ans.id,
+            sequence: ans.sequence,
+            question: ans.question.content,
+            audioUrl: ans.audio_url,
+            transcript: ans.transcript_text
+        })),
+        // ✅ 수정: template은 단일 객체이므로 .map() 사용 불가 -> 배열로 감싸기
+        templates: template ? [{
+            id: template.id,
+            content: template.template_text
+        }] : []
+    };
 }

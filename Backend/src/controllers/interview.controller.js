@@ -99,11 +99,10 @@ export const completeInterview = async (req, res, next) => {
         const requestDto = new CompleteInterviewRequestDto(req);
         const payload = requestDto.toServicePayload();
 
-        const interview = await service.completeInterview(payload);
+        const result = await service.completeInterview(payload);
 
         return res.status(StatusCodes.OK).success({
-            interviewId: String(interview.id),
-            status: interview.status,
+            data: result
         });
     } catch (err) {
         next(err);
