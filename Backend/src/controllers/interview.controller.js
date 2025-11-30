@@ -107,4 +107,21 @@ export const completeInterview = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-};   
+};
+
+// POST /api/interviews/:interviewId/feedbacks
+export const submitFeedbacks = async (req, res, next) => {
+    try {
+        const requestDto = new CreateFeedbackRequestDto(req);
+        const payload = requestDto.toServicePayload();
+
+        const result = await service.submitFeedbacks(payload);
+
+        return res.status(StatusCodes.CREATED).success({
+            message: "피드백이 성공적으로 저장되었습니다.",
+            count: result.count
+        });
+    } catch (err) {
+        next(err);
+    }
+}
