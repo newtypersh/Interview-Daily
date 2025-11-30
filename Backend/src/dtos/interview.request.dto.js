@@ -95,3 +95,41 @@ export class CompleteInterviewRequestDto {
         };
     }
 }
+
+export class CreateFeedbackRequestDto {
+    constructor(req) {
+        this.userId = req.user?.id;
+        this.interviewId = req.params?.interviewId;
+        this.feedbacks = req.body?.feedbacks;
+
+        this.validate();
+    }
+
+    validate() {
+        if (!this.userId) throw new UnauthorizedError("로그인이 필요합니다.");
+        if (!this.interviewId) throw new BadRequestError("interviewId가 필요합니다.");
+
+        if (!this.feedbacks || !Array.isArray(this.feedbacks) || this.feedbacks.length === 0) {
+            throw new BadRequestError("피드백 데이터가 올바르지 않습니다.");
+        }
+
+        for (const item of this.feedbacks) {
+            if (!item.answerId) throw new BadRequestError("answerId가 누락되었습니다.");
+            if (item.rating === undefined || item.rating < 1 || item.rating > 5) {
+                throw new BadRequestError("점수는 1에서 5 사이여야 합니다.");
+            }
+        }
+    }
+
+    toServicePayload() {
+        return {
+            userId: this.userId,
+            interviewId: this.interviewId,
+            feedbacks: this.feedbacks.map(f => ({
+                answerId: f.answerId,
+                rating: f.rating,
+                feedbackText: f.feedbackText || "",
+            }))
+        }
+    }
+}
