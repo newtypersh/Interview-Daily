@@ -314,3 +314,15 @@ export async function updateInterviewAnswerTranscriptText({ answerId, transcript
     },
   });
 }
+
+export async function updateInterviewStatus({ interviewId, status }) {
+    const iId = toBigInt(interviewId);
+
+    return prisma.interview.update({
+        where: { id: iId },
+        data: {
+            status: status,
+            updated_at: new Date(),
+        },
+    });
+}
