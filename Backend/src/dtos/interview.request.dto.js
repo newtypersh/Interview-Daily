@@ -69,3 +69,29 @@ export class UploadAnswerAudioRequestDto {
         };
     }
 }
+
+export class CompleteInterviewRequestDto {
+    constructor(req) {
+        this.userId = req.user?.id;
+        this.interviewId = req.params?.interviewId;
+
+        this.validate();
+    }
+
+    validate() {
+        if (!this.userId) {
+            throw new UnauthorizedError("로그인이 필요합니다.");
+        }
+
+        if (!this.interviewId) {
+            throw new BadRequestError("interviewId가 필요합니다.");
+        }
+    }
+
+    toServicePayload() {
+        return {
+            userId: this.userId,
+            interviewId: this.interviewId,
+        };
+    }
+}
