@@ -1,6 +1,10 @@
 import * as service from "../services/interview.service.js";
 import { toInterviewDto } from "../dtos/interview.dto.js";
-import { StartInterviewRequestDto, UploadAnswerAudioRequestDto } from "../dtos/interview.request.dto.js";
+import { 
+    StartInterviewRequestDto, 
+    UploadAnswerAudioRequestDto,
+    CompleteInterviewRequestDto,
+ } from "../dtos/interview.request.dto.js";
 import { StatusCodes } from "http-status-codes";
 
 // POST /api/interviews/start
@@ -88,3 +92,20 @@ export const uploadAnswerAudio = async (req, res, next) => {
         next(err);
     }
 };
+
+// POST /api/interviews/:interviewId/complete
+export const completeInterview = async (req, res, next) => {
+    try {
+        const requestDto = new CompleteInterviewRequestDto(req);
+        const payload = requestDto.toServicePayload();
+
+        const interview = await service.completeInterview(payload);
+
+        return res.status(StatusCodes.OK).success({
+            interviewId: String(interview.id),
+            status: interview.status,
+        });
+    } catch (err) {
+        next(err);
+    }
+};   
