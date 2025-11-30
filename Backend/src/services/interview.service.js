@@ -66,3 +66,19 @@ export async function updateAnswerAudio({ interviewId, answerId, userId, audioUr
 
   return updatedAnswer;
 }
+
+export async function completeInterview({ interviewId, userId }) {
+    // 1. 면접 존재 여부 및 소유자 확인
+    const interview = await repo.getInterviewById({ interviewId, userId });
+
+    // 2. 이미 완료된 경우 중복 처리 방지
+    if (interview.status === "COMPLETED") {
+        throw interview;
+    }
+
+    // 3. 상태 업데이트 (IN_PROGRESS -> COMPLETED)
+    return repo.updateInterviewStatus({
+        interviewId,
+        status: "COMPLETED",
+    });
+}
