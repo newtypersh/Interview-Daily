@@ -135,11 +135,11 @@ export async function findInterviewById(interviewId, userId) {
     const interview = await prisma.interview.findUnique({
         where: { id: iId },
         include: {
-            answers: {
+            answers: { // 인터뷰에 달린 답변들을 가져온다.
                 orderBy: { sequence: "asc" },
                 include: { 
-                    question: true,
-                    feedback: true,
+                    question: true, // 각 답변에 연결된 질문도 함께 로드
+                    feedback: true, // 각 답변에 연결된 피드백도 함께 로드
                 },
             }
         }
