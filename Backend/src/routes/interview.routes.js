@@ -20,4 +20,7 @@ router.post("/:interviewId/feedbacks", ensureAuth, ctrl.postFeedbacksForIntervie
 // POST /api/interviews/:interviewId/answers/:answerId/audio
 router.post("/:interviewId/answers/:answerId/audio", ensureAuth, audioUploader.single("file"), ctrl.uploadAnswerAudio);
 
+// POST /api/interviews/:interviewId/complete   
+router.post("/:interviewId/complete", ensureAuth, ctrl.completeInterview);
+
 export default router;
