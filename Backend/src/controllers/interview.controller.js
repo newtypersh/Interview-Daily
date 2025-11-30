@@ -81,6 +81,7 @@ export const uploadAnswerAudio = async (req, res, next) => {
             answer: {
                 id: String(updated.id),
                 audioUrl: payload.audioUrl,
+                transcriptText: updated.transcript_text,
             }
         });
     } catch (err) {

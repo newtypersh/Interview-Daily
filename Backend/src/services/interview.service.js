@@ -49,15 +49,20 @@ export async function updateAnswerAudio({ interviewId, answerId, userId, audioUr
   await repo.assertInterviewAndAnswerOwnership({ interviewId, answerId, userId });
   
   // 2. DB 업데이트 (audio_url 저장)
-  const updated = await repo.updateInterviewAnswerAudio({ answerId, audioUrl });
+  await repo.updateInterviewAnswerAudio({ answerId, audioUrl });
   
-  // 3. STT 작업 큐에 추가 (Non-blocking)
-  setImmediate(() => {
-    enqueueTranscription(String(answerId), audioUrl)
-        .catch(err => {
-            console.error(`[STT Error] AnswerID: ${answerId}, AudioURL: ${audioUrl}`, err)
-        });
-  });
+  // 3. STT 변환 대기
+  let transcript = "";
+  try {
+    transcript = await enqueueTranscription({ answerId: String(answerId), audioUrl });
+  } catch (err) {
+    console.error(`[STT Error] AnswerID: ${answerId}`, err);
+    transcript = "변환에 실패했습니다.";
+  }
 
-  return updated;
+  const updatedAnswer = await repo.updateInterviewAnswerTranscriptText({ 
+    answerId, transcriptText: transcript 
+});
+
+  return updatedAnswer;
 }
