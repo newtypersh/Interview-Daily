@@ -343,3 +343,38 @@ export async function findFeedbackTemplate(userId, category) {
         },
     });
 }
+
+export async function createFeedbacksBulk({ feedbacks }) {
+    return prisma.$transaction(async (tx) => {
+        let count = 0;
+
+        for (const fb of feedbacks) {
+            const aId = toBigInt(fb.answerId);
+
+            // 1. 해당 답변(InterviewAnswer) 정보를 조회하여 question_id를 알아냄
+            const answer = await tx.interviewAnswer.findUnique({
+                where: { id: aId },
+                select: { question_id: true },
+            });
+
+            if (!answer) {
+                throw new NotFoundError(`답변을 찾을 수 없습니다. (ID: ${fb.answerId})`);
+            }
+
+            // 2. 피드백 생성
+            await tx.feedback.create({
+                data: {
+                    interview_answer_id: aId,
+                    question_id: answer.question_id,
+                    rating: fb.rating,
+                    feedback_text: fb.feedbackText,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                }
+            });
+
+            count++;
+        }
+        return count;
+    });
+}
