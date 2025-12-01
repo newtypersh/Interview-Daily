@@ -15,7 +15,7 @@ router.get("/:interviewId/", ensureAuth, ctrl.getInterview);
 router.get("/:interviewId/answers", ensureAuth, ctrl.getInterviewAnswers);
 
 // POST /api/interviews/:interviewId/feedbacks
-router.post("/:interviewId/feedbacks", ensureAuth, ctrl.postFeedbacksForInterview);
+router.post("/:interviewId/feedbacks", ensureAuth, ctrl.submitFeedbacks);
 
 // POST /api/interviews/:interviewId/answers/:answerId/audio
 router.post("/:interviewId/answers/:answerId/audio", ensureAuth, audioUploader.single("file"), ctrl.uploadAnswerAudio);

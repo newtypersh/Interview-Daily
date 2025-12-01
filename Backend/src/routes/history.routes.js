@@ -5,6 +5,6 @@ import { ensureAuth } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // GET /api/history/interviews?limit=20&cursorCreatedAt=2025-...&cursorId=123
-router.get("./interviews", ensureAuth, ctrl.getInterviewHistory);
+router.get("./interviews", ensureAuth, ctrl.getHistory);
 
 export default router;
