@@ -12,11 +12,6 @@ const outputFile = './src/swagger-output.json';
 // 라우트 파일 경로들
 const routes = [
   "./src/index.js",
-  "./src/routes/auth.routes.js",
-  "./src/routes/questionSet.routes.js",
-  "./src/routes/feedbackTemplate.routes.js",
-  "./src/routes/history.routes.js",
-  "./src/routes/interview.routes.js",
 ];
 
 const doc = {

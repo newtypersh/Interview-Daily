@@ -17,57 +17,74 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "post": {
-        "description": "",
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
           }
         }
       }
     },
     "/oauth2/login/google": {
       "get": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "구글 로그인 시작",
+        "description": "구글 OAuth2 인증 페이지로 리다이렉트합니다.",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "302": {
+            "description": "구글 로그인 페이지로 이동"
           }
         }
       }
     },
     "/oauth2/callback/google": {
       "get": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "구글 로그인 콜백",
+        "description": "구글 인증 서버에서 돌아오는 콜백 URL입니다. 인증 성공 시 세션을 생성하고 메인 페이지(/)로 리다이렉트합니다.",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "302": {
+            "description": "로그인 성공 후 리다이렉트"
+          },
+          "401": {
+            "description": "인증 실패 (로그인 페이지로 리다이렉트)"
           }
         }
       }
     },
     "/oauth2/logout": {
       "post": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "로그아웃",
+        "description": "현재 세션을 종료하고 메인 페이지로 리다이렉트합니다.",
         "responses": {
           "200": {
             "description": "OK"
           },
+          "302": {
+            "description": "로그아웃 성공 후 메인으로 이동"
+          },
           "401": {
-            "description": "Unauthorized"
+            "description": "로그인하지 않은 사용자"
           }
         }
       }
     },
     "/api/question-sets/": {
       "get": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 세트 목록 조회",
+        "description": "사용자가 생성한 모든 질문 세트 목록을 조회합니다.",
         "responses": {
           "200": {
             "description": "OK"
@@ -78,7 +95,36 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 세트 생성",
+        "description": "새로운 질문 세트를 생성합니다.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "질문 세트 정보",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "CS 면접 대비"
+                },
+                "category": {
+                  "type": "string",
+                  "example": "CS"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "운영체제, 네트워크 위주"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -91,7 +137,11 @@
     },
     "/api/question-sets/{setId}/questions": {
       "get": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "세트 내 질문 목록 조회",
+        "description": "특정 질문 세트에 포함된 질문들을 조회합니다.",
         "parameters": [
           {
             "name": "setId",
@@ -99,7 +149,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "질문 세트 ID"
           }
         ],
         "responses": {
@@ -112,7 +163,11 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 추가",
+        "description": "특정 질문 세트에 새로운 질문을 추가합니다.",
         "parameters": [
           {
             "name": "setId",
@@ -120,6 +175,22 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "질문 세트 ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "질문 내용",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "example": "프로세스와 스레드의 차이는 무엇인가요?"
+                }
+              }
             }
           }
         ],
@@ -135,7 +206,11 @@
     },
     "/api/question-sets/{setId}": {
       "patch": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 세트 수정",
+        "description": "질문 세트의 제목이나 설명을 수정합니다.",
         "parameters": [
           {
             "name": "setId",
@@ -143,6 +218,25 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "질문 세트 ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "수정할 내용",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "수정된 제목"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "수정된 설명"
+                }
+              }
             }
           }
         ],
@@ -156,7 +250,11 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 세트 삭제",
+        "description": "질문 세트와 포함된 모든 질문을 삭제합니다.",
         "parameters": [
           {
             "name": "setId",
@@ -164,7 +262,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "질문 세트 ID"
           }
         ],
         "responses": {
@@ -179,7 +278,11 @@
     },
     "/api/question-sets/{setId}/questions/{questionId}": {
       "patch": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 수정",
+        "description": "세트 내의 특정 질문 내용을 수정합니다.",
         "parameters": [
           {
             "name": "setId",
@@ -187,7 +290,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "질문 세트 ID"
           },
           {
             "name": "questionId",
@@ -195,6 +299,21 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "질문 ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "수정할 질문 내용",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "example": "수정된 질문 내용"
+                }
+              }
             }
           }
         ],
@@ -208,7 +327,11 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": [
+          "QuestionSet"
+        ],
+        "summary": "질문 삭제",
+        "description": "세트 내의 특정 질문 하나를 삭제합니다.",
         "parameters": [
           {
             "name": "setId",
@@ -216,7 +339,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "질문 세트 ID"
           },
           {
             "name": "questionId",
@@ -224,7 +348,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "질문 ID"
           }
         ],
         "responses": {
@@ -239,10 +364,84 @@
     },
     "/api/feedback-templates/": {
       "get": {
-        "description": "",
+        "tags": [
+          "FeedbackTemplate"
+        ],
+        "summary": "피드백 템플릿 전체 조회",
+        "description": "모든 카테고리의 피드백 템플릿 목록을 조회합니다.",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "success": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "category": {
+                            "type": "string",
+                            "example": "CS"
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": "..."
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "success": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "category": {
+                            "type": "string",
+                            "example": "CS"
+                          },
+                          "content": {
+                            "type": "string",
+                            "example": "..."
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -252,6 +451,10 @@
     },
     "/api/feedback-templates/{category}": {
       "get": {
+        "tags": [
+          "FeedbackTemplate"
+        ],
+        "summary": "카테고리별 템플릿 조회",
         "description": "",
         "parameters": [
           {
@@ -260,12 +463,13 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "조회할 템플릿 카테고리 (예: CS, BE, FE)"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "조회 성공"
           },
           "401": {
             "description": "Unauthorized"
@@ -273,7 +477,11 @@
         }
       },
       "patch": {
-        "description": "",
+        "tags": [
+          "FeedbackTemplate"
+        ],
+        "summary": "피드백 템플릿 수정",
+        "description": "특정 카테고리의 피드백 템플릿 내용을 수정합니다.",
         "parameters": [
           {
             "name": "category",
@@ -281,12 +489,28 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "수정할 템플릿 카테고리"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "수정할 템플릿 데이터",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "example": "수정된 템플릿 내용입니다."
+                }
+              }
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "수정 성공"
           },
           "401": {
             "description": "Unauthorized"
@@ -294,12 +518,164 @@
         }
       }
     },
-    "/api/history./interviews": {
+    "/api/history/interviews": {
       "get": {
-        "description": "",
+        "tags": [
+          "History"
+        ],
+        "summary": "면접 기록 조회 (커서 페이징)",
+        "description": "사용자의 지난 면접 기록을 조회합니다. 무한 스크롤을 위한 커서 기반 페이징을 지원합니다.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "한 번에 가져올 항목 수 (기본값: 20)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cursorCreatedAt",
+            "in": "query",
+            "description": "페이징 커서: 마지막으로 조회된 면접의 생성일시 (ISO String)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursorId",
+            "in": "query",
+            "description": "페이징 커서: 마지막으로 조회된 면접의 ID (중복 방지용)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2023-12-01T09:00:00.000Z"
+                              },
+                              "totalScore": {
+                                "type": "number",
+                                "example": 85
+                              },
+                              "questionCount": {
+                                "type": "number",
+                                "example": 5
+                              }
+                            }
+                          }
+                        },
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "nextCursorCreatedAt": {
+                              "type": "string",
+                              "example": "2023-11-30T09:00:00.000Z"
+                            },
+                            "nextCursorId": {
+                              "type": "number",
+                              "example": 5
+                            },
+                            "hasNext": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "number",
+                                "example": 1
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "example": "2023-12-01T09:00:00.000Z"
+                              },
+                              "totalScore": {
+                                "type": "number",
+                                "example": 85
+                              },
+                              "questionCount": {
+                                "type": "number",
+                                "example": 5
+                              }
+                            }
+                          }
+                        },
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "nextCursorCreatedAt": {
+                              "type": "string",
+                              "example": "2023-11-30T09:00:00.000Z"
+                            },
+                            "nextCursorId": {
+                              "type": "number",
+                              "example": 5
+                            },
+                            "hasNext": {
+                              "type": "boolean",
+                              "example": true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -309,10 +685,94 @@
     },
     "/api/interviews/start": {
       "post": {
-        "description": "",
+        "tags": [
+          "Interview"
+        ],
+        "summary": "면접 시작",
+        "description": "새로운 면접 세션을 생성하고 첫 번째 질문 세트를 할당합니다.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "면접 설정 (질문 수, 카테고리 등)",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "questionCount": {
+                  "type": "number",
+                  "example": 5
+                },
+                "category": {
+                  "type": "string",
+                  "example": "CS"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "201": {
+            "description": "면접 생성 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "interviewId": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "IN_PROGRESS"
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "interviewId": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "IN_PROGRESS"
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -322,6 +782,10 @@
     },
     "/api/interviews/{interviewId}/": {
       "get": {
+        "tags": [
+          "Interview"
+        ],
+        "summary": "면접 상세 정보 조회",
         "description": "",
         "parameters": [
           {
@@ -330,7 +794,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "면접 ID"
           }
         ],
         "responses": {
@@ -345,7 +810,11 @@
     },
     "/api/interviews/{interviewId}/answers": {
       "get": {
-        "description": "",
+        "tags": [
+          "Interview"
+        ],
+        "summary": "면접 답변 목록 조회",
+        "description": "특정 면접의 모든 질문과 사용자의 답변(오디오 URL 포함)을 조회합니다.",
         "parameters": [
           {
             "name": "interviewId",
@@ -353,7 +822,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "면접 ID"
           }
         ],
         "responses": {
@@ -368,7 +838,11 @@
     },
     "/api/interviews/{interviewId}/feedbacks": {
       "post": {
-        "description": "",
+        "tags": [
+          "Interview"
+        ],
+        "summary": "피드백 제출",
+        "description": "면접이 끝난 후, 사용자가 스스로 평가한 피드백 점수와 코멘트를 저장합니다.",
         "parameters": [
           {
             "name": "interviewId",
@@ -376,6 +850,38 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "면접 ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "피드백 데이터 목록",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "feedbacks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "answerId": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "score": {
+                        "type": "number",
+                        "example": 3
+                      },
+                      "comment": {
+                        "type": "string",
+                        "example": "보통임"
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         ],
@@ -391,7 +897,11 @@
     },
     "/api/interviews/{interviewId}/answers/{answerId}/audio": {
       "post": {
-        "description": "",
+        "tags": [
+          "Interview"
+        ],
+        "summary": "답변 오디오 업로드",
+        "description": "특정 질문에 대한 사용자의 음성 답변 파일을 업로드합니다.",
         "parameters": [
           {
             "name": "interviewId",
@@ -399,7 +909,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "면접 ID"
           },
           {
             "name": "answerId",
@@ -407,6 +918,16 @@
             "required": true,
             "schema": {
               "type": "string"
+            },
+            "description": "답변(질문) ID"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "required": true,
+            "description": "업로드할 오디오 파일 (mp3, wav, m4a 등)",
+            "schema": {
+              "type": "file"
             }
           }
         ],
@@ -422,7 +943,11 @@
     },
     "/api/interviews/{interviewId}/complete": {
       "post": {
-        "description": "",
+        "tags": [
+          "Interview"
+        ],
+        "summary": "면접 종료",
+        "description": "면접 상태를 완료(COMPLETED)로 변경합니다.",
         "parameters": [
           {
             "name": "interviewId",
@@ -430,348 +955,14 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "description": "면접 ID"
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
           },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/login/google": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/callback/google": {
-      "get": {
-        "description": "",
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/logout": {
-      "post": {
-        "description": "",
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{setId}/questions": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "setId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "setId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{setId}": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "setId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "setId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{setId}/questions/{questionId}": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "setId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "questionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "delete": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "setId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "questionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{category}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "category",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      },
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "category",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "./interviews": {
-      "get": {
-        "description": "",
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/start": {
-      "post": {
-        "description": "",
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{interviewId}/": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "interviewId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{interviewId}/answers": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "interviewId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{interviewId}/feedbacks": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "interviewId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{interviewId}/answers/{answerId}/audio": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "interviewId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "answerId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/{interviewId}/complete": {
-      "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "interviewId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
           "401": {
             "description": "Unauthorized"
           }
