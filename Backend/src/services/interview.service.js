@@ -102,7 +102,7 @@ export async function submitFeedbacks({ userId, interviewId, feedbacks }) {
     await repo.findInterviewById({ interviewId, userId });
 
     // 2. 피드백 일괄 저장
-    const savedCount = await repo.createFeedbacks({ feedbacks });
+    const savedCount = await repo.createFeedbacksBulk({ feedbacks });
 
     return { count: savedCount };
 }
