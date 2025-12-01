@@ -40,7 +40,6 @@ jobs:
       - name: Install dependencies
         run: |
           ssh Interview-Daily 'cd /opt/app && npm install'
-          ssh Interview-Daily 'cd /opt/app && npx prisma generate'
 
       - name: Copy systemd service file
         run: |
