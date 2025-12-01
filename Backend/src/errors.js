@@ -45,3 +45,14 @@ export class BadRequestError extends Error {
     this.data = data;
   }
 }
+
+export class ConflictError extends Error {
+  statusCode = 409;
+  errorCode = "CONFLICT";
+
+  constructor(reason = "리소스 충돌이 발생했습니다.", data = null) {
+    super(reason);
+    this.reason = reason;
+    this.data = data;
+  }
+}
