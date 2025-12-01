@@ -39,8 +39,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ssh Interview-Daily 'npm install --prefix /opt/app/'
-          ssh Interview-Daily 'npx prisma generate'
+          ssh Interview-Daily 'cd /opt/app && npm install'
+          ssh Interview-Daily 'cd /opt/app && npx prisma generate'
 
       - name: Copy systemd service file
         run: |
