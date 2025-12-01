@@ -54,7 +54,7 @@ jobs:
             Restart=always
 
             [Install]
-            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/interview-daily.service
+            WantedBy=multi-user.target" | sudo tee /etc/systemd/system/app.service
           '
 
       - name: Enable systemd service
