@@ -1,4 +1,4 @@
-import { BadRequestError, UnauthorizedError } from "../errors";
+import { BadRequestError, UnauthorizedError } from "../errors.js";
 
 export class StartInterviewRequestDto {
     constructor(req) {

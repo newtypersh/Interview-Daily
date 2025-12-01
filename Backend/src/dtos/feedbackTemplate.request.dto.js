@@ -1,6 +1,5 @@
 import { BadRequestError, UnauthorizedError } from "../errors.js";
 
-
 // GET /api/feedback-templates 요청 DTO
 export class GetFeedbackTemplatesRequestDto {
   constructor(req) {

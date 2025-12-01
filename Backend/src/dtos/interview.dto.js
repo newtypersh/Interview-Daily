@@ -1,5 +1,4 @@
-import { BadRequestError } from "../errors.js";
-import { UnauthorizedError } from "../errors/unauthorized.error.js";
+import { BadRequestError, UnauthorizedError } from "../errors.js";
 
 export function toListQuestionSetsRequest(req) {
   const userId = req.user?.id;
