@@ -1,17 +1,17 @@
 import * as service from "../services/questionSet.service.js";
 import { 
-  toListQuestionsRequest, 
+  toListQuestionsRequest,
+  toListQuestionSetsRequest,
   toCreateQuestionSetRequest,
   toCreateQuestionRequest,
   toUpdateQuestionSetRequest,
   toUpdateQuestionRequest,
   toDeleteQuestionSetRequest,
   toDeleteQuestionRequest,
-  toListItem, 
-  toQuestionItem 
+  toListItem,
+  toQuestionItem
 } from "../dtos/questionSet.dto.js";
 import { StatusCodes } from "http-status-codes";
-import { toListQuestionSetsRequest } from "../dtos/interview.dto.js";
 
 // GET /api/question-sets
 export const listQuestionSets = async (req, res, next) => {
