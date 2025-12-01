@@ -79,6 +79,7 @@ app.use(
 );
 
 app.get('/', (req, res) => {
+  // #swagger.ignore = true
   res.send('Hello World!');
 });
 
