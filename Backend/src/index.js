@@ -8,6 +8,8 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 import passport from "passport";
 import { googleStrategy } from "./auth.config.js";
+import fs from 'fs';
+import path from 'path';
 
 import authRouter from './routes/auth.routes.js';
 import questionSetRouter from "./routes/questionSet.routes.js";
@@ -63,36 +65,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(
-  "/docs",
-  swaggerUiExpress.serve,
-  swaggerUiExpress.setup({}, {
-    swaggerOptions: {
-      url: "/openapi.json",
-    },
-  })
+// 생성된 swagger-output.json 파일을 읽어옵니다.
+// 참고하신 코드의 'import ... assert { type: "json" }'과 같은 역할입니다.
+const swaggerFile = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), 'src/swagger-output.json'), 'utf-8')
 );
 
-app.get("/openapi.json", async (req, res, next) => {
-  // #swagger.ignore = true
-  const options = {
-    openapi: "3.0.0",
-    disableLogs: true,
-    writeOutputFile: false,
-  };
-  const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
-  const routes = ["./src/index.js"];
-  const doc = {
-    info: {
-      title: "Interview Daily",
-      description: "Interview Daily 테스트 입니다.",
-    },
-    host: "localhost:3000",
-  };
-
-  const result = await swaggerAutogen(options)(outputFile, routes, doc);
-  res.json(result ? result.data : null);
-});
+// Swagger UI 연결 (참고하신 코드 스타일)
+app.use(
+  '/api-docs',
+  swaggerUiExpress.serve,
+  swaggerUiExpress.setup(swaggerFile)
+);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
