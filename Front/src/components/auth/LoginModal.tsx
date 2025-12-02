@@ -6,7 +6,7 @@ import {
   Box,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import kakaoLoginButton from '../../assets/kakao_Login_button.svg';
+import googleLoginButton from '../../assets/google_Login_button.svg';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -15,9 +15,9 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
-  const handleKakaoLogin = () => {
-    // TODO: Implement Kakao login
-    console.log('Kakao login clicked');
+  const handleGoogleLogin = () => {
+    // TODO: Implement Google login
+    console.log('Google login clicked');
     onLogin();
     onClose();
   };
@@ -65,9 +65,9 @@ export default function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps
 
           <Box
             component="img"
-            src={kakaoLoginButton}
-            alt="카카오톡으로 로그인"
-            onClick={handleKakaoLogin}
+            src={googleLoginButton}
+            alt="구글로 로그인"
+            onClick={handleGoogleLogin}
             sx={{
               width: '100%',
               cursor: 'pointer',
