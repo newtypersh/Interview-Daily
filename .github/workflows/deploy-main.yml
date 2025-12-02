@@ -13,6 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check prisma has changes
+        uses: dorny/paths-filter@v3
+        id: paths-filter
+        with:
+          filters: |
+            prisma: ["Backend/prisma/**"]
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
@@ -35,11 +42,17 @@ jobs:
         run: |
           ssh Interview-Daily 'sudo mkdir -p /opt/app'
           ssh Interview-Daily 'sudo chown ubuntu:ubuntu /opt/app'
-          scp -r ./Backend/* Interview-Daily:/opt/app
+          scp -r ./Backend/. Interview-Daily:/opt/app
 
       - name: Install dependencies
         run: |
           ssh Interview-Daily 'cd /opt/app && npm install'
+          ssh Interview-Daily 'cd /opt/app && npx prisma generate'
+
+      - name: Apply prisma migrations
+        if: steps.paths-filter.outputs.prisma == 'true'
+        run: |
+          ssh Interview-Daily 'cd /opt/app; npm exec prisma migrate deploy'
 
       - name: Copy systemd service file
         run: |
@@ -49,8 +62,8 @@ jobs:
             After=network.target
 
             [Service]
-            User=${USER}
-            ExecStart=/usr/bin/npm run dev --prefix /opt/app/
+            User=ubuntu
+            ExecStart=/usr/bin/npm run start --prefix /opt/app/
             Restart=always
 
             [Install]
