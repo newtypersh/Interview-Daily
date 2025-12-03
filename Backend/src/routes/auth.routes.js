@@ -24,7 +24,8 @@ router.get(
   }),
   (req, res) => {
     // #swagger.ignore = true
-    res.redirect('/');
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    res.redirect(clientUrl);
   }
 );
 
