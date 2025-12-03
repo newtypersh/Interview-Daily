@@ -1,7 +1,7 @@
 export function toFeedbackTemplateDto(row) {
     return {
         id: row.id != null ? String(row.id) : null,
-        userUd: row.user_id != null ? String(row.user_id) : null,
+        userId: row.user_id != null ? String(row.user_id) : null,
         category: row.category ?? null,
         templateText: row.template_text ?? null,
         createdAt: row.created_at ? row.created_at.toISOString() : null,

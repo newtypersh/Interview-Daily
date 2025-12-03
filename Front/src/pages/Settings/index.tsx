@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getFeedbackTemplates } from '../../apis/feedbackTemplate';
 import {
   Box,
   Container,
@@ -123,7 +125,44 @@ const initialTemplates: FeedbackTemplate[] = [
 
 export default function Settings() {
   const [questionSets, setQuestionSets] = useState(initialQuestionSets);
-  const [templates, setTemplates] = useState(initialTemplates);
+  const [templates, setTemplates] = useState<FeedbackTemplate[]>(initialTemplates);
+
+  const { data: fetchedTemplates } = useQuery({
+    queryKey: ['feedbackTemplates'],
+    queryFn: getFeedbackTemplates,
+  });
+
+  useEffect(() => {
+    if (fetchedTemplates) {
+      const mappedTemplates: FeedbackTemplate[] = fetchedTemplates.map((t) => {
+        let type: FeedbackTemplate['type'] = 'job_competency';
+        let title = '직무 역량 면접';
+
+        if (t.category === 'JOB') {
+          type = 'job_competency';
+          title = '직무 역량 면접';
+        } else if (t.category === 'PERSONAL') {
+          type = 'personality';
+          title = '인성면접';
+        } else if (t.category === 'MOTIVATION') {
+          type = 'motivation';
+          title = '지원동기 면접';
+        }
+
+        return {
+          type,
+          title,
+          content: t.templateText || '',
+        };
+      });
+      
+      // Sort to match the order: job, personality, motivation
+      const order = ['job_competency', 'personality', 'motivation'];
+      mappedTemplates.sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
+
+      setTemplates(mappedTemplates);
+    }
+  }, [fetchedTemplates]);
   const [activeTab, setActiveTab] = useState(0);
   // 전체 질문세트 중 선택 모드 및 선택된 질문세트
   const [selectionMode, setSelectionMode] = useState<'random' | 'choice'>('choice');
