@@ -19,12 +19,12 @@ router.get('/login/google', passport.authenticate('google'), (req, res) => {
 router.get(
   '/callback/google',
   passport.authenticate('google', {
-    failureRedirect: '/oauth2/login/google',
+    failureRedirect: 'http://localhost:5173?fail=true',
     failureMessage: true,
   }),
   (req, res) => {
     // #swagger.ignore = true
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const clientUrl = 'http://localhost:5173';
     res.redirect(clientUrl);
   }
 );

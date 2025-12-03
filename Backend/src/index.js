@@ -1,3 +1,7 @@
+BigInt.prototype.toJSON = function() {
+  return this.toString();
+};
+
 import "dotenv/config";
 import cors from 'cors'
 import { prisma } from './db.config.js'
@@ -16,6 +20,8 @@ import questionSetRouter from "./routes/questionSet.routes.js";
 import feedbackTemplateRouter from "./routes/feedbackTemplate.routes.js";
 import historyRouter from "./routes/history.routes.js";
 import interviewRouter from "./routes/interview.routes.js";
+
+
 
 passport.use(googleStrategy);
 passport.serializeUser((user, done) => done(null, user));
