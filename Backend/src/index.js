@@ -16,6 +16,7 @@ import fs from 'fs';
 import path from 'path';
 
 import authRouter from './routes/auth.routes.js';
+import userRouter from './routes/user.routes.js';
 import questionSetRouter from "./routes/questionSet.routes.js";
 import feedbackTemplateRouter from "./routes/feedbackTemplate.routes.js";
 import historyRouter from "./routes/history.routes.js";
@@ -90,6 +91,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/oauth2', authRouter);
+app.use('/api/users', userRouter);
 app.use("/api/question-sets", questionSetRouter);
 app.use("/api/feedback-templates", feedbackTemplateRouter);
 app.use("/api/history", historyRouter);

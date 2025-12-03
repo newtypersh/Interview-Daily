@@ -1,4 +1,7 @@
 import { prisma } from "../db.config.js";
+import * as userRepository from "../repositories/user.repository.js";
+import { userDto } from "../dtos/user.dto.js";
+import { NotFoundError } from "../errors.js";
 
 /**
  * 새 사용자를 생성하고 기본 질문세트, 질문들, 피드백 템플릿을 함께 생성합니다.
@@ -192,4 +195,14 @@ export async function createUserAndDefaults({ email, name }) {
 
     return user;
   });
+}
+
+export const getUserProfile = async (userId) => {
+  const user =  await userRepository.findUserById(userId);
+
+  if (!user) {
+    throw new NotFoundError("존재하지 않는 사용자입니다.");
+  }
+
+  return userDto(user);
 }

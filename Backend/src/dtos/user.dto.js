@@ -6,3 +6,11 @@ export const toPublicUser = (user) => {
     name: user.name ?? null,
   };
 };
+
+export const userDto = (user) => {
+  return {
+    id: user.id.toString(),
+    email: user.email,
+    name: user.name,
+  };
+}

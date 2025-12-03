@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { useReducer } from 'react';
 
 /**
  * Repository helpers for user model.
@@ -19,4 +20,11 @@ export const createUser = async (client, data) => {
 
 export const updateUpdatedAt = async (client, id, now = new Date()) => {
   return client.user.update({ where: { id }, data: { updated_at: now } });
+};
+
+export const findUserById = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+  return user;
 };
