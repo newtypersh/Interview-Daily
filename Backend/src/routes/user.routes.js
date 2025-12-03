@@ -18,9 +18,7 @@ router.get('/me', ensureAuth, (req, res, next) => {
             success: {
                 id: "1",
                 email: "user@example.com",
-                nickname: "닉네임",
-                profileImage: "https://...",
-                provider: "google"
+                name: "이름",
             }
         }
     }
