@@ -48,6 +48,102 @@
         }
       }
     },
+    "/api/users/me": {
+      "get": {
+        "summary": "내 정보 조회",
+        "description": "현재 로그인된 사용자의 정보를 반환합니다. (세션 쿠키 필요)",
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "error": {},
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "1"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "nickname": {
+                          "type": "string",
+                          "example": "닉네임"
+                        },
+                        "profileImage": {
+                          "type": "string",
+                          "example": "https://..."
+                        },
+                        "provider": {
+                          "type": "string",
+                          "example": "google"
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "resultType": {
+                      "type": "string",
+                      "example": "SUCCESS"
+                    },
+                    "error": {},
+                    "success": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "1"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "nickname": {
+                          "type": "string",
+                          "example": "닉네임"
+                        },
+                        "profileImage": {
+                          "type": "string",
+                          "example": "https://..."
+                        },
+                        "provider": {
+                          "type": "string",
+                          "example": "google"
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "로그인하지 않음 (세션 만료)"
+          }
+        }
+      }
+    },
     "/api/question-sets/": {
       "get": {
         "tags": [

@@ -4,7 +4,6 @@ import * as ctrl from '../controllers/user.controller.js';
 
 const router = express.Router();
 
-
 router.get('/me', ensureAuth, (req, res, next) => {
     /*
     #swagger.summary = '내 정보 조회'

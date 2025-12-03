@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { useReducer } from 'react';
 
 /**
  * Repository helpers for user model.
