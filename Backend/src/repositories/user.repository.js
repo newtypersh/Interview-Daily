@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { prisma } from '../db.config.js';
 
 /**
  * Repository helpers for user model.

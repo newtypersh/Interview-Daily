@@ -50,6 +50,9 @@
     },
     "/api/users/me": {
       "get": {
+        "tags": [
+          "User"
+        ],
         "summary": "내 정보 조회",
         "description": "현재 로그인된 사용자의 정보를 반환합니다. (세션 쿠키 필요)",
         "responses": {
@@ -76,17 +79,9 @@
                           "type": "string",
                           "example": "user@example.com"
                         },
-                        "nickname": {
+                        "name": {
                           "type": "string",
-                          "example": "닉네임"
-                        },
-                        "profileImage": {
-                          "type": "string",
-                          "example": "https://..."
-                        },
-                        "provider": {
-                          "type": "string",
-                          "example": "google"
+                          "example": "이름"
                         }
                       }
                     }
@@ -116,17 +111,9 @@
                           "type": "string",
                           "example": "user@example.com"
                         },
-                        "nickname": {
+                        "name": {
                           "type": "string",
-                          "example": "닉네임"
-                        },
-                        "profileImage": {
-                          "type": "string",
-                          "example": "https://..."
-                        },
-                        "provider": {
-                          "type": "string",
-                          "example": "google"
+                          "example": "이름"
                         }
                       }
                     }
