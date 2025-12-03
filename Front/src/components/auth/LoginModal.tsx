@@ -16,10 +16,7 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
   const handleGoogleLogin = () => {
-    // TODO: Implement Google login
-    console.log('Google login clicked');
-    onLogin();
-    onClose();
+    window.location.href = '/oauth2/login/google';
   };
 
   return (

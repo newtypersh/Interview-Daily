@@ -1,30 +1,42 @@
-import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Box, CircularProgress } from '@mui/material';
 import Header from './components/layout/Header';
 import Home from './pages/Home';
 import DailyInterview from './pages/DailyInterview';
 import Feedback from './pages/DailyInterview/Feedback';
 import Settings from './pages/Settings';
 import History from './pages/History';
+import { useAuth } from './hooks/useAuth.ts';
+import { api } from './apis/axios';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: isLoggedIn, isLoading } = useAuth();
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
+  const handleLogout = async () => {
+    try {
+      await api.post('/oauth2/logout', {}, { baseURL: '' });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      window.location.href = '/';
+    }
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} onLogin={handleLogin} />
+        <Header onLogout={handleLogout} />
         <div className="pt-16">
           <Routes>
-            <Route path="/" element={<Home isLoggedIn={isLoggedIn} onLogin={handleLogin} />} />
+            <Route path="/" element={<Home />} />
             <Route
               path="/daily-interview"
               element={isLoggedIn ? <DailyInterview /> : <Navigate to="/" />}

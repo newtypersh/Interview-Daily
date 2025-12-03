@@ -1,27 +1,48 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
   Container,
   Typography,
   Button,
   Stack,
+  CircularProgress,
 } from '@mui/material';
 import { Psychology as PsychologyIcon } from '@mui/icons-material';
 import LoginModal from '../../components/auth/LoginModal';
+import { useAuth } from '../../hooks/useAuth.ts';
 
-interface HomeProps {
-  isLoggedIn: boolean;
-  onLogin: () => void;
-}
-
-export default function Home({ isLoggedIn, onLogin }: HomeProps) {
+export default function Home() {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const { data: isLoggedIn = false, isLoading, refetch } = useAuth();
+
+  // 로그인 성공 후 리다이렉트 처리 로직
+  useEffect(() => {
+    const isSuccess = searchParams.get('success');
+
+    if (isSuccess === 'true') {
+      refetch().then(() => {
+        navigate('/', { replace: true });
+      });
+    }
+
+  }, [searchParams, refetch, navigate]);
 
   const handleDailyInterviewClick = () => {
     navigate('/daily-interview');
   };
+
+  // 로딩 중일 때 깜빡임 방지
+  if (isLoading) {
+    return (
+      <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -92,7 +113,7 @@ export default function Home({ isLoggedIn, onLogin }: HomeProps) {
       <LoginModal
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
-        onLogin={onLogin}
+        onLogin={() => setLoginModalOpen(false)}
       />
     </Box>
   );

@@ -21,17 +21,18 @@ import {
   Login as LoginIcon,
 } from '@mui/icons-material';
 import LoginModal from '../auth/LoginModal';
+import { useAuth } from '../../hooks/useAuth.ts';
 
 interface HeaderProps {
-  isLoggedIn: boolean;
   onLogout: () => void;
-  onLogin: () => void;
 }
 
-export default function Header({ isLoggedIn, onLogout, onLogin }: HeaderProps) {
+export default function Header({ onLogout }: HeaderProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { data: isLoggedIn } = useAuth();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -58,7 +59,6 @@ export default function Header({ isLoggedIn, onLogout, onLogin }: HeaderProps) {
 
   const handleLoginSuccess = () => {
     setLoginModalOpen(false);
-    onLogin();
   };
 
   return (
