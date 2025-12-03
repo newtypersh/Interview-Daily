@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/me', ensureAuth, (req, res, next) => {
     /*
+    #swagger.tags = ['User']
     #swagger.summary = '내 정보 조회'
     #swagger.description = '현재 로그인된 사용자의 정보를 반환합니다. (세션 쿠키 필요)'
     
