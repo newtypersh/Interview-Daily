@@ -23,7 +23,7 @@ export async function findFeedbackTemplatesByUser({ userId }) {
             id: true,
             user_id: true,
             category: true,
-            content: true,
+            template_text: true,
             created_at: true,
             updated_at: true,
         }
@@ -45,7 +45,7 @@ export async function findFeedbackTemplatesByUserAndCategory({ userId, category 
             id: true,
             user_id: true,
             category: true,
-            content: true,
+            template_text: true,
             created_at: true,
             updated_at: true,
         }
@@ -70,14 +70,14 @@ export async function updateFeedbackTemplate({ userId, category, content }) {
             },
         },
         data: {
-            content: content,
+            template_text: content,
             updated_at: new Date(),
         },
         select: { 
             id: true, 
             user_id: true,
             category: true,
-            content: true,
+            template_text: true,
             created_at: true,
             updated_at: true,
         },
