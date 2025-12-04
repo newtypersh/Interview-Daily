@@ -61,14 +61,21 @@ export async function findFeedbackTemplatesByUserAndCategory({ userId, category 
 export async function updateFeedbackTemplate({ userId, category, content }) {
     const userIdBig = toBigInt(userId);
 
-    return await prisma.feedbackTemplate.update({
-        where: { 
-            user_id_category: {
-                user_id: userIdBig,
-                category: category,
-            
-            },
+    // 1. 해당 카테고리의 템플릿 찾기
+    const template = await prisma.feedbackTemplate.findFirst({
+        where: {
+            user_id: userIdBig,
+            category: category,
         },
+    });
+
+    if (!template) {
+        throw new Error("Feedback template not found");
+    }
+
+    // 2. ID로 업데이트
+    return await prisma.feedbackTemplate.update({
+        where: { id: template.id },
         data: {
             template_text: content,
             updated_at: new Date(),
