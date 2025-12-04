@@ -13,7 +13,7 @@ export type Question = {
 export type QuestionSet = {
   id: string;
   name: string;
-  type: 'job_competency' | 'personality' | 'motivation';
+  type: 'JOB' | 'PERSONAL' | 'MOTIVATION';
   questions: Question[];
 }
 

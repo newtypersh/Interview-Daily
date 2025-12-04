@@ -39,14 +39,14 @@ interface QuestionSetSelection {
 }
 
 interface FeedbackTemplate {
-  type: 'job_competency' | 'personality' | 'motivation';
+  type: 'JOB' | 'PERSONAL' | 'MOTIVATION';
   title: string;
   content: string;
 }
 
 // Mock data
 const initialQuestionSets = {
-  job_competency: [
+  JOB: [
     {
       id: '1',
       name: '질문세트1',
@@ -65,7 +65,7 @@ const initialQuestionSets = {
       expanded: false,
     },
   ],
-  personality: [
+  PERSONAL: [
     {
       id: '3',
       name: '질문세트1',
@@ -83,7 +83,7 @@ const initialQuestionSets = {
       expanded: false,
     },
   ],
-  motivation: [
+  MOTIVATION: [
     {
       id: '5',
       name: '질문세트1',
@@ -105,17 +105,17 @@ const initialQuestionSets = {
 
 const initialTemplates: FeedbackTemplate[] = [
   {
-    type: 'job_competency',
+    type: 'JOB',
     title: '직무 역량 면접',
     content: '## 1. 질문에 대해 들었을 때 무엇을 답변해야 하고 있나요?\n## 2. 질문에 대해 내용을 정리한 경험에 기반하여 리드했던 내용이 있나요?\n## 3. 질문에 대해 주변 수구팀 이외 것이 있나요?'
   },
   {
-    type: 'personality',
+    type: 'PERSONAL',
     title: '인성면접',
     content: '## 1. 질문에 대해 타인이 고워하던 경험을 거라 무릇 수 있나요?\n## 2. 이해가지 않아진 일을 타타이 타타이 타타에 수경이 이성비의 홀려량을 홀래요?\n## 3. 질문에 대해 타타 타타 타타마 본 구해한 경험을 하고 있다면 있나요?'
   },
   {
-    type: 'motivation',
+    type: 'MOTIVATION',
     title: '지원동기 면접',
     content: '## 1. 단지에 가기/타타에 타타 보서이 소자이을 끊게 할 발생양니까?\n## 2. 본디의 끊었을 직타인 본류학의 타타마니까?\n## 3. 타타에 구끊스수로 잘 실명하니까?'
   },
@@ -133,29 +133,25 @@ export default function Settings() {
   useEffect(() => {
     if (fetchedTemplates) {
       const mappedTemplates: FeedbackTemplate[] = fetchedTemplates.map((t) => {
-        let type: FeedbackTemplate['type'] = 'job_competency';
         let title = '직무 역량 면접';
 
         if (t.category === 'JOB') {
-          type = 'job_competency';
           title = '직무 역량 면접';
         } else if (t.category === 'PERSONAL') {
-          type = 'personality';
           title = '인성면접';
         } else if (t.category === 'MOTIVATION') {
-          type = 'motivation';
           title = '지원동기 면접';
         }
 
         return {
-          type,
+          type: t.category,
           title,
           content: t.templateText || '',
         };
       });
       
-      // Sort to match the order: job, personality, motivation
-      const order = ['job_competency', 'personality', 'motivation'];
+      // Sort to match the order: JOB, PERSONAL, MOTIVATION
+      const order = ['JOB', 'PERSONAL', 'MOTIVATION'];
       mappedTemplates.sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
 
       setTemplates(mappedTemplates);
@@ -196,13 +192,8 @@ export default function Settings() {
   };
 
   const handleSaveTemplate = (template: FeedbackTemplate) => {
-    let category: 'JOB' | 'PERSONAL' | 'MOTIVATION' = 'JOB';
-    if (template.type === 'job_competency') category = 'JOB';
-    else if (template.type === 'personality') category = 'PERSONAL';
-    else if (template.type === 'motivation') category = 'MOTIVATION';
-
     updateTemplateMutation.mutate({
-      category,
+      category: template.type,
       content: template.content,
     });
   };
@@ -455,9 +446,9 @@ export default function Settings() {
 
 
                 <Stack spacing={4}>
-                  {renderQuestionCategory('job_competency', '직무 역량 면접')}
-                  {renderQuestionCategory('personality', '인성면접')}
-                  {renderQuestionCategory('motivation', '지원동기 면접')}
+                  {renderQuestionCategory('JOB', '직무 역량 면접')}
+                  {renderQuestionCategory('PERSONAL', '인성면접')}
+                  {renderQuestionCategory('MOTIVATION', '지원동기 면접')}
                 </Stack>
               </>
             ) : (
