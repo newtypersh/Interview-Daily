@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getFeedbackTemplates } from '../../apis/feedbackTemplate';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getFeedbackTemplates, updateFeedbackTemplate } from '../../apis/feedbackTemplate';
 import {
   Box,
   Container,
@@ -14,17 +14,16 @@ import {
   Stack,
   Collapse,
   IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
   Divider,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Check as CheckIcon,
   ExpandMore as ExpandMoreIcon,
   Delete as DeleteIcon,
-  Shuffle as ShuffleIcon,
-  TouchApp as TouchAppIcon,
+  Save as SaveIcon,
 } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 
@@ -165,7 +164,7 @@ export default function Settings() {
   }, [fetchedTemplates]);
   const [activeTab, setActiveTab] = useState(0);
   // 전체 질문세트 중 선택 모드 및 선택된 질문세트
-  const [selectionMode, setSelectionMode] = useState<'random' | 'choice'>('choice');
+
   const [selectedQuestionSet, setSelectedQuestionSet] = useState<{
     category: keyof typeof questionSets | null;
     setId: string | null;
@@ -178,17 +177,34 @@ export default function Settings() {
     category: keyof typeof questionSets,
     id: string
   ) => {
-    if (selectionMode === 'choice') {
-      // 선택 모드: 전체에서 하나만 선택 가능
-      // 같은 질문세트를 다시 클릭하면 선택 해제
-      if (selectedQuestionSet.category === category && selectedQuestionSet.setId === id) {
-        setSelectedQuestionSet({ category: null, setId: null });
-      } else {
-        setSelectedQuestionSet({ category, setId: id });
-      }
+    // 같은 질문세트를 다시 클릭하면 선택 해제
+    if (selectedQuestionSet.category === category && selectedQuestionSet.setId === id) {
+      setSelectedQuestionSet({ category: null, setId: null });
+    } else {
+      setSelectedQuestionSet({ category, setId: id });
     }
-    // random 모드에서는 선택 불가
   };
+
+  const queryClient = useQueryClient();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+  const updateTemplateMutation = useMutation({
+    mutationFn: updateFeedbackTemplate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['feedbackTemplates'] });
+      setSnackbarMessage('템플릿이 성공적으로 저장되었습니다.');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+    },
+    onError: (error) => {
+      console.error('Failed to update template:', error);
+      setSnackbarMessage('템플릿 저장에 실패했습니다.');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    },
+  });
 
   const handleTemplateChange = (type: FeedbackTemplate['type'], content: string) => {
     setTemplates(
@@ -198,13 +214,19 @@ export default function Settings() {
     );
   };
 
-  const handleSelectionModeChange = (mode: 'random' | 'choice') => {
-    setSelectionMode(mode);
-    // 랜덤 모드로 변경하면 선택 해제
-    if (mode === 'random') {
-      setSelectedQuestionSet({ category: null, setId: null });
-    }
+  const handleSaveTemplate = (template: FeedbackTemplate) => {
+    let category: 'JOB' | 'PERSONAL' | 'MOTIVATION' = 'JOB';
+    if (template.type === 'job_competency') category = 'JOB';
+    else if (template.type === 'personality') category = 'PERSONAL';
+    else if (template.type === 'motivation') category = 'MOTIVATION';
+
+    updateTemplateMutation.mutate({
+      category,
+      content: template.content,
+    });
   };
+
+
 
   const handleAddQuestionSet = (category: keyof typeof questionSets) => {
     const newId = String(Date.now());
@@ -220,6 +242,13 @@ export default function Settings() {
           expanded: false,
         },
       ],
+    });
+  };
+
+  const handleDeleteQuestionSet = (category: keyof typeof questionSets, id: string) => {
+    setQuestionSets({
+      ...questionSets,
+      [category]: questionSets[category].filter((set) => set.id !== id),
     });
   };
 
@@ -293,7 +322,7 @@ export default function Settings() {
     category: keyof typeof questionSets,
     title: string
   ) => {
-    const isChoiceMode = selectionMode === 'choice';
+
 
     return (
       <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3, bgcolor: 'white' }}>
@@ -331,22 +360,20 @@ export default function Settings() {
                       },
                     }}
                   />
-                  {isChoiceMode && (
-                    <Chip
-                      label={isSelected ? '선택됨' : '선택'}
-                      onClick={() => handleQuestionSetSelect(category, set.id)}
-                      color={isSelected ? 'warning' : 'default'}
-                      icon={isSelected ? <CheckIcon /> : undefined}
-                      sx={{
-                        minWidth: 90,
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                        '&:hover': {
-                          bgcolor: isSelected ? 'warning.main' : 'action.hover',
-                        },
-                      }}
-                    />
-                  )}
+                  <Chip
+                    label={isSelected ? '선택됨' : '선택'}
+                    onClick={() => handleQuestionSetSelect(category, set.id)}
+                    color={isSelected ? 'warning' : 'default'}
+                    icon={isSelected ? <CheckIcon /> : undefined}
+                    sx={{
+                      minWidth: 90,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      '&:hover': {
+                        bgcolor: isSelected ? 'warning.main' : 'action.hover',
+                      },
+                    }}
+                  />
                   <IconButton
                     onClick={() => handleToggleExpand(category, set.id)}
                     sx={{
@@ -355,6 +382,12 @@ export default function Settings() {
                     }}
                   >
                     <ExpandMoreIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => handleDeleteQuestionSet(category, set.id)}
+                    color="error"
+                  >
+                    <DeleteIcon />
                   </IconButton>
                 </Box>
 
@@ -453,28 +486,7 @@ export default function Settings() {
           <Box sx={{ p: { xs: 3, md: 6 } }}>
             {activeTab === 0 ? (
               <>
-                {/* 전체 질문 선택 방식 */}
-                <Box sx={{ mb: 4, display: 'flex', justifyContent: 'center' }}>
-                  <ToggleButtonGroup
-                    value={selectionMode}
-                    exclusive
-                    onChange={(_, newMode) => {
-                      if (newMode !== null) {
-                        handleSelectionModeChange(newMode);
-                      }
-                    }}
-                    size="medium"
-                  >
-                    <ToggleButton value="choice" sx={{ px: 4 }}>
-                      <TouchAppIcon sx={{ mr: 1 }} />
-                      선택
-                    </ToggleButton>
-                    <ToggleButton value="random" sx={{ px: 4 }}>
-                      <ShuffleIcon sx={{ mr: 1 }} />
-                      랜덤
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </Box>
+
 
                 <Stack spacing={4}>
                   {renderQuestionCategory('job_competency', '직무 역량 면접')}
@@ -493,9 +505,20 @@ export default function Settings() {
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
                       {/* 편집기 */}
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                          편집
-                        </Typography>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                            편집
+                          </Typography>
+                          <Button
+                            variant="contained"
+                            size="small"
+                            startIcon={<SaveIcon />}
+                            onClick={() => handleSaveTemplate(template)}
+                            disabled={updateTemplateMutation.isPending}
+                          >
+                            저장
+                          </Button>
+                        </Box>
                         <TextField
                           multiline
                           fullWidth
@@ -571,6 +594,16 @@ export default function Settings() {
           </Box>
         </Paper>
       </Container>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
