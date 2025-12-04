@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
-import { useFeedbackTemplates, UI_FeedbackTemplate } from '../../hooks/useFeedbackTemplates';
+import { useFeedbackTemplates, type UI_FeedbackTemplate } from '../../hooks/useFeedbackTemplates';
 import { INTERVIEW_CATEGORIES } from '../../constants/interview';
 
 export default function FeedbackTemplateSection() {
