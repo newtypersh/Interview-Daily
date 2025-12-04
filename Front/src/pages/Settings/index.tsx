@@ -10,7 +10,6 @@ import {
   Typography,
   TextField,
   Button,
-  Chip,
   Stack,
   Collapse,
   IconButton,
@@ -20,7 +19,7 @@ import {
 } from '@mui/material';
 import {
   Add as AddIcon,
-  Check as CheckIcon,
+
   ExpandMore as ExpandMoreIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
@@ -165,25 +164,7 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState(0);
   // 전체 질문세트 중 선택 모드 및 선택된 질문세트
 
-  const [selectedQuestionSet, setSelectedQuestionSet] = useState<{
-    category: keyof typeof questionSets | null;
-    setId: string | null;
-  }>({
-    category: 'job_competency',
-    setId: '1',
-  });
 
-  const handleQuestionSetSelect = (
-    category: keyof typeof questionSets,
-    id: string
-  ) => {
-    // 같은 질문세트를 다시 클릭하면 선택 해제
-    if (selectedQuestionSet.category === category && selectedQuestionSet.setId === id) {
-      setSelectedQuestionSet({ category: null, setId: null });
-    } else {
-      setSelectedQuestionSet({ category, setId: id });
-    }
-  };
 
   const queryClient = useQueryClient();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -332,9 +313,7 @@ export default function Settings() {
 
         <Stack spacing={2}>
           {questionSets[category].map((set, index) => {
-            const isSelected =
-              selectedQuestionSet.category === category &&
-              selectedQuestionSet.setId === set.id;
+
 
             return (
               <Box
@@ -360,20 +339,7 @@ export default function Settings() {
                       },
                     }}
                   />
-                  <Chip
-                    label={isSelected ? '선택됨' : '선택'}
-                    onClick={() => handleQuestionSetSelect(category, set.id)}
-                    color={isSelected ? 'warning' : 'default'}
-                    icon={isSelected ? <CheckIcon /> : undefined}
-                    sx={{
-                      minWidth: 90,
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                      '&:hover': {
-                        bgcolor: isSelected ? 'warning.main' : 'action.hover',
-                      },
-                    }}
-                  />
+
                   <IconButton
                     onClick={() => handleToggleExpand(category, set.id)}
                     sx={{
