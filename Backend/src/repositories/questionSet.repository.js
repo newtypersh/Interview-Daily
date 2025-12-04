@@ -191,9 +191,33 @@ export async function deleteQuestionSet(setId, userId) {
     throw err;
   }
 
-  // cascade 삭제가 설정되어 있지 않다면 트랜잭션으로 질문들 먼저 삭제 후 세트 삭제
+  // cascade 삭제가 설정되어 있지 않으므로 수동으로 연관 데이터 삭제
+  // 삭제 순서: Feedback -> InterviewAnswer -> Interview -> Question -> QuestionSet
+
+  // 1. 해당 질문세트와 연관된 인터뷰 조회
+  const interviews = await prisma.interview.findMany({
+    where: { question_set_id: setIdBig },
+    select: { id: true }
+  });
+  const interviewIds = interviews.map(i => i.id);
+
+  // 2. 해당 인터뷰들의 답변 조회 (Feedback 삭제를 위해)
+  const answers = await prisma.interviewAnswer.findMany({
+    where: { interview_id: { in: interviewIds } },
+    select: { id: true }
+  });
+  const answerIds = answers.map(a => a.id);
+
   await prisma.$transaction([
+    // 3. Feedback 삭제
+    prisma.feedback.deleteMany({ where: { interview_answer_id: { in: answerIds } } }),
+    // 4. InterviewAnswer 삭제
+    prisma.interviewAnswer.deleteMany({ where: { interview_id: { in: interviewIds } } }),
+    // 5. Interview 삭제
+    prisma.interview.deleteMany({ where: { id: { in: interviewIds } } }),
+    // 6. Question 삭제
     prisma.question.deleteMany({ where: { question_set_id: setIdBig } }),
+    // 7. QuestionSet 삭제
     prisma.questionSet.delete({ where: { id: setIdBig } }),
   ]);
 

@@ -12,22 +12,22 @@ export async function createQuestionSet({ userId, name, category }) {
   return repo.createQuestionSet({ userId, name, category });
 }
 
-export async function createQuestion(setId, { content, order = null, createdBy = null}) {
-  return repo.createQuestion(setId, { content, order, createdBy });
+export async function createQuestion({ setId, content, order = null }) {
+  return repo.createQuestion(setId, { content, order });
 }
 
-export async function updateQuestionSet(setId, params) {
-  return repo.updateQuestionSet(setId, params);
+export async function updateQuestionSet({ setId, userId, data }) {
+  return repo.updateQuestionSet(setId, { userId, ...data });
 }
 
-export async function updateQuestion(setId, questionId, params) {
-  return repo.updateQuestion(setId, questionId, params);
+export async function updateQuestion({ setId, questionId, userId, data }) {
+  return repo.updateQuestion(setId, questionId, { userId, ...data });
 }
 
-export async function deleteQuestionSet(setId) {
-  return repo.deleteQuestionSet(setId);
+export async function deleteQuestionSet({ setId, userId }) {
+  return repo.deleteQuestionSet(setId, userId);
 }
 
-export async function deleteQuestion(setId, questionId) {
-  return repo.deleteQuestion(setId, questionId);
+export async function deleteQuestion({ setId, questionId, userId }) {
+  return repo.deleteQuestion(setId, questionId, { userId });
 }
