@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Box,
   Stack,
@@ -10,55 +9,20 @@ import {
 } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
-import { useFeedbackTemplates, type UI_FeedbackTemplate } from '../../hooks/useFeedbackTemplates';
-import { INTERVIEW_CATEGORIES } from '../../constants/interview';
+import { useFeedbackTemplateEditor } from '../../hooks/useFeedbackTemplateEditor';
 
 export default function FeedbackTemplateSection() {
-  const { templates, updateTemplate, isUpdating } = useFeedbackTemplates();
-  
-  // Local state for editing content before saving
-  // We need to initialize this when templates are loaded, or handle it via a controlled input that updates the local cache
-  // However, the original code updated the 'templates' state directly.
-  // Since 'templates' from the hook is read-only (from useQuery), we need local state for editing.
-  // But wait, the original code used setTemplates to update the local state.
-  // Here, we should probably maintain a local copy of the content being edited.
-  
-  // Let's use a simple approach: The hook returns the data. We can't easily mutate it locally without re-fetching or complex cache updates.
-  // But for a text editor, we need instant feedback.
-  // So, we will use a local state map for edits: { [type]: content }
-  
-  const [edits, setEdits] = useState<Record<string, string>>({});
-  
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-
-  const handleContentChange = (type: string, content: string) => {
-    setEdits((prev) => ({ ...prev, [type]: content }));
-  };
-
-  const getContent = (template: UI_FeedbackTemplate) => {
-    return edits[template.type] !== undefined ? edits[template.type] : template.content;
-  };
-
-  const handleSave = (template: UI_FeedbackTemplate) => {
-    const contentToSave = getContent(template);
-    updateTemplate(
-      { category: template.type, content: contentToSave },
-      {
-        onSuccess: () => {
-          setSnackbarMessage('템플릿이 성공적으로 저장되었습니다.');
-          setSnackbarSeverity('success');
-          setSnackbarOpen(true);
-        },
-        onError: () => {
-          setSnackbarMessage('템플릿 저장에 실패했습니다.');
-          setSnackbarSeverity('error');
-          setSnackbarOpen(true);
-        },
-      }
-    );
-  };
+  const {
+    templates,
+    isUpdating,
+    getContent,
+    handleContentChange,
+    handleSave,
+    snackbarOpen,
+    snackbarMessage,
+    snackbarSeverity,
+    handleSnackbarClose,
+  } = useFeedbackTemplateEditor();
 
   return (
     <>
@@ -147,10 +111,10 @@ export default function FeedbackTemplateSection() {
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
+        onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
           {snackbarMessage}
         </Alert>
       </Snackbar>

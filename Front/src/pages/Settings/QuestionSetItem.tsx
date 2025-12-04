@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Typography,
@@ -16,15 +15,8 @@ import {
   Add as AddIcon,
 } from '@mui/icons-material';
 import type { QuestionSet } from '../../types';
-import {
-  getQuestions,
-  createQuestion,
-  updateQuestion,
-  deleteQuestion,
-  deleteQuestionSet,
-  updateQuestionSet,
-} from '../../apis/questionSet';
 import QuestionInput from './QuestionInput';
+import { useQuestionSetActions } from '../../hooks/useQuestionSetActions';
 
 interface QuestionSetItemProps {
   questionSet: QuestionSet;
@@ -33,56 +25,22 @@ interface QuestionSetItemProps {
 
 export default function QuestionSetItem({ questionSet, index }: QuestionSetItemProps) {
   const [expanded, setExpanded] = useState(false);
-  const queryClient = useQueryClient();
-
-  const { data: questions = [] } = useQuery({
-    queryKey: ['questions', questionSet.id],
-    queryFn: () => getQuestions(questionSet.id),
-    enabled: expanded,
-  });
-
-  const createQuestionMutation = useMutation({
-    mutationFn: (content: string) => createQuestion(questionSet.id, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions', questionSet.id] });
-    },
-  });
-
-  const updateQuestionMutation = useMutation({
-    mutationFn: ({ questionId, content }: { questionId: string; content: string }) =>
-      updateQuestion(questionSet.id, questionId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions', questionSet.id] });
-    },
-  });
-
-  const deleteQuestionMutation = useMutation({
-    mutationFn: (questionId: string) => deleteQuestion(questionSet.id, questionId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions', questionSet.id] });
-    },
-  });
-
-  const deleteSetMutation = useMutation({
-    mutationFn: () => deleteQuestionSet(questionSet.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questionSets'] });
-    },
-  });
-
-  const updateSetMutation = useMutation({
-    mutationFn: (name: string) => updateQuestionSet(questionSet.id, { name }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questionSets'] });
-    },
-  });
+  
+  const {
+    questions,
+    createQuestion,
+    updateQuestion,
+    deleteQuestion,
+    deleteSet,
+    updateSet,
+  } = useQuestionSetActions(questionSet.id, expanded);
 
   const handleAddQuestion = () => {
-    createQuestionMutation.mutate('새 질문');
+    createQuestion('새 질문');
   };
 
   const handleUpdateQuestion = (questionId: string, content: string) => {
-    updateQuestionMutation.mutate({ questionId, content });
+    updateQuestion({ questionId, content });
   };
 
   return (
@@ -105,7 +63,7 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
           onBlur={(e) => {
             const newName = e.target.value.trim();
             if (newName && newName !== questionSet.name) {
-              updateSetMutation.mutate(newName);
+              updateSet(newName);
             }
           }}
         />
@@ -118,7 +76,7 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
         >
           <ExpandMoreIcon />
         </IconButton>
-        <IconButton onClick={() => deleteSetMutation.mutate()} color="error">
+        <IconButton onClick={() => deleteSet()} color="error">
           <DeleteIcon />
         </IconButton>
       </Box>
@@ -139,7 +97,7 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
               />
               <IconButton
                 size="small"
-                onClick={() => deleteQuestionMutation.mutate(question.id)}
+                onClick={() => deleteQuestion(question.id)}
                 sx={{ mt: 0.5 }}
               >
                 <DeleteIcon fontSize="small" />
