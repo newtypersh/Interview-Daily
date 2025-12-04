@@ -237,11 +237,16 @@ export async function findInterviewsByUserPaginated(userId, { limit = 20, cursor
             question_set_id: true,
             day: true,
             interviewed_at: true,
-            day: true,
-            interviewed_at: true,
             created_at: true,
             updated_at: true,
-            _count: { select: {answers: true} },
+            answers: {
+                select: {
+                    feedbacks: {
+                        select: { rating: true }
+                    }
+                }
+            },
+            _count: { select: { answers: true } },
         },
     });
 

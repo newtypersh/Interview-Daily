@@ -5,13 +5,18 @@ import { StatusCodes } from "http-status-codes";
 
 export const getHistory = async (req, res, next) => {
     try {
-        const requestDto = GetInterviewHistoryRequestDto(req);
+        const requestDto = new GetInterviewHistoryRequestDto(req);
         const payload = requestDto.toServicePayload();
 
-        const interviews = await service.getInterviewHistory(payload);
+        const { items, nextCursor } = await service.getInterviewHistory(payload);
 
         return res.status(StatusCodes.OK).success({
-            histories: interviews.map(toHistoryResponseDto)
+            data: items.map(toHistoryResponseDto),
+            pagination: {
+                nextCursorCreatedAt: nextCursor?.createdAt || null,
+                nextCursorId: nextCursor?.id ? Number(nextCursor.id) : null,
+                hasNext: !!nextCursor,
+            }
         });
     } catch (err) {
         next(err);

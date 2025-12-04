@@ -3,7 +3,9 @@ import { UnauthorizedError } from "../errors.js";
 export class GetInterviewHistoryRequestDto {
     constructor(req) {
         this.userId = req.user?.id;
-        this.date = req.query?.date;
+        this.limit = req.query?.limit;
+        this.cursorCreatedAt = req.query?.cursorCreatedAt;
+        this.cursorId = req.query?.cursorId;
         this.validate();
     }
 
@@ -16,7 +18,9 @@ export class GetInterviewHistoryRequestDto {
     toServicePayload() {
         return {
             userId: this.userId,
-            date: this.date ? new Date(this.date) : null,
+            limit: this.limit ? parseInt(this.limit) : 20,
+            cursorCreatedAt: this.cursorCreatedAt || null,
+            cursorId: this.cursorId || null,
         };
     }
 }
