@@ -4,7 +4,7 @@ import type {
   GetFeedbackTemplatesResponse, 
   UpdateFeedbackTemplateRequest, 
   UpdateFeedbackTemplateResponse 
-} from '../interface/feedbackTemplate.interface';
+} from '../types';
 
 export const getFeedbackTemplates = async (): Promise<FeedbackTemplateDto[]> => {
   const response = await api.get<GetFeedbackTemplatesResponse>('/feedback-templates');
