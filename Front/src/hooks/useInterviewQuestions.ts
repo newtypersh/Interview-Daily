@@ -1,38 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { startInterview } from '../apis/interview';
 import type { Question } from '../types';
-
-// Mock data moved here
-const mockQuestions: Question[] = [
-  { id: '1', content: '1분 자기소개 시작해주세요', order: 1 },
-  { id: '2', content: '만일 1분 자기소개에서 말한 1번째 경험을 어떻게 진행했었나요?', order: 2 },
-];
 
 export const useInterviewQuestions = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [interviewId, setInterviewId] = useState<string | null>(null);
+  const initialized = useRef(false);
+
+  const { mutate, isPending: isLoading, error } = useMutation({
+    mutationFn: (strategy: string) => startInterview(strategy),
+    onSuccess: (data) => {
+      if (data.success && data.success.interview) {
+        const { interview } = data.success;
+        setInterviewId(interview.id);
+        
+        const mappedQuestions: Question[] = interview.answers.map((answer) => ({
+          id: answer.id, 
+          content: answer.questionContent,
+          order: answer.sequence,
+        })).sort((a, b) => a.order - b.order);
+
+        setQuestions(mappedQuestions);
+      }
+    },
+    onError: (err: any) => {
+      console.error('Failed to start interview:', err);
+      // Logic for 409 Conflict can be added here
+    }
+  });
 
   useEffect(() => {
-    // Simulate API call
-    const fetchQuestions = async () => {
-      try {
-        setIsLoading(true);
-        // Simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        setQuestions(mockQuestions);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch questions'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    // Prevent double calling in Strict Mode and ensure single execution
+    if (initialized.current) return;
+    initialized.current = true;
 
-    fetchQuestions();
-  }, []);
+    mutate('random'); // Trigger the mutation
+  }, [mutate]);
 
   return {
     questions,
+    interviewId,
     isLoading,
-    error,
+    error: error as Error | null,
   };
 };

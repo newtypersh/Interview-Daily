@@ -9,7 +9,7 @@ export const useDailyInterview = () => {
   const navigate = useNavigate();
   
   const recording = useRecording();
-  const { questions, isLoading, error } = useInterviewQuestions();
+  const { questions, interviewId, isLoading, error } = useInterviewQuestions();
 
   const currentQuestion = questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -51,6 +51,7 @@ export const useDailyInterview = () => {
     currentQuestion,
     currentQuestionIndex,
     totalQuestions: questions.length,
+    interviewId,
     isRecording: recording.isRecording,
     recordingStopped: recording.recordingStopped,
     isLastQuestion,
