@@ -19,7 +19,7 @@ export const useInterviewQuestions = () => {
           id: answer.id, 
           content: answer.questionContent,
           order: answer.sequence,
-        })).sort((a, b) => a.order - b.order);
+        })).sort((a: Question, b: Question) => a.order - b.order);
 
         setQuestions(mappedQuestions);
       }
