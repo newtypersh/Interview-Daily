@@ -1,26 +1,21 @@
 import { Box, Container, Paper, Stack } from '@mui/material';
-import { useDailyInterview } from '../../hooks/useDailyInterview';
 import InterviewNavigation from './components/InterviewNavigation';
 import QuestionDisplay from './components/QuestionDisplay';
 import RecordingSection from './components/RecordingSection';
 import AnswerReview from './components/AnswerReview';
+import { InterviewProvider, useInterviewContext } from './context/InterviewContext';
 
-export default function DailyInterview() {
+// Inner component to consume context
+function InterviewContent() {
   const {
     currentQuestion,
-    currentQuestionIndex,
-    totalQuestions,
-    isRecording,
     recordingStopped,
-    isLastQuestion,
-    isFirstQuestion,
-    handleStartRecording,
-    handleStopRecording,
-    handleRetry,
-    handlePrevQuestion,
-    handleNextQuestion,
-    handleSubmit,
-  } = useDailyInterview();
+  } = useInterviewContext();
+
+  // Safety check for currentQuestion (it might be undefined during loading/empty state)
+  if (!currentQuestion) {
+    return null; // Or a loading spinner handled inside context/components
+  }
 
   return (
     <Box
@@ -41,35 +36,27 @@ export default function DailyInterview() {
             borderRadius: 3,
           }}
         >
-          <InterviewNavigation
-            currentIndex={currentQuestionIndex}
-            totalQuestions={totalQuestions}
-            isFirstQuestion={isFirstQuestion}
-            isLastQuestion={isLastQuestion}
-            onPrev={handlePrevQuestion}
-            onNext={handleNextQuestion}
-          />
+          <InterviewNavigation />
 
-          <QuestionDisplay content={currentQuestion.content} />
+          <QuestionDisplay />
 
           <Stack spacing={3}>
             {!recordingStopped ? (
-              <RecordingSection
-                isRecording={isRecording}
-                onStart={handleStartRecording}
-                onStop={handleStopRecording}
-              />
+              <RecordingSection />
             ) : (
-              <AnswerReview
-                questionContent={currentQuestion.content}
-                isLastQuestion={isLastQuestion}
-                onRetry={handleRetry}
-                onSubmit={handleSubmit}
-              />
+              <AnswerReview />
             )}
           </Stack>
         </Paper>
       </Container>
     </Box>
+  );
+}
+
+export default function DailyInterview() {
+  return (
+    <InterviewProvider>
+      <InterviewContent />
+    </InterviewProvider>
   );
 }

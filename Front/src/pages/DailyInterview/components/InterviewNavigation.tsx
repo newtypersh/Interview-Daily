@@ -1,57 +1,49 @@
-import { Box, IconButton, Chip } from '@mui/material';
-import { ArrowBack as ArrowBackIcon, ArrowForward as ArrowForwardIcon } from '@mui/icons-material';
+import { Stack, LinearProgress, Typography, Box, IconButton } from '@mui/material';
+import { NavigateNext, NavigateBefore } from '@mui/icons-material';
+import { useInterviewContext } from '../context/InterviewContext';
 
-interface InterviewNavigationProps {
-  currentIndex: number;
-  totalQuestions: number;
-  isFirstQuestion: boolean;
-  isLastQuestion: boolean;
-  onPrev: () => void;
-  onNext: () => void;
-}
+export default function InterviewNavigation() {
+  const { currentIndex, totalQuestions, isFirstQuestion, isLastQuestion, toPrevQuestion, toNextQuestion } = useInterviewContext();
 
-export default function InterviewNavigation({
-  currentIndex,
-  totalQuestions,
-  isFirstQuestion,
-  isLastQuestion,
-  onPrev,
-  onNext,
-}: InterviewNavigationProps) {
+  const progress = ((currentIndex + 1) / totalQuestions) * 100;
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4, gap: 2 }}>
-      <IconButton
-        onClick={onPrev}
-        disabled={isFirstQuestion}
+    <Box sx={{ mb: 4 }}>
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+        <IconButton 
+          onClick={toPrevQuestion}
+          disabled={isFirstQuestion}
+          size="small"
+        >
+          <NavigateBefore />
+        </IconButton>
+        
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          질문 {currentIndex + 1} / {totalQuestions}
+        </Typography>
+
+        <IconButton 
+          onClick={toNextQuestion}
+          disabled={isLastQuestion}
+          size="small"
+        >
+          <NavigateNext />
+        </IconButton>
+      </Stack>
+
+      <LinearProgress
+        variant="determinate"
+        value={progress}
         sx={{
-          color: '#667eea',
-          '&:disabled': {
-            color: 'rgba(0, 0, 0, 0.26)',
+          height: 8,
+          borderRadius: 4,
+          bgcolor: '#edf2f7',
+          '& .MuiLinearProgress-bar': {
+            borderRadius: 4,
+            background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
           },
-        }}
-      >
-        <ArrowBackIcon />
-      </IconButton>
-      <Chip
-        label={`질문 ${currentIndex + 1} / ${totalQuestions}`}
-        sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          fontWeight: 600,
         }}
       />
-      <IconButton
-        onClick={onNext}
-        disabled={isLastQuestion}
-        sx={{
-          color: '#667eea',
-          '&:disabled': {
-            color: 'rgba(0, 0, 0, 0.26)',
-          },
-        }}
-      >
-        <ArrowForwardIcon />
-      </IconButton>
     </Box>
   );
 }

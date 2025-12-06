@@ -1,10 +1,12 @@
-import { Paper, Typography } from '@mui/material';
+import { Typography, Paper } from '@mui/material';
+import { useInterviewContext } from '../context/InterviewContext';
 
-interface QuestionDisplayProps {
-  content: string;
-}
+export default function QuestionDisplay() {
+  const { currentQuestion } = useInterviewContext();
 
-export default function QuestionDisplay({ content }: QuestionDisplayProps) {
+  // Safety check, although parent should handle it
+  if (!currentQuestion) return null;
+
   return (
     <Paper
       elevation={0}
@@ -32,7 +34,7 @@ export default function QuestionDisplay({ content }: QuestionDisplayProps) {
           fontWeight: 500,
         }}
       >
-        {content}
+        {currentQuestion.content}
       </Typography>
     </Paper>
   );

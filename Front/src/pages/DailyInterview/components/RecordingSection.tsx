@@ -1,16 +1,13 @@
-import { Button, Alert, Typography } from '@mui/material';
+import { Box, Button, Alert, Typography } from '@mui/material';
 import { Mic as MicIcon, Stop as StopIcon, FiberManualRecord as RecordIcon } from '@mui/icons-material';
+import { useInterviewContext } from '../context/InterviewContext';
 
-interface RecordingSectionProps {
-  isRecording: boolean;
-  onStart: () => void;
-  onStop: () => void;
-}
+export default function RecordingSection() {
+  const { isRecording, startRecording, stopRecording } = useInterviewContext();
 
-export default function RecordingSection({ isRecording, onStart, onStop }: RecordingSectionProps) {
   if (isRecording) {
     return (
-      <>
+      <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Alert
           icon={<RecordIcon sx={{ animation: 'pulse 1.5s infinite' }} />}
           severity="error"
@@ -31,7 +28,7 @@ export default function RecordingSection({ isRecording, onStart, onStop }: Recor
           variant="contained"
           size="large"
           startIcon={<StopIcon />}
-          onClick={onStop}
+          onClick={stopRecording}
           sx={{
             bgcolor: '#dc2626',
             py: 2,
@@ -44,7 +41,7 @@ export default function RecordingSection({ isRecording, onStart, onStop }: Recor
         >
           녹음 완료
         </Button>
-      </>
+      </Box>
     );
   }
 
@@ -54,7 +51,7 @@ export default function RecordingSection({ isRecording, onStart, onStop }: Recor
       variant="contained"
       size="large"
       startIcon={<MicIcon />}
-      onClick={onStart}
+      onClick={startRecording}
       sx={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         py: 2,

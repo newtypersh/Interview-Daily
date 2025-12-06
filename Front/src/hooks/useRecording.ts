@@ -1,32 +1,31 @@
-import { useState, useCallback } from 'react';
+import { useReactMediaRecorder } from 'react-media-recorder';
 
 export const useRecording = () => {
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordingStopped, setRecordingStopped] = useState(false);
+  const {
+    startRecording,
+    stopRecording,
+    mediaBlobUrl,
+    status,
+    clearBlobUrl,
+  } = useReactMediaRecorder({ audio: true });
 
-  const start = useCallback(() => {
-    setIsRecording(true);
-    setRecordingStopped(false);
-    // TODO: Implement actual recording logic (MediaRecorder)
-  }, []);
+  const isRecording = status === 'recording';
+  const recordingStopped = status === 'stopped';
 
-  const stop = useCallback(() => {
-    setIsRecording(false);
-    setRecordingStopped(true);
-    // TODO: Stop MediaRecorder and save blob
-  }, []);
-
-  const reset = useCallback(() => {
-    setIsRecording(false);
-    setRecordingStopped(false);
-    // TODO: Reset MediaRecorder state
-  }, []);
+  // Manual reset function (optional since we have clearBlobUrl)
+  const reset = () => {
+    clearBlobUrl();
+    // If needed, we can add more reset logic here
+    // Note: react-media-recorder doesn't have a direct 'reset' to initial state, 
+    // but clearing blob and status tracking handles most cases.
+  };
 
   return {
     isRecording,
     recordingStopped,
-    start,
-    stop,
+    mediaBlobUrl, // Exposed for playback and upload
+    start: startRecording,
+    stop: stopRecording,
     reset,
   };
 };

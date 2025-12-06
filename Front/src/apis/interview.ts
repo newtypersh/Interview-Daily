@@ -36,3 +36,23 @@ export const startInterview = async (strategy: string = 'random'): Promise<Start
   });
   return response.data;
 };
+
+export const uploadAnswerAudio = async (
+  interviewId: string,
+  answerId: string,
+  file: Blob | File
+): Promise<InterviewAnswerDto> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await api.post<{ answer: InterviewAnswerDto }>(
+    `/interviews/${interviewId}/answers/${answerId}/audio`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+  return response.data.answer;
+};

@@ -1,19 +1,12 @@
 import { Paper, Stack, Box, Typography, Divider, Button } from '@mui/material';
 import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon } from '@mui/icons-material';
+import { useInterviewContext } from '../context/InterviewContext';
 
-interface AnswerReviewProps {
-  questionContent: string;
-  isLastQuestion: boolean;
-  onRetry: () => void;
-  onSubmit: () => void;
-}
+export default function AnswerReview() {
+  const { currentQuestion, isLastQuestion, retryRecording, submitAnswer, isSubmitting } = useInterviewContext();
 
-export default function AnswerReview({
-  questionContent,
-  isLastQuestion,
-  onRetry,
-  onSubmit,
-}: AnswerReviewProps) {
+  if (!currentQuestion) return null;
+
   return (
     <>
       <Paper
@@ -30,7 +23,7 @@ export default function AnswerReview({
               질문
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {questionContent}
+              {currentQuestion.content}
             </Typography>
           </Box>
           <Divider />
@@ -61,7 +54,8 @@ export default function AnswerReview({
           variant="outlined"
           size="large"
           startIcon={<ReplayIcon />}
-          onClick={onRetry}
+          onClick={retryRecording}
+          disabled={isSubmitting}
           sx={{
             borderColor: '#667eea',
             color: '#667eea',
@@ -79,7 +73,8 @@ export default function AnswerReview({
           variant="contained"
           size="large"
           endIcon={!isLastQuestion && <NavigateNextIcon />}
-          onClick={onSubmit}
+          onClick={() => submitAnswer()}
+          disabled={isSubmitting}
           sx={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             fontWeight: 600,
@@ -88,7 +83,7 @@ export default function AnswerReview({
             },
           }}
         >
-          {isLastQuestion ? '피드백 작성하기' : '다음 질문'}
+          {isSubmitting ? '저장 중...' : (isLastQuestion ? '피드백 작성하기' : '다음 질문')}
         </Button>
       </Stack>
     </>
