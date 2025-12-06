@@ -15,7 +15,7 @@ export const useInterviewQuestions = () => {
         const { interview } = data.success;
         setInterviewId(interview.id);
         
-        const mappedQuestions: Question[] = interview.answers.map((answer) => ({
+        const mappedQuestions: Question[] = interview.answers.map((answer: { id: string; questionContent: string; sequence: number }) => ({
           id: answer.id, 
           content: answer.questionContent,
           order: answer.sequence,
