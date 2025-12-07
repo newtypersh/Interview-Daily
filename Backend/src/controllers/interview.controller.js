@@ -64,7 +64,8 @@ export const getInterviewAnswers = async (req, res, next) => {
 
         const { interviewId } = req.params;
         const payload = await service.getInterviewAnswers({ interviewId, userId });
-        return res.status(200).json(payload);
+        const dto = toInterviewDto(payload);
+        return res.status(200).json(dto);
     } catch (err) {
         next(err);
     }

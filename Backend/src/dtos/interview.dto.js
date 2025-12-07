@@ -11,6 +11,7 @@ export function toInterviewAnswerDto(a) {
         createdAt: a.created_at ? a.created_at.toISOString() : null,
         updatedAt: a.updated_at ? a.updated_at.toISOString() : null,
         questionContent: a.question?.content ?? null,
+        transcriptText: a.transcript_text ?? null,
     };
 }
 

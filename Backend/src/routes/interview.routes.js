@@ -51,8 +51,27 @@ router.get("/:interviewId/answers", ensureAuth, (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '면접 답변 목록 조회'
-        #swagger.description = '특정 면접의 모든 질문과 사용자의 답변(오디오 URL 포함)을 조회합니다.'
+        #swagger.description = '특정 면접의 모든 질문과 사용자의 답변(오디오 URL, STT 결과 포함)을 조회합니다.'
         #swagger.parameters['interviewId'] = { description: '면접 ID' }
+        #swagger.responses[200] = {
+            description: '조회 성공',
+            schema: {
+                id: "1",
+                userId: "1",
+                questionSetId: "1",
+                answers: [{
+                    id: "1",
+                    interviewId: "1",
+                    questionId: "1",
+                    sequence: 1,
+                    questionContent: "질문 내용",
+                    audioUrl: "https://...",
+                    transcriptText: "답변 내용",
+                    createdAt: "2023-01-01T00:00:00Z",
+                    updatedAt: "2023-01-01T00:00:00Z"
+                }]
+            }
+        }
     */
     ctrl.getInterviewAnswers(req, res, next);
 });
