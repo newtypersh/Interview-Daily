@@ -383,3 +383,10 @@ export async function createFeedbacksBulk({ feedbacks }) {
         return count;
     });
 }
+
+export async function findInterviewAnswerById(answerId) {
+    const aId = toBigInt(answerId);
+    return prisma.interviewAnswer.findUnique({
+        where: { id: aId }
+    });
+}
