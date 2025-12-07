@@ -1,11 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  useDeleteQuestionSet,
+  useUpdateQuestionSet,
+} from '../react-query/mutation/useQuestionSetMutations';
+import {
   getQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
-  deleteQuestionSet,
-  updateQuestionSet,
 } from '../apis/questionSet';
 
 export const useQuestionSetActions = (questionSetId: string, expanded: boolean = false) => {
@@ -39,19 +41,8 @@ export const useQuestionSetActions = (questionSetId: string, expanded: boolean =
     },
   });
 
-  const deleteSetMutation = useMutation({
-    mutationFn: () => deleteQuestionSet(questionSetId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questionSets'] });
-    },
-  });
-
-  const updateSetMutation = useMutation({
-    mutationFn: (name: string) => updateQuestionSet(questionSetId, { name }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questionSets'] });
-    },
-  });
+  const { mutate: deleteSet, isPending: isDeletingSet } = useDeleteQuestionSet();
+  const { mutate: updateSet, isPending: isUpdatingSet } = useUpdateQuestionSet();
 
   return {
     questions,
@@ -59,12 +50,12 @@ export const useQuestionSetActions = (questionSetId: string, expanded: boolean =
     createQuestion: createQuestionMutation.mutate,
     updateQuestion: updateQuestionMutation.mutate,
     deleteQuestion: deleteQuestionMutation.mutate,
-    deleteSet: deleteSetMutation.mutate,
-    updateSet: updateSetMutation.mutate,
+    deleteSet: () => deleteSet(questionSetId),
+    updateSet: (name: string) => updateSet({ id: questionSetId, name }),
     isCreatingQuestion: createQuestionMutation.isPending,
     isUpdatingQuestion: updateQuestionMutation.isPending,
     isDeletingQuestion: deleteQuestionMutation.isPending,
-    isDeletingSet: deleteSetMutation.isPending,
-    isUpdatingSet: updateSetMutation.isPending,
+    isDeletingSet,
+    isUpdatingSet,
   };
 };

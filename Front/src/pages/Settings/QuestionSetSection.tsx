@@ -1,11 +1,13 @@
 import { Box, Stack, Typography, Button } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import QuestionSetItem from './QuestionSetItem';
-import { useQuestionSets } from '../../hooks/useQuestionSets';
+import { useQuestionSetsQuery } from '../../react-query/queries/useQuestionSetsQuery';
+import { useCreateQuestionSet } from '../../react-query/mutation/useQuestionSetMutations';
 import { CATEGORY_LIST, INTERVIEW_CATEGORIES } from '../../constants/interview';
 
 export default function QuestionSetSection() {
-  const { questionSets, createQuestionSet } = useQuestionSets();
+  const { data: questionSets = [] } = useQuestionSetsQuery();
+  const { mutate: createQuestionSet } = useCreateQuestionSet();
 
   const handleAddQuestionSet = (category: keyof typeof INTERVIEW_CATEGORIES) => {
     createQuestionSet({ category, name: '새 질문세트' });
