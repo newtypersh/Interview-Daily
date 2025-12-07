@@ -27,16 +27,41 @@ Files: camelCase for JS/TS utilities, PascalCase for React components.
 Variables/Functions: camelCase.
 Constants: UPPER_SNAKE_CASE.
 Path Aliases: Use absolute paths or configured aliases where possible (check tsconfig.json paths).
+## Project Structure
+### 1. Frontend (/Front/src)
+We follow a **Hybrid** architecture:
+-   **Type-based** at the root level (organized by file role: `components`, `hooks`, `layout`, etc.).
+-   **Feature-based** within `pages/` for complex domains (self-contained modules with local components/hooks).
+#### Directory Layout
+```
+src/
+├── apis/               # Shared API functions
+├── assets/             # Static assets
+├── components/         # Shared UI components
+├── data/               # Static data & Constants
+├── hooks/              # Shared custom hooks
+├── layout/             # Layout components (Header, Footer)
+├── pages/              # Page components
+├── styles/             # Global styles
+├── tests/              # Test files
+├── types/              # TypeScript types
+├── utils/              # Utility functions
+├── App.tsx             # Main App Component
+└── index.css           # Entry styles
+```
+#### Rules
+-   **Shared vs Feature**:
+    -   **Shared**: Reusable UI (Buttons, Modals) goes to `src/components`. Shared logic goes to `src/hooks`.
+    -   **Feature**: Page-specific, non-reusable items stay in `src/pages/[Feature]/...`.
+-   **Layouts**: Global structure (Header, Sidebar) goes to `src/layout`.
+-   **Context**: Use local providers for feature state (e.g., `InterviewProvider` inside the page).
+
 Frontend Rules
 Components: Use functional components with hooks. Avoid class components.
 Styling: Prioritize Tailwind CSS utility classes. Use Emotion/Styled Components only when dynamic styling is strictly necessary.
 Data Fetching: Use React Query hooks (useQuery, useMutation) for server state. Avoid useEffect for data fetching.
 Types: Define interfaces/types in src/types or co-located with components if specific. Avoid any.
-Directory Structure:
-components/: Reusable UI components.
-pages/: Route-level components.
-hooks/: Custom hooks.
-apis/: Axios instance and API request functions.
+
 Backend Rules
 Architecture: Service Oriented Architecture (SOA) with Layered Pattern.
 Controllers (/controllers):
