@@ -10,12 +10,14 @@ const InterviewContext = createContext<InterviewContextType | null>(null);
 export function InterviewProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
-  const handleSuccess = useCallback(() => {
-    navigate('/daily-interview/feedback');
+  const handleSuccess = useCallback((interviewId?: string) => {
+    navigate('/daily-interview/feedback', {
+      state: { interviewId }
+    });
   }, [navigate]);
 
   const { complete } = useInterviewCompletion({
-    onSuccess: handleSuccess,
+    onSuccess: (_, variables) => handleSuccess(variables),
     onError: handleError,
   });
 

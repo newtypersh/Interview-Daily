@@ -3,7 +3,7 @@ import { completeInterview } from '../../../apis/interview';
 import { handleError } from '../../../utils/errorHandler';
 
 interface UseInterviewCompletionProps {
-  onSuccess: () => void;
+  onSuccess: (data: any, variables: string, context: unknown) => void;
   onError: (error: Error) => void;
 }
 

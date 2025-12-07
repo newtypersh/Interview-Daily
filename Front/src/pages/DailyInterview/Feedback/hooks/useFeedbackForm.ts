@@ -10,6 +10,8 @@ export interface Question {
   id: string;
   content: string;
   order: number;
+  transcript?: string;
+  audioUrl?: string | null;
 }
 
 export const useFeedbackForm = (questions: Question[]) => {

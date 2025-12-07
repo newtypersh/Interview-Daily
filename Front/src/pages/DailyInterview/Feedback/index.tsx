@@ -1,3 +1,4 @@
+import { useLocation, Navigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -5,24 +6,30 @@ import {
   Typography,
   Button,
   Stack,
+  CircularProgress,
 } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
-import { useFeedbackForm, type Question } from './hooks/useFeedbackForm';
+import { useFeedbackForm } from './hooks/useFeedbackForm';
 import FeedbackItem from './components/FeedbackItem';
-
-// Mock data
-const mockQuestions: Question[] = [
-  { id: '1', content: '1분 자기소개 시작해주세요', order: 1 },
-  { id: '2', content: '만일 1분 자기소개에서 말한 1번째 경험을 어떻게 진행했었나요?', order: 2 },
-];
-
-// Mock answers - 실제로는 녹음된 답변 데이터를 받아올 것
-const mockAnswers: Record<string, string> = {
-  '1': '안녕하세요. 저는 3년차 프론트엔드 개발자입니다. 주로 React와 TypeScript를 사용하여 웹 애플리케이션을 개발해왔으며, 최근에는 Next.js를 활용한 프로젝트에 참여하고 있습니다.',
-  '2': '해당 프로젝트에서는 먼저 요구사항을 분석하고, 팀원들과 함께 기술 스택을 선정했습니다. 그 후 컴포넌트 설계를 진행하고, 점진적으로 기능을 구현해나갔습니다.',
-};
+import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 
 export default function Feedback() {
+  const location = useLocation();
+  // Location state에서 interviewId 가져오기
+  const interviewId = location.state?.interviewId as string | undefined;
+
+  const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
+  
+  // API 데이터를 UI 포맷으로 변환
+  const questions = interview?.answers.map(a => ({
+    id: a.questionId, // 답변 ID가 아닌 질문 ID를 식별자로 사용 (일관성 유지)
+    content: a.questionContent,
+    order: a.sequence,
+    answerId: a.id, // 답변 고유 ID도 필요할 수 있으므로 저장 (useFeedbackForm에서 활용 가능성)
+    audioUrl: a.audioUrl,
+    transcript: a.transcriptText,
+  })) || [];
+
   const {
     feedbacks,
     playingAudio,
@@ -30,7 +37,29 @@ export default function Feedback() {
     handleContentChange,
     handlePlayAudio,
     handleSubmit,
-  } = useFeedbackForm(mockQuestions);
+  } = useFeedbackForm(questions);
+
+  if (!interviewId) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'white' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error || !interview) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'white' }}>
+        <Typography color="error">
+          인터뷰 데이터를 불러들이는데 실패했습니다.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'white', py: 6 }}>
@@ -64,15 +93,15 @@ export default function Feedback() {
 
           {/* Feedback Forms */}
           <Stack spacing={4}>
-            {mockQuestions.map((question, index) => (
+            {questions.map((q, index) => (
               <FeedbackItem
-                key={question.id}
-                question={question}
+                key={q.id}
+                question={q}
                 index={index}
-                answer={mockAnswers[question.id]}
-                feedback={feedbacks[question.id]}
-                isPlaying={playingAudio === question.id}
-                onPlayAudio={handlePlayAudio}
+                answer={q.transcript || '답변 내용이 없습니다.'}
+                feedback={feedbacks[q.id]}
+                isPlaying={playingAudio === q.id}
+                onPlayAudio={() => q.audioUrl && handlePlayAudio(q.id)} // 오디오 URL이 있을 때만 재생 트리거
                 onRatingChange={handleRatingChange}
                 onContentChange={handleContentChange}
               />
