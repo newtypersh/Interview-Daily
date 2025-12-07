@@ -45,3 +45,4 @@ export type InterviewSession = {
 export * from './feedbackTemplate';
 export * from './history';
 export * from './interview';
+export * from './feedback';

@@ -13,6 +13,7 @@ import { useFeedbackForm } from './hooks/useFeedbackForm';
 import FeedbackItem from './components/FeedbackItem';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTemplate';
+import { useSubmitFeedback } from '../../../react-query/mutation/useSubmitFeedback';
 
 export default function Feedback() {
   const location = useLocation();
@@ -41,8 +42,40 @@ export default function Feedback() {
     handleRatingChange,
     handleContentChange,
     handlePlayAudio,
-    handleSubmit,
   } = useFeedbackForm(questions, templateContent);
+
+  const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId || '');
+
+  const onSubmit = () => {
+    if (!interviewId) return;
+
+    const formattedFeedbacks = Object.entries(feedbacks).map(([questionId, feedback]) => {
+      // Find the answerId for the corresponding questionId
+      const question = questions.find(q => q.id === questionId);
+      if (!question?.answerId) return null;
+
+      return {
+        answerId: question.answerId,
+        score: feedback.rating,
+        comment: feedback.content,
+      };
+    }).filter((item): item is { answerId: string; score: number; comment: string } => item !== null);
+
+    if (formattedFeedbacks.length === 0) {
+      alert('제출할 피드백이 없습니다.');
+      return;
+    }
+
+    submitFeedback({ feedbacks: formattedFeedbacks }, {
+      onSuccess: () => {
+        alert('피드백이 성공적으로 제출되었습니다.');
+        // Navigate or update state as needed
+      },
+      onError: () => {
+        alert('피드백 제출에 실패했습니다.');
+      }
+    });
+  };
 
   if (!interviewId) {
     return <Navigate to="/" replace />;
@@ -131,8 +164,9 @@ export default function Feedback() {
               fullWidth
               variant="contained"
               size="large"
-              endIcon={<SendIcon />}
-              onClick={handleSubmit}
+              endIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
+              onClick={onSubmit}
+              disabled={isSubmitting}
               sx={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                 py: 2,

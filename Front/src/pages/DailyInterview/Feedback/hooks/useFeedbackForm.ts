@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export interface QuestionFeedback {
   rating: number;
@@ -12,10 +11,10 @@ export interface Question {
   order: number;
   transcript?: string;
   audioUrl?: string | null;
+  answerId?: string;
 }
 
 export const useFeedbackForm = (questions: Question[], defaultContent?: string) => {
-  const navigate = useNavigate();
   const [feedbacks, setFeedbacks] = useState<Record<string, QuestionFeedback>>({});
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
@@ -69,11 +68,7 @@ export const useFeedbackForm = (questions: Question[], defaultContent?: string) 
     }
   };
 
-  const handleSubmit = () => {
-    // TODO: Save feedbacks to backend
-    console.log('Feedbacks:', feedbacks);
-    navigate('/');
-  };
+
 
   return {
     feedbacks,
@@ -81,6 +76,5 @@ export const useFeedbackForm = (questions: Question[], defaultContent?: string) 
     handleRatingChange,
     handleContentChange,
     handlePlayAudio,
-    handleSubmit,
   };
 };
