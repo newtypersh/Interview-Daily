@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getFeedbackTemplates, updateFeedbackTemplate, type FeedbackTemplateDto } from '../apis/feedbackTemplate';
+import { getFeedbackTemplates, updateFeedbackTemplate } from '../apis/feedbackTemplate';
+import type { FeedbackTemplateDto } from '../types';
 import { INTERVIEW_CATEGORIES, CATEGORY_TITLES, CATEGORY_LIST } from '../constants/interview';
 
 export interface UI_FeedbackTemplate {

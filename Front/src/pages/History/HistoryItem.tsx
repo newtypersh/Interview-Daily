@@ -1,6 +1,6 @@
 import { Paper, Box, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import type { InterviewHistoryItem } from '../../apis/history';
+import type { InterviewHistoryItem } from '../../types';
 
 interface HistoryItemProps {
   interview: InterviewHistoryItem;
