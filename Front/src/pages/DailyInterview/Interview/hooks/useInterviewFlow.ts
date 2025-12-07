@@ -3,13 +3,12 @@ import { useRecording } from '../../../../hooks/useRecording';
 import { useInterviewQuestions } from '../../../../react-query/mutation/DailyInterview/useInterviewQuestions';
 import { useInterviewSession } from './useInterviewSession';
 import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
+import type { InterviewContextType } from '../../../../types';
 
 interface UseInterviewFlowProps {
-  onComplete: () => void;
+  onComplete: (interviewId: string) => void;
   onError: (error: Error) => void;
 }
-
-import type { InterviewContextType } from '../../../../types';
 
 export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps): InterviewContextType => {
   // 1. Core Hooks & Data
@@ -43,17 +42,7 @@ export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps)
     if (data?.answer?.id) {
        setCurrentAnswerId(data.answer.id);
     }
-    
-    // Auto-complete only if it's the last question? 
-    // Plan said: "Update submitAnswer to NOT call toNextQuestion on success." 
-    // "Instead, on success, set currentAnswerId."
-    if (isLastQuestion) {
-      // For last question, we might still want to show STT?
-      // User said "1번 방식(Polling)".
-      // Let's keep it manual for now. User must click "Next" or "Complete".
-      // But button says "피드백 작성하기" for last question.
-    }
-  }, [isLastQuestion]);
+  }, []);
 
   const { submitAudio, isSubmitting, error: submissionError } = useAnswerSubmission({
     interviewId,
@@ -67,6 +56,12 @@ export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps)
     }
   }, [recording.mediaBlobUrl, currentQuestion, submitAudio]);
 
+  const handleComplete = useCallback(() => {
+    if (interviewId) {
+      onComplete(interviewId);
+    }
+  }, [interviewId, onComplete]);
+
   return {
     session: {
       currentQuestion,
@@ -76,7 +71,7 @@ export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps)
       isLastQuestion,
       toNextQuestion,
       toPrevQuestion,
-      completeInterview: onComplete,
+      completeInterview: handleComplete,
     },
     recording: {
       isActive: recording.isRecording,

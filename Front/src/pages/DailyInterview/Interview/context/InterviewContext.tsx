@@ -1,18 +1,27 @@
 import { createContext, useContext, useCallback, type ReactNode } from 'react';
-import { useInterviewFlow } from '../hooks/useInterviewFlow';
-import { handleError } from '../../../../utils/errorHandler';
 import { useNavigate } from 'react-router-dom';
+import { useInterviewFlow } from '../hooks/useInterviewFlow';
+import { useInterviewCompletion } from '../../../../react-query/mutation/DailyInterview/useInterviewCompletion';
+import { handleError } from '../../../../utils/errorHandler';
 import type { InterviewContextType } from '../../../../types';
-
 
 const InterviewContext = createContext<InterviewContextType | null>(null);
 
 export function InterviewProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
-  const handleComplete = useCallback(() => {
+  const handleSuccess = useCallback(() => {
     navigate('/daily-interview/feedback');
   }, [navigate]);
+
+  const { complete } = useInterviewCompletion({
+    onSuccess: handleSuccess,
+    onError: handleError,
+  });
+
+  const handleComplete = useCallback((interviewId: string) => {
+    complete(interviewId);
+  }, [complete]);
 
   const interviewLogic = useInterviewFlow({
     onComplete: handleComplete,
