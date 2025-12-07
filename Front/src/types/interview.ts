@@ -16,6 +16,7 @@ export interface InterviewDto {
   id: string;
   userId: string;
   questionSetId: string;
+  category?: string;
   day: string | null;
   interviewedAt: string | null;
   createdAt: string | null;

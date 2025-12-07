@@ -164,7 +164,8 @@ export async function findInterviewAnswers(interviewId, userId) {
 
     const interview = await prisma.interview.findUnique({ 
         where: { id: iId }, 
-        include: {
+            include: {
+            questionSet: { select: { category: true } },
             answers: {
                 orderBy: { sequence: "asc" },
                 include: { question: true },

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export interface QuestionFeedback {
@@ -14,15 +14,34 @@ export interface Question {
   audioUrl?: string | null;
 }
 
-export const useFeedbackForm = (questions: Question[]) => {
+export const useFeedbackForm = (questions: Question[], defaultContent?: string) => {
   const navigate = useNavigate();
-  const [feedbacks, setFeedbacks] = useState<Record<string, QuestionFeedback>>(
-    questions.reduce((acc, q) => ({
-      ...acc,
-      [q.id]: { rating: 0, content: '' }
-    }), {})
-  );
+  const [feedbacks, setFeedbacks] = useState<Record<string, QuestionFeedback>>({});
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+
+  // Initialize feedbacks or update them when defaultContent changes
+  useEffect(() => {
+    setFeedbacks(prev => {
+      const newFeedbacks = { ...prev };
+      let hasChanges = false;
+
+      questions.forEach(q => {
+        // If feedback for this question doesn't exist, create it
+        if (!newFeedbacks[q.id]) {
+          newFeedbacks[q.id] = { rating: 0, content: defaultContent || '' };
+          hasChanges = true;
+        } 
+        // If it exists but content is empty and we have a defaultContent, update it
+        else if (!newFeedbacks[q.id].content && defaultContent) {
+          newFeedbacks[q.id] = { ...newFeedbacks[q.id], content: defaultContent };
+          hasChanges = true;
+        }
+      });
+
+      return hasChanges ? newFeedbacks : prev;
+    });
+  }, [questions, defaultContent]);
+
 
   const handleRatingChange = (questionId: string, rating: number | null) => {
     setFeedbacks({

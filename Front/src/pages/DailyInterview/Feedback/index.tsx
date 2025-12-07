@@ -12,6 +12,7 @@ import { Send as SendIcon } from '@mui/icons-material';
 import { useFeedbackForm } from './hooks/useFeedbackForm';
 import FeedbackItem from './components/FeedbackItem';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
+import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTemplate';
 
 export default function Feedback() {
   const location = useLocation();
@@ -19,6 +20,10 @@ export default function Feedback() {
   const interviewId = location.state?.interviewId as string | undefined;
 
   const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
+  
+  // 카테고리 기반 템플릿 조회
+  const { templates } = useFeedbackTemplate(interview?.category);
+  const templateContent = templates?.[0]?.templateText; // 첫 번째 템플릿 사용
   
   // API 데이터를 UI 포맷으로 변환
   const questions = interview?.answers.map(a => ({
@@ -37,7 +42,7 @@ export default function Feedback() {
     handleContentChange,
     handlePlayAudio,
     handleSubmit,
-  } = useFeedbackForm(questions);
+  } = useFeedbackForm(questions, templateContent);
 
   if (!interviewId) {
     return <Navigate to="/" replace />;
@@ -93,6 +98,18 @@ export default function Feedback() {
 
           {/* Feedback Forms */}
           <Stack spacing={4}>
+            {/* Template Display */}
+            {templateContent && (
+              <Box sx={{ p: 3, bgcolor: '#f8f9fa', borderRadius: 2, mb: 2 }}>
+                <Typography variant="h6" gutterBottom color="primary">
+                  💡 피드백 가이드 ({interview?.category || 'General'})
+                </Typography>
+                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                  {templateContent}
+                </Typography>
+              </Box>
+            )}
+
             {questions.map((q, index) => (
               <FeedbackItem
                 key={q.id}
