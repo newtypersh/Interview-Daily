@@ -5,15 +5,16 @@ import {
   Paper,
   Typography,
   Button,
-  Stack,
   CircularProgress,
 } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
 import { useFeedbackForm } from './hooks/useFeedbackForm';
-import FeedbackItem from './components/FeedbackItem';
+import { useFeedbackSubmission } from './hooks/useFeedbackSubmission';
+import FeedbackHeader from './components/FeedbackHeader';
+import FeedbackTemplateGuide from './components/FeedbackTemplateGuide';
+import FeedbackList from './components/FeedbackList';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTemplate';
-import { useSubmitFeedback } from '../../../react-query/mutation/useSubmitFeedback';
 
 export default function Feedback() {
   const location = useLocation();
@@ -44,38 +45,11 @@ export default function Feedback() {
     handlePlayAudio,
   } = useFeedbackForm(questions, templateContent);
 
-  const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId || '');
-
-  const onSubmit = () => {
-    if (!interviewId) return;
-
-    const formattedFeedbacks = Object.entries(feedbacks).map(([questionId, feedback]) => {
-      // Find the answerId for the corresponding questionId
-      const question = questions.find(q => q.id === questionId);
-      if (!question?.answerId) return null;
-
-      return {
-        answerId: question.answerId,
-        score: feedback.rating,
-        comment: feedback.content,
-      };
-    }).filter((item): item is { answerId: string; score: number; comment: string } => item !== null);
-
-    if (formattedFeedbacks.length === 0) {
-      alert('제출할 피드백이 없습니다.');
-      return;
-    }
-
-    submitFeedback({ feedbacks: formattedFeedbacks }, {
-      onSuccess: () => {
-        alert('피드백이 성공적으로 제출되었습니다.');
-        // Navigate or update state as needed
-      },
-      onError: () => {
-        alert('피드백 제출에 실패했습니다.');
-      }
-    });
-  };
+  const { submit, isSubmitting } = useFeedbackSubmission({
+    interviewId,
+    questions,
+    feedbacks
+  });
 
   if (!interviewId) {
     return <Navigate to="/" replace />;
@@ -102,70 +76,28 @@ export default function Feedback() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'white', py: 6 }}>
       <Container maxWidth="md">
-        <Paper
-          elevation={3}
-          sx={{
-            p: { xs: 3, md: 6 },
-            borderRadius: 3,
-          }}
-        >
-          {/* Header */}
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography
-              variant="h4"
-              component="h1"
-              sx={{
-                fontWeight: 700,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                mb: 1,
-              }}
-            >
-              피드백 작성
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              각 질문에 대한 답변을 평가하고 피드백을 작성해주세요
-            </Typography>
+        <Paper elevation={3} sx={{ p: { xs: 3, md: 6 }, borderRadius: 3 }}>
+          <FeedbackHeader />
+          <FeedbackTemplateGuide content={templateContent} category={interview?.category} />
+          
+          <Box sx={{ mb: 6 }}>
+            <FeedbackList
+              questions={questions}
+              feedbacks={feedbacks}
+              playingAudio={playingAudio}
+              onPlayAudio={handlePlayAudio}
+              onRatingChange={handleRatingChange}
+              onContentChange={handleContentChange}
+            />
           </Box>
 
-          {/* Feedback Forms */}
-          <Stack spacing={4}>
-            {/* Template Display */}
-            {templateContent && (
-              <Box sx={{ p: 3, bgcolor: '#f8f9fa', borderRadius: 2, mb: 2 }}>
-                <Typography variant="h6" gutterBottom color="primary">
-                  💡 피드백 가이드 ({interview?.category || 'General'})
-                </Typography>
-                <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                  {templateContent}
-                </Typography>
-              </Box>
-            )}
-
-            {questions.map((q, index) => (
-              <FeedbackItem
-                key={q.id}
-                question={q}
-                index={index}
-                answer={q.transcript || '답변 내용이 없습니다.'}
-                feedback={feedbacks[q.id]}
-                isPlaying={playingAudio === q.id}
-                onPlayAudio={() => q.audioUrl && handlePlayAudio(q.id)} // 오디오 URL이 있을 때만 재생 트리거
-                onRatingChange={handleRatingChange}
-                onContentChange={handleContentChange}
-              />
-            ))}
-          </Stack>
-
-          {/* Submit Button */}
           <Box sx={{ mt: 6 }}>
             <Button
               fullWidth
               variant="contained"
               size="large"
               endIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
-              onClick={onSubmit}
+              onClick={submit}
               disabled={isSubmitting}
               sx={{
                 background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
