@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getInterviews, type InterviewHistoryResponse } from '../apis/history';
+import { getInterviews } from '../../apis/history';
+import type { InterviewHistoryResponse } from '../../types';
 
 export const useInterviewHistory = (limit: number = 20) => {
   return useInfiniteQuery<InterviewHistoryResponse, Error>({

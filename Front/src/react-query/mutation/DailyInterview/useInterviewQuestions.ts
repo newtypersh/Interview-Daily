@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { startInterview } from '../apis/interview';
-import type { Question } from '../types';
+import { startInterview } from '../../../apis/interview';
+import { handleError } from '../../../utils/errorHandler';
+import type { Question } from '../../../types';
 
 export const useInterviewQuestions = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -25,8 +26,7 @@ export const useInterviewQuestions = () => {
       }
     },
     onError: (err: any) => {
-      console.error('Failed to start interview:', err);
-      // Logic for 409 Conflict can be added here
+      handleError(err, '인터뷰를 시작하는 중 문제가 발생했습니다.');
     }
   });
 

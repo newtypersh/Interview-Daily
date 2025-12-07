@@ -1,9 +1,17 @@
 import { api } from './axios';
 import type { InterviewHistoryResponse } from '../types';
 
-export const getInterviewHistory = async ({ pageParam = 0 }: { pageParam?: number }) => {
-  const response = await api.get<InterviewHistoryResponse>(
-    `/interviews/history?cursor=${pageParam}&limit=10`
-  );
+export const getInterviews = async (
+  limit: number,
+  cursorCreatedAt?: string,
+  cursorId?: number
+) => {
+  const params: Record<string, any> = { limit };
+  if (cursorCreatedAt) params.cursorCreatedAt = cursorCreatedAt;
+  if (cursorId) params.cursorId = cursorId;
+
+  const response = await api.get<InterviewHistoryResponse>('/interviews/history', {
+    params,
+  });
   return response.data;
 };

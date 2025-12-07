@@ -42,6 +42,9 @@ src/
 ├── hooks/              # Shared custom hooks
 ├── layout/             # Layout components (Header, Footer)
 ├── pages/              # Page components
+├── react-query/        # React Query Configuration
+│   ├── mutation/       # Global Mutations
+│   └── queries/        # Global Queries
 ├── styles/             # Global styles
 ├── tests/              # Test files
 ├── types/              # TypeScript types

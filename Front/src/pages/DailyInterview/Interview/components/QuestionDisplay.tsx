@@ -2,7 +2,8 @@ import { Typography, Paper } from '@mui/material';
 import { useInterviewContext } from '../context/InterviewContext';
 
 export default function QuestionDisplay() {
-  const { currentQuestion } = useInterviewContext();
+  const { session } = useInterviewContext();
+  const { currentQuestion } = session;
 
   // Safety check, although parent should handle it
   if (!currentQuestion) return null;

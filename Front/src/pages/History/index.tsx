@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
-import { useInterviewHistory } from '../../hooks/useInterviewHistory';
+import { useInterviewHistory } from '../../react-query/queries/useInterviewHistory';
 import HistoryItem from './HistoryItem';
 import EmptyState from './EmptyState';
 

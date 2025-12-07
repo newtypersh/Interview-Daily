@@ -7,10 +7,9 @@ import { InterviewProvider, useInterviewContext } from './context/InterviewConte
 
 // Inner component to consume context
 function InterviewContent() {
-  const {
-    currentQuestion,
-    recordingStopped,
-  } = useInterviewContext();
+  const { session, recording } = useInterviewContext();
+  const { currentQuestion } = session;
+  const { isStopped } = recording;
 
   // Safety check for currentQuestion (it might be undefined during loading/empty state)
   if (!currentQuestion) {
@@ -41,7 +40,7 @@ function InterviewContent() {
           <QuestionDisplay />
 
           <Stack spacing={3}>
-            {!recordingStopped ? (
+            {!isStopped ? (
               <RecordingSection />
             ) : (
               <AnswerReview />

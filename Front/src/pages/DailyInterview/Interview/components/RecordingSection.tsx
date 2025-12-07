@@ -3,9 +3,10 @@ import { Mic as MicIcon, Stop as StopIcon, FiberManualRecord as RecordIcon } fro
 import { useInterviewContext } from '../context/InterviewContext';
 
 export default function RecordingSection() {
-  const { isRecording, startRecording, stopRecording } = useInterviewContext();
+  const { recording } = useInterviewContext();
+  const { isActive, start, stop } = recording;
 
-  if (isRecording) {
+  if (isActive) {
     return (
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Alert
@@ -28,7 +29,7 @@ export default function RecordingSection() {
           variant="contained"
           size="large"
           startIcon={<StopIcon />}
-          onClick={stopRecording}
+          onClick={stop}
           sx={{
             bgcolor: '#dc2626',
             py: 2,
@@ -51,7 +52,7 @@ export default function RecordingSection() {
       variant="contained"
       size="large"
       startIcon={<MicIcon />}
-      onClick={startRecording}
+      onClick={start}
       sx={{
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         py: 2,

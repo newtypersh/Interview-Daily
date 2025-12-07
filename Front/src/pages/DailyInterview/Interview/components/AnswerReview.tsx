@@ -3,7 +3,10 @@ import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon } from '@mui/ico
 import { useInterviewContext } from '../context/InterviewContext';
 
 export default function AnswerReview() {
-  const { currentQuestion, isLastQuestion, retryRecording, submitAnswer, isSubmitting } = useInterviewContext();
+  const { session, recording, submission } = useInterviewContext();
+  const { currentQuestion, isLastQuestion } = session;
+  const { retry } = recording;
+  const { submit, isSubmitting } = submission;
 
   if (!currentQuestion) return null;
 
@@ -54,7 +57,7 @@ export default function AnswerReview() {
           variant="outlined"
           size="large"
           startIcon={<ReplayIcon />}
-          onClick={retryRecording}
+          onClick={retry}
           disabled={isSubmitting}
           sx={{
             borderColor: '#667eea',
@@ -73,7 +76,7 @@ export default function AnswerReview() {
           variant="contained"
           size="large"
           endIcon={!isLastQuestion && <NavigateNextIcon />}
-          onClick={() => submitAnswer()}
+          onClick={() => submit()}
           disabled={isSubmitting}
           sx={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',

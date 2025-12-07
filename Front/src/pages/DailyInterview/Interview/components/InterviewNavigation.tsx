@@ -3,7 +3,8 @@ import { NavigateNext, NavigateBefore } from '@mui/icons-material';
 import { useInterviewContext } from '../context/InterviewContext';
 
 export default function InterviewNavigation() {
-  const { currentIndex, totalQuestions, isFirstQuestion, isLastQuestion, toPrevQuestion, toNextQuestion } = useInterviewContext();
+  const { session } = useInterviewContext();
+  const { currentIndex, totalQuestions, isFirstQuestion, isLastQuestion, toPrevQuestion, toNextQuestion } = session;
 
   const progress = ((currentIndex + 1) / totalQuestions) * 100;
 

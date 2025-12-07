@@ -1,3 +1,5 @@
+import type { Question } from './index';
+
 export interface InterviewAnswerDto {
   id: string;
   interviewId: string;
@@ -26,4 +28,41 @@ export interface StartInterviewResponse {
     interview: InterviewDto;
   };
   error?: any;
+}
+
+export interface InterviewSessionState {
+  currentQuestion: Question | undefined;
+  currentIndex: number;
+  totalQuestions: number;
+  isFirstQuestion: boolean;
+  isLastQuestion: boolean;
+  toNextQuestion: () => void;
+  toPrevQuestion: () => void;
+}
+
+export interface InterviewRecording {
+  isActive: boolean;
+  isStopped: boolean;
+  start: () => void;
+  stop: () => void;
+  retry: () => void;
+}
+
+export interface InterviewSubmission {
+  isSubmitting: boolean;
+  error: Error | null;
+  submit: () => void;
+}
+
+export interface InterviewStatus {
+  isLoading: boolean;
+  error: Error | null;
+  interviewId: string | null;
+}
+
+export interface InterviewContextType {
+  session: InterviewSessionState;
+  recording: InterviewRecording;
+  submission: InterviewSubmission;
+  status: InterviewStatus;
 }

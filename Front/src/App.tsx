@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Box, CircularProgress } from '@mui/material';
 import Header from './components/layout/Header';
 import Home from './pages/Home';
-import DailyInterview from './pages/DailyInterview';
+import DailyInterview from './pages/DailyInterview/Interview';
 import Feedback from './pages/DailyInterview/Feedback';
 import Settings from './pages/Settings';
 import History from './pages/History';
