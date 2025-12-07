@@ -1,14 +1,37 @@
-import { Paper, Stack, Box, Typography, Divider, Button } from '@mui/material';
-import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon } from '@mui/icons-material';
+import { useEffect } from 'react';
+import { Paper, Stack, Box, Typography, Divider, Button, CircularProgress } from '@mui/material';
+import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon, Check as CheckIcon } from '@mui/icons-material';
 import { useInterviewContext } from '../context/InterviewContext';
+import { useTranscript } from '../../../../react-query/queries/useTranscript';
 
 export default function AnswerReview() {
-  const { session, recording, submission } = useInterviewContext();
-  const { currentQuestion, isLastQuestion } = session;
+  const { session, recording, submission, status } = useInterviewContext();
+  const { currentQuestion, isLastQuestion, toNextQuestion, completeInterview } = session;
   const { retry } = recording;
-  const { submit, isSubmitting } = submission;
+  const { submit, isSubmitting, currentAnswerId } = submission;
+  const { interviewId } = status;
+
+  // Auto-submit when component mounts (Review phase starts)
+  useEffect(() => {
+    submit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only on mount
+
+  // Poll for transcript
+  const { transcript, isTranscribing } = useTranscript({
+    interviewId,
+    answerId: currentAnswerId || null,
+  });
 
   if (!currentQuestion) return null;
+
+  const handleNext = () => {
+    if (isLastQuestion) {
+      completeInterview();
+    } else {
+      toNextQuestion();
+    }
+  };
 
   return (
     <>
@@ -32,7 +55,7 @@ export default function AnswerReview() {
           <Divider />
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-              답변
+              답변 (STT 변환 결과)
             </Typography>
             <Paper
               elevation={0}
@@ -41,11 +64,27 @@ export default function AnswerReview() {
                 p: 2,
                 minHeight: 100,
                 borderRadius: 1,
+                display: 'flex',
+                alignItems: isTranscribing ? 'center' : 'flex-start',
+                justifyContent: isTranscribing ? 'center' : 'flex-start',
               }}
             >
-              <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                녹음된 답변이 여기에 표시됩니다...
-              </Typography>
+              {isTranscribing ? (
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <CircularProgress size={20} />
+                  <Typography variant="body2" color="text.secondary">
+                    변환 중...
+                  </Typography>
+                </Stack>
+              ) : transcript ? (
+                <Typography variant="body1" color="text.primary">
+                  {transcript}
+                </Typography>
+              ) : (
+                <Typography variant="body2" color="text.secondary" fontStyle="italic">
+                   {isSubmitting ? '답변 저장 중...' : '변환된 텍스트가 없습니다.'}
+                </Typography>
+              )}
             </Paper>
           </Box>
         </Stack>
@@ -58,7 +97,7 @@ export default function AnswerReview() {
           size="large"
           startIcon={<ReplayIcon />}
           onClick={retry}
-          disabled={isSubmitting}
+          disabled={isSubmitting} // Disable retry while submitting to avoid confusion
           sx={{
             borderColor: '#667eea',
             color: '#667eea',
@@ -75,9 +114,9 @@ export default function AnswerReview() {
           fullWidth
           variant="contained"
           size="large"
-          endIcon={!isLastQuestion && <NavigateNextIcon />}
-          onClick={() => submit()}
-          disabled={isSubmitting}
+          endIcon={!isLastQuestion ? <NavigateNextIcon /> : <CheckIcon />}
+          onClick={handleNext}
+          disabled={isSubmitting} // Can navigate only after submission is done (answerId received)
           sx={{
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             fontWeight: 600,
@@ -86,7 +125,7 @@ export default function AnswerReview() {
             },
           }}
         >
-          {isSubmitting ? '저장 중...' : (isLastQuestion ? '피드백 작성하기' : '다음 질문')}
+          {isLastQuestion ? '피드백 작성하기' : '다음 질문'}
         </Button>
       </Stack>
     </>

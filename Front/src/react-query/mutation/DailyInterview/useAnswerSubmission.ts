@@ -3,7 +3,7 @@ import { uploadAnswerAudio } from '../../../apis/interview';
 
 interface UseAnswerSubmissionProps {
   interviewId: string | null;
-  onSuccess: () => void;
+  onSuccess: (data: any) => void;
   onError: (error: Error) => void;
 }
 

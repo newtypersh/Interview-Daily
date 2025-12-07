@@ -9,6 +9,7 @@ export interface InterviewAnswerDto {
   createdAt: string | null;
   updatedAt: string | null;
   questionContent: string;
+  transcriptText?: string;
 }
 
 export interface InterviewDto {
@@ -38,6 +39,7 @@ export interface InterviewSessionState {
   isLastQuestion: boolean;
   toNextQuestion: () => void;
   toPrevQuestion: () => void;
+  completeInterview: () => void;
 }
 
 export interface InterviewRecording {
@@ -52,6 +54,7 @@ export interface InterviewSubmission {
   isSubmitting: boolean;
   error: Error | null;
   submit: () => void;
+  currentAnswerId?: string | null;
 }
 
 export interface InterviewStatus {
