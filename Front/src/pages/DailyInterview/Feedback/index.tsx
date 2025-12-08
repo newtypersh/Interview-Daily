@@ -15,6 +15,7 @@ import FeedbackTemplateGuide from './components/FeedbackTemplateGuide';
 import FeedbackList from './components/FeedbackList';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTemplate';
+import { mapInterviewToQuestions } from './utils/feedbackMapper';
 
 export default function Feedback() {
   const location = useLocation();
@@ -28,14 +29,7 @@ export default function Feedback() {
   const templateContent = templates?.[0]?.templateText; // 첫 번째 템플릿 사용
   
   // API 데이터를 UI 포맷으로 변환
-  const questions = interview?.answers.map(a => ({
-    id: a.questionId, // 답변 ID가 아닌 질문 ID를 식별자로 사용 (일관성 유지)
-    content: a.questionContent,
-    order: a.sequence,
-    answerId: a.id, // 답변 고유 ID도 필요할 수 있으므로 저장 (useFeedbackForm에서 활용 가능성)
-    audioUrl: a.audioUrl,
-    transcript: a.transcriptText,
-  })) || [];
+  const questions = mapInterviewToQuestions(interview?.answers);
 
   const {
     feedbacks,
