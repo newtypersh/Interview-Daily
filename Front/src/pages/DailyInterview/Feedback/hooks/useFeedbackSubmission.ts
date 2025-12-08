@@ -1,4 +1,4 @@
-import { useSubmitFeedback } from '../../../react-query/mutation/useSubmitFeedback';
+import { useSubmitFeedback } from '../../../../react-query/mutation/useSubmitFeedback';
 import type { Question, QuestionFeedback } from './useFeedbackForm';
 
 interface UseFeedbackSubmissionProps {
