@@ -1,9 +1,12 @@
 import { Stack, LinearProgress, Typography, Box, IconButton } from '@mui/material';
 import { NavigateNext, NavigateBefore } from '@mui/icons-material';
-import { useInterviewContext } from '../context/InterviewContext';
+import type { InterviewSessionState } from '../../../../types';
 
-export default function InterviewNavigation() {
-  const { session } = useInterviewContext();
+interface InterviewNavigationProps {
+  session: InterviewSessionState;
+}
+
+export default function InterviewNavigation({ session }: InterviewNavigationProps) {
   const { currentIndex, totalQuestions, isFirstQuestion, isLastQuestion, toPrevQuestion, toNextQuestion } = session;
 
   const progress = ((currentIndex + 1) / totalQuestions) * 100;

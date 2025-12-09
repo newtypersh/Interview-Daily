@@ -1,9 +1,11 @@
 import { Typography, Paper } from '@mui/material';
-import { useInterviewContext } from '../context/InterviewContext';
+import type { Question } from '../../../../types';
 
-export default function QuestionDisplay() {
-  const { session } = useInterviewContext();
-  const { currentQuestion } = session;
+interface QuestionDisplayProps {
+  currentQuestion: Question | undefined;
+}
+
+export default function QuestionDisplay({ currentQuestion }: QuestionDisplayProps) {
 
   // Safety check, although parent should handle it
   if (!currentQuestion) return null;

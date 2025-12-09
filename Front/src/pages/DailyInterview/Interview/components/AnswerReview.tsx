@@ -1,11 +1,17 @@
 import { useEffect } from 'react';
 import { Paper, Stack, Box, Typography, Divider, Button, CircularProgress } from '@mui/material';
 import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon, Check as CheckIcon } from '@mui/icons-material';
-import { useInterviewContext } from '../context/InterviewContext';
 import { useTranscript } from '../../../../react-query/queries/useTranscript';
+import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewStatus } from '../../../../types';
 
-export default function AnswerReview() {
-  const { session, recording, submission, status } = useInterviewContext();
+interface AnswerReviewProps {
+  session: InterviewSessionState;
+  recording: InterviewRecording;
+  submission: InterviewSubmission;
+  status: InterviewStatus;
+}
+
+export default function AnswerReview({ session, recording, submission, status }: AnswerReviewProps) {
   const { currentQuestion, isLastQuestion, toNextQuestion, completeInterview } = session;
   const { retry } = recording;
   const { submit, isSubmitting, currentAnswerId } = submission;

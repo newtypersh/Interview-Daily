@@ -1,30 +1,40 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useInterviewQuestions } from '../../../../react-query/mutation/DailyInterview/useInterviewQuestions';
 import { useInterviewSession } from './useInterviewSession';
 import { useRecordingManager } from './useRecordingManager';
 import { useSubmissionManager } from './useSubmissionManager';
+import { useInterviewCompletion } from '../../../../react-query/mutation/DailyInterview/useInterviewCompletion';
+import { handleError } from '../../../../utils/errorHandler';
 import type { InterviewContextType } from '../../../../types';
 
-interface UseInterviewFlowProps {
-  onComplete: (interviewId: string) => void;
-  onError: (error: Error) => void;
-}
+export const useInterviewFlow = (): InterviewContextType => {
+  const navigate = useNavigate();
 
-export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps): InterviewContextType => {
-  // 1. Data Layer
+  // 1. Completion Logic (Moved from index.tsx)
+  const { complete } = useInterviewCompletion({
+    onSuccess: (_, interviewId) => {
+      navigate('/daily-interview/feedback', {
+        state: { interviewId }
+      });
+    },
+    onError: handleError,
+  });
+
+  // 2. Data Layer
   const { questions, interviewId, isLoading, error: stepsError } = useInterviewQuestions();
 
-  // 2. Session Layer
+  // 3. Session Layer
   const session = useInterviewSession({ totalQuestions: questions.length });
 
-  // 3. Recording Layer (Auto-resets on index change)
+  // 4. Recording Layer (Auto-resets on index change)
   const recording = useRecordingManager({ resetOnIndexChange: session.currentIndex });
 
-  // 4. Submission Layer
+  // 5. Submission Layer
   const submission = useSubmissionManager({ 
     interviewId, 
     currentIndex: session.currentIndex, 
-    onError 
+    onError: handleError
   });
 
   const currentQuestion = questions[session.currentIndex];
@@ -35,9 +45,9 @@ export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps)
 
   const handleComplete = useCallback(() => {
     if (interviewId) {
-      onComplete(interviewId);
+      complete(interviewId);
     }
-  }, [interviewId, onComplete]);
+  }, [interviewId, complete]);
 
   return {
     session: {

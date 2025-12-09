@@ -3,17 +3,17 @@ import InterviewNavigation from './components/InterviewNavigation';
 import QuestionDisplay from './components/QuestionDisplay';
 import RecordingSection from './components/RecordingSection';
 import AnswerReview from './components/AnswerReview';
-import { InterviewProvider, useInterviewContext } from './context/InterviewContext';
+import { useInterviewFlow } from './hooks/useInterviewFlow';
 
-// Inner component to consume context
-function InterviewContent() {
-  const { session, recording } = useInterviewContext();
+export default function DailyInterview() {
+  const { session, recording, submission, status } = useInterviewFlow();
+
   const { currentQuestion } = session;
   const { isStopped } = recording;
 
   // Safety check for currentQuestion (it might be undefined during loading/empty state)
   if (!currentQuestion) {
-    return null; // Or a loading spinner handled inside context/components
+    return null; // Or a loading spinner handled here
   }
 
   return (
@@ -35,27 +35,24 @@ function InterviewContent() {
             borderRadius: 3,
           }}
         >
-          <InterviewNavigation />
+          <InterviewNavigation session={session} />
 
-          <QuestionDisplay />
+          <QuestionDisplay currentQuestion={currentQuestion} />
 
           <Stack spacing={3}>
             {!isStopped ? (
-              <RecordingSection />
+              <RecordingSection recording={recording} />
             ) : (
-              <AnswerReview />
+              <AnswerReview 
+                session={session}
+                recording={recording} 
+                submission={submission}
+                status={status}
+              />
             )}
           </Stack>
         </Paper>
       </Container>
     </Box>
-  );
-}
-
-export default function DailyInterview() {
-  return (
-    <InterviewProvider>
-      <InterviewContent />
-    </InterviewProvider>
   );
 }

@@ -1,9 +1,12 @@
 import { Box, Button, Alert, Typography } from '@mui/material';
 import { Mic as MicIcon, Stop as StopIcon, FiberManualRecord as RecordIcon } from '@mui/icons-material';
-import { useInterviewContext } from '../context/InterviewContext';
+import type { InterviewRecording } from '../../../../types';
 
-export default function RecordingSection() {
-  const { recording } = useInterviewContext();
+interface RecordingSectionProps {
+  recording: InterviewRecording;
+}
+
+export default function RecordingSection({ recording }: RecordingSectionProps) {
   const { isActive, start, stop } = recording;
 
   if (isActive) {
