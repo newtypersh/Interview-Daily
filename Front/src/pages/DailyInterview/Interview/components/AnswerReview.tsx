@@ -31,14 +31,6 @@ export default function AnswerReview({ session, recording, submission, status }:
 
   if (!currentQuestion) return null;
 
-  const handleNext = () => {
-    if (isLastQuestion) {
-      completeInterview();
-    } else {
-      toNextQuestion();
-    }
-  };
-
   return (
     <>
       <Paper
@@ -59,81 +51,129 @@ export default function AnswerReview({ session, recording, submission, status }:
             </Typography>
           </Box>
           <Divider />
-          <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-              답변 (STT 변환 결과)
-            </Typography>
-            <Paper
-              elevation={0}
-              sx={{
-                bgcolor: 'white',
-                p: 2,
-                minHeight: 100,
-                borderRadius: 1,
-                display: 'flex',
-                alignItems: isTranscribing ? 'center' : 'flex-start',
-                justifyContent: isTranscribing ? 'center' : 'flex-start',
-              }}
-            >
-              {isTranscribing ? (
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <CircularProgress size={20} />
-                  <Typography variant="body2" color="text.secondary">
-                    변환 중...
-                  </Typography>
-                </Stack>
-              ) : transcript ? (
-                <Typography variant="body1" color="text.primary">
-                  {transcript}
-                </Typography>
-              ) : (
-                <Typography variant="body2" color="text.secondary" fontStyle="italic">
-                   {isSubmitting ? '답변 저장 중...' : '변환된 텍스트가 없습니다.'}
-                </Typography>
-              )}
-            </Paper>
-          </Box>
+          <ReviewTranscript
+            isTranscribing={isTranscribing}
+            transcript={transcript}
+            isSubmitting={isSubmitting}
+          />
         </Stack>
       </Paper>
 
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
-        <Button
-          fullWidth
-          variant="outlined"
-          size="large"
-          startIcon={<ReplayIcon />}
-          onClick={retry}
-          disabled={isSubmitting} // Disable retry while submitting to avoid confusion
-          sx={{
-            borderColor: '#667eea',
-            color: '#667eea',
-            fontWeight: 600,
-            '&:hover': {
-              borderColor: '#667eea',
-              bgcolor: 'rgba(102, 126, 234, 0.04)',
-            },
-          }}
-        >
-          다시 녹음하기
-        </Button>
-        <Button
-          fullWidth
-          variant="contained"
-          size="large"
-          endIcon={!isLastQuestion ? <NavigateNextIcon /> : <CheckIcon />}
-          onClick={handleNext}
-          disabled={isSubmitting} // Can navigate only after submission is done (answerId received)
-          sx={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            fontWeight: 600,
-            '&:hover': {
-              background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
-            },
-          }}
-        >
-          {isLastQuestion ? '피드백 작성하기' : '다음 질문'}
-        </Button>
-      </Stack>
+      <ReviewActions
+        retry={retry}
+        isSubmitting={isSubmitting}
+        isLastQuestion={isLastQuestion}
+        onNext={isLastQuestion ? completeInterview : toNextQuestion}
+      />
     </>
+  );
+}
+
+// --- Sub Components ---
+
+interface ReviewTranscriptProps {
+  isTranscribing: boolean;
+  transcript: string | null | undefined;
+  isSubmitting: boolean;
+}
+
+function ReviewTranscript({ isTranscribing, transcript, isSubmitting }: ReviewTranscriptProps) {
+  const renderContent = () => {
+    if (isTranscribing) {
+      return (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <CircularProgress size={20} />
+          <Typography variant="body2" color="text.secondary">
+            변환 중...
+          </Typography>
+        </Stack>
+      );
+    }
+
+    if (transcript) {
+      return (
+        <Typography variant="body1" color="text.primary">
+          {transcript}
+        </Typography>
+      );
+    }
+
+    return (
+      <Typography variant="body2" color="text.secondary" fontStyle="italic">
+        {isSubmitting ? '답변 저장 중...' : '변환된 텍스트가 없습니다.'}
+      </Typography>
+    );
+  };
+
+  return (
+    <Box>
+      <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+        답변 (STT 변환 결과)
+      </Typography>
+      <Paper
+        elevation={0}
+        sx={{
+          bgcolor: 'white',
+          p: 2,
+          minHeight: 100,
+          borderRadius: 1,
+          display: 'flex',
+          alignItems: isTranscribing ? 'center' : 'flex-start',
+          justifyContent: isTranscribing ? 'center' : 'flex-start',
+        }}
+      >
+        {renderContent()}
+      </Paper>
+    </Box>
+  );
+}
+
+interface ReviewActionsProps {
+  retry: () => void;
+  isSubmitting: boolean;
+  isLastQuestion: boolean;
+  onNext: () => void;
+}
+
+function ReviewActions({ retry, isSubmitting, isLastQuestion, onNext }: ReviewActionsProps) {
+  return (
+    <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+      <Button
+        fullWidth
+        variant="outlined"
+        size="large"
+        startIcon={<ReplayIcon />}
+        onClick={retry}
+        disabled={isSubmitting} // Disable retry while submitting to avoid confusion
+        sx={{
+          borderColor: '#667eea',
+          color: '#667eea',
+          fontWeight: 600,
+          '&:hover': {
+            borderColor: '#667eea',
+            bgcolor: 'rgba(102, 126, 234, 0.04)',
+          },
+        }}
+      >
+        다시 녹음하기
+      </Button>
+      <Button
+        fullWidth
+        variant="contained"
+        size="large"
+        endIcon={!isLastQuestion ? <NavigateNextIcon /> : <CheckIcon />}
+        onClick={onNext}
+        disabled={isSubmitting} // Can navigate only after submission is done (answerId received)
+        sx={{
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          fontWeight: 600,
+          '&:hover': {
+            background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
+          },
+        }}
+      >
+        {isLastQuestion ? '피드백 작성하기' : '다음 질문'}
+      </Button>
+    </Stack>
   );
 }
