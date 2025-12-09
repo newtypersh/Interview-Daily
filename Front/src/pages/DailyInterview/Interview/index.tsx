@@ -1,14 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Paper } from '@mui/material';
-import InterviewNavigation from './components/InterviewNavigation';
-import QuestionDisplay from './components/QuestionDisplay';
-import InterviewActionArea from './components/InterviewActionArea';
 import { useInterviewQuestions } from '../../../react-query/mutation/DailyInterview/useInterviewQuestions';
 import { useInterviewSession } from './hooks/useInterviewSession';
 import { useRecordingManager } from './hooks/useRecordingManager';
 import { useSubmissionManager } from './hooks/useSubmissionManager';
 import { useInterviewCompletion } from '../../../react-query/mutation/DailyInterview/useInterviewCompletion';
 import { handleError } from '../../../utils/errorHandler';
+import DailyInterviewLayout from './components/DailyInterviewLayout';
 
 export default function DailyInterview() {
   const navigate = useNavigate();
@@ -52,7 +49,7 @@ export default function DailyInterview() {
     return null; // Or a loading spinner handled here
   }
 
-  // Construct props for components
+  // Construct props for Layout
   const sessionProps = {
     ...session,
     totalQuestions: questions.length,
@@ -76,37 +73,12 @@ export default function DailyInterview() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        bgcolor: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: 6,
-      }}
-    >
-      <Container maxWidth="md">
-        <Paper
-          elevation={3}
-          sx={{
-            p: { xs: 3, md: 6 },
-            borderRadius: 3,
-          }}
-        >
-          <InterviewNavigation session={sessionProps} />
-
-          <QuestionDisplay currentQuestion={currentQuestion} />
-
-          <InterviewActionArea 
-            session={sessionProps}
-            recording={recordingProps}
-            submission={submissionProps}
-            status={status}
-            onComplete={complete}
-          />
-        </Paper>
-      </Container>
-    </Box>
+    <DailyInterviewLayout
+      session={sessionProps}
+      recording={recordingProps}
+      submission={submissionProps}
+      status={status}
+      onComplete={complete}
+    />
   );
 }
