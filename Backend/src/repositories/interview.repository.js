@@ -4,8 +4,9 @@ import { BadRequestError, NotFoundError, ForbiddenError } from "../errors.js";
 function toBigInt(v) {
     if (typeof v === "bigint") return v;
     if (typeof v === "number") return BigInt(v);
-    if (typeof v === "string") return BigInt(v);
-    throw new Error("invalid id");
+    if (typeof v === "string" && /^-?\d+$/.test(v)) return BigInt(v); // 정수 형태 문자열만 허용
+    console.error(`[toBigInt] Invalid value: ${v} (Type: ${typeof v})`);
+    throw new Error(`invalid id: ${v} (Type: ${typeof v})`);
 }
 
 export async function findInterviewByUserAndDay(userId, day) {

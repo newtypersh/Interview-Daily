@@ -33,11 +33,11 @@ export async function startInterview({ userId, strategy = "random" }) {
 };
 
 export async function getInterviewById({ interviewId, userId }) {
-    return repo.findInterviewById({ interviewId, userId });
+    return repo.findInterviewById(interviewId, userId);
 }
 
 export async function getInterviewAnswers({ interviewId, userId }) {
-    return repo.findInterviewAnswers({ interviewId, userId });
+    return repo.findInterviewAnswers(interviewId, userId);
 }
 
 export async function updateAnswerAudio({ interviewId, answerId, userId, audioUrl }) {

@@ -56,6 +56,12 @@ app.use(express.static('public')); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
+// Global Logger
+app.use((req, res, next) => {
+  console.log(`[Global Request] ${req.method} ${req.url}`);
+  next();
+});
+
 app.use(
   session({
     cookie: {
@@ -105,6 +111,8 @@ app.use((err, req, res, next) => {
   if(res.headersSent) {
     return next(err);
   }
+
+  console.error("[Global Error Catch]", err);
 
   res.status(err.statusCode || 500).error({
     errorCode: err.errorCode || "unknown",
