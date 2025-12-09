@@ -1,4 +1,5 @@
-import type { StartInterviewResponse, InterviewDto, InterviewAnswerDto, UploadAudioResponse } from '../types/interview';
+import { api } from './axios';
+import type { StartInterviewResponse, InterviewDto, UploadAudioResponse } from '../types/interview';
 
 export const startInterview = async (strategy: string): Promise<StartInterviewResponse> => {
   const response = await api.post<StartInterviewResponse>('/interviews/start', { strategy });
