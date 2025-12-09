@@ -40,7 +40,7 @@ export const useInterviewFlow = (): InterviewContextType => {
   const currentQuestion = questions[session.currentIndex];
 
   const submitAnswer = useCallback(() => {
-    submission.submit(currentQuestion, recording.mediaBlobUrl ?? undefined);
+    submission.submit(currentQuestion, recording.mediaBlobUrl ?? null);
   }, [currentQuestion, recording.mediaBlobUrl, submission]);
 
   const handleComplete = useCallback(() => {
