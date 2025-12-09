@@ -1,8 +1,8 @@
-import { useEffect, useCallback, useState } from 'react';
-import { useRecording } from '../../../../hooks/useRecording';
+import { useCallback } from 'react';
 import { useInterviewQuestions } from '../../../../react-query/mutation/DailyInterview/useInterviewQuestions';
 import { useInterviewSession } from './useInterviewSession';
-import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
+import { useRecordingManager } from './useRecordingManager';
+import { useSubmissionManager } from './useSubmissionManager';
 import type { InterviewContextType } from '../../../../types';
 
 interface UseInterviewFlowProps {
@@ -11,50 +11,27 @@ interface UseInterviewFlowProps {
 }
 
 export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps): InterviewContextType => {
-  // 1. Core Hooks & Data
-  const recording = useRecording();
+  // 1. Data Layer
   const { questions, interviewId, isLoading, error: stepsError } = useInterviewQuestions();
 
-  // 2. Session Management
-  const {
-    currentIndex,
-    isFirstQuestion,
-    isLastQuestion,
-    toNextQuestion,
-    toPrevQuestion,
-  } = useInterviewSession({ totalQuestions: questions.length });
+  // 2. Session Layer
+  const session = useInterviewSession({ totalQuestions: questions.length });
 
-  const currentQuestion = questions[currentIndex];
-  const [currentAnswerId, setCurrentAnswerId] = useState<string | null>(null);
+  // 3. Recording Layer (Auto-resets on index change)
+  const recording = useRecordingManager({ resetOnIndexChange: session.currentIndex });
 
-  // Clear answer ID when moving to next question
-  useEffect(() => {
-    setCurrentAnswerId(null);
-  }, [currentIndex]);
-
-  // 3. Orchestration Helpers
-  useEffect(() => {
-    recording.reset();
-  }, [currentIndex]);
-
-  // 4. Submission Logic
-  const handleSubmissionSuccess = useCallback((data: any) => {
-    if (data?.answer?.id) {
-       setCurrentAnswerId(data.answer.id);
-    }
-  }, []);
-
-  const { submitAudio, isSubmitting, error: submissionError } = useAnswerSubmission({
-    interviewId,
-    onSuccess: handleSubmissionSuccess,
-    onError,
+  // 4. Submission Layer
+  const submission = useSubmissionManager({ 
+    interviewId, 
+    currentIndex: session.currentIndex, 
+    onError 
   });
 
+  const currentQuestion = questions[session.currentIndex];
+
   const submitAnswer = useCallback(() => {
-    if (recording.mediaBlobUrl && currentQuestion) {
-      submitAudio({ id: currentQuestion.id, mediaUrl: recording.mediaBlobUrl });
-    }
-  }, [recording.mediaBlobUrl, currentQuestion, submitAudio]);
+    submission.submit(currentQuestion, recording.mediaBlobUrl ?? undefined);
+  }, [currentQuestion, recording.mediaBlobUrl, submission]);
 
   const handleComplete = useCallback(() => {
     if (interviewId) {
@@ -64,27 +41,23 @@ export const useInterviewFlow = ({ onComplete, onError }: UseInterviewFlowProps)
 
   return {
     session: {
-      currentQuestion,
-      currentIndex,
+      ...session,
       totalQuestions: questions.length,
-      isFirstQuestion,
-      isLastQuestion,
-      toNextQuestion,
-      toPrevQuestion,
+      currentQuestion,
       completeInterview: handleComplete,
     },
     recording: {
-      isActive: recording.isRecording,
-      isStopped: recording.recordingStopped,
+      isActive: recording.isActive,
+      isStopped: recording.isStopped,
       start: recording.start,
       stop: recording.stop,
-      retry: recording.reset,
+      retry: recording.retry,
     },
     submission: {
-      isSubmitting,
-      error: submissionError,
+      isSubmitting: submission.isSubmitting,
+      error: submission.error,
       submit: submitAnswer,
-      currentAnswerId,
+      currentAnswerId: submission.currentAnswerId,
     },
     status: {
       isLoading,
