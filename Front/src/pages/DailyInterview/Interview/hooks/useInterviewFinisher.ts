@@ -7,9 +7,7 @@ export const useInterviewFinisher = () => {
 
   const { complete, isCompleting } = useInterviewCompletion({
     onSuccess: (_: unknown, completedInterviewId: string) => {
-      navigate('/daily-interview/feedback', {
-        state: { interviewId: completedInterviewId },
-      });
+      navigate(`/daily-interview/${completedInterviewId}/feedback`);
     },
     onError: handleError,
   });

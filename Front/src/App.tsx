@@ -42,7 +42,7 @@ function App() {
               element={isLoggedIn ? <DailyInterview /> : <Navigate to="/" />}
             />
             <Route
-              path="/daily-interview/feedback"
+              path="/daily-interview/:interviewId/feedback"
               element={isLoggedIn ? <Feedback /> : <Navigate to="/" />}
             />
             <Route

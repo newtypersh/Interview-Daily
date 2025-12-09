@@ -1,4 +1,4 @@
-import { useLocation, Navigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -18,9 +18,7 @@ import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTem
 import { mapInterviewToQuestions } from './utils/feedbackMapper';
 
 export default function Feedback() {
-  const location = useLocation();
-  // Location state에서 interviewId 가져오기
-  const interviewId = location.state?.interviewId as string | undefined;
+  const { interviewId } = useParams<{ interviewId: string }>();
 
   const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
   
