@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
+import { handleError } from '../../../../utils/errorHandler';
 import type { Question } from '../../../../types';
 
 interface UseSubmissionManagerProps {
   interviewId: string | null;
   currentIndex: number;
-  onError: (error: Error) => void;
 }
 
-export const useSubmissionManager = ({ interviewId, currentIndex, onError }: UseSubmissionManagerProps) => {
+export const useSubmissionManager = ({ interviewId, currentIndex }: UseSubmissionManagerProps) => {
   const [currentAnswerId, setCurrentAnswerId] = useState<string | null>(null);
 
   // Clear answer ID when moving to next question
@@ -25,7 +25,7 @@ export const useSubmissionManager = ({ interviewId, currentIndex, onError }: Use
   const { submitAudio, isSubmitting, error: submissionError } = useAnswerSubmission({
     interviewId,
     onSuccess: handleSubmissionSuccess,
-    onError,
+    onError: handleError,
   });
 
   const submitAnswer = useCallback((currentQuestion: Question | undefined, mediaBlobUrl: string | null) => {

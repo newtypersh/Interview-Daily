@@ -3,7 +3,6 @@ import { useInterviewSession } from './hooks/useInterviewSession';
 import { useRecordingManager } from './hooks/useRecordingManager';
 import { useSubmissionManager } from './hooks/useSubmissionManager';
 import { useInterviewFinisher } from './hooks/useInterviewFinisher';
-import { handleError } from '../../../utils/errorHandler';
 import DailyInterviewLayout from './components/DailyInterviewLayout';
 
 export default function DailyInterview() {
@@ -22,8 +21,7 @@ export default function DailyInterview() {
   // 5. Submission Layer
   const submission = useSubmissionManager({ 
     interviewId: status.interviewId, 
-    currentIndex: session.currentIndex, 
-    onError: handleError
+    currentIndex: session.currentIndex 
   });
 
   // Safety check for currentQuestion (it might be undefined during loading/empty state)
