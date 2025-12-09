@@ -20,7 +20,7 @@ export default function AnswerReview({ session, recording, submission, status, o
 
   // Auto-submit when component mounts (Review phase starts)
   useEffect(() => {
-    submit(currentQuestion, mediaBlobUrl ?? null);
+    submit(currentQuestion?.id, mediaBlobUrl ?? null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on mount
 

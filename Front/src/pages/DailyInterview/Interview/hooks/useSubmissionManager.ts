@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
 import { handleError } from '../../../../utils/errorHandler';
-import type { Question, UploadAudioResponse } from '../../../../types';
+import type { UploadAudioResponse } from '../../../../types';
 
 interface UseSubmissionManagerProps {
   interviewId: string | null;
@@ -28,10 +28,10 @@ export const useSubmissionManager = ({ interviewId, currentIndex }: UseSubmissio
     onError: handleError,
   });
 
-  const submitAnswer = useCallback((currentQuestion: Question | undefined, mediaBlobUrl: string | null) => {
-    if (mediaBlobUrl && currentQuestion) {
-      submitAudio({ id: currentQuestion.id, mediaUrl: mediaBlobUrl });
-    }
+  const submitAnswer = useCallback((questionId: string | undefined, mediaBlobUrl: string | null) => {
+    if (!mediaBlobUrl || !questionId) return;
+    
+    submitAudio({ id: questionId, mediaUrl: mediaBlobUrl });
   }, [submitAudio]);
 
   return {

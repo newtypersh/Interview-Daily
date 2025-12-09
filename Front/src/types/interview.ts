@@ -62,7 +62,7 @@ export interface InterviewRecording {
 export interface InterviewSubmission {
   isSubmitting: boolean;
   error: Error | null;
-  submit: (question: Question | undefined, mediaBlobUrl: string | null) => void;
+  submit: (questionId: string | undefined, mediaBlobUrl: string | null) => void;
   currentAnswerId?: string | null;
 }
 
