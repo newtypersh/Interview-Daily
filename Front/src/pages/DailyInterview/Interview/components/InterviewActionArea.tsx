@@ -9,9 +9,10 @@ interface InterviewActionAreaProps {
   recording: InterviewRecording;
   submission: InterviewSubmission;
   status: InterviewStatus;
+  onComplete: (interviewId: string) => void;
 }
 
-export default function InterviewActionArea({ session, recording, submission, status }: InterviewActionAreaProps) {
+export default function InterviewActionArea({ session, recording, submission, status, onComplete }: InterviewActionAreaProps) {
   const { isStopped } = recording;
 
   return (
@@ -24,6 +25,7 @@ export default function InterviewActionArea({ session, recording, submission, st
           recording={recording} 
           submission={submission}
           status={status}
+          onComplete={onComplete}
         />
       )}
     </Stack>

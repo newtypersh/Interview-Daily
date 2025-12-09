@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Paper } from '@mui/material';
 import InterviewNavigation from './components/InterviewNavigation';
@@ -41,16 +40,6 @@ export default function DailyInterview() {
     onError: handleError
   });
 
-  const submitAnswer = useCallback(() => {
-    submission.submit(currentQuestion, recording.mediaBlobUrl ?? null);
-  }, [currentQuestion, recording.mediaBlobUrl, submission]);
-
-  const handleComplete = useCallback(() => {
-    if (interviewId) {
-      complete(interviewId);
-    }
-  }, [interviewId, complete]);
-
   // Construct status object
   const status = {
     isLoading,
@@ -68,7 +57,6 @@ export default function DailyInterview() {
     ...session,
     totalQuestions: questions.length,
     currentQuestion,
-    completeInterview: handleComplete,
   };
 
   const recordingProps = {
@@ -77,12 +65,13 @@ export default function DailyInterview() {
     start: recording.start,
     stop: recording.stop,
     retry: recording.retry,
+    mediaBlobUrl: recording.mediaBlobUrl ?? null,
   };
 
   const submissionProps = {
     isSubmitting: submission.isSubmitting,
     error: submission.error,
-    submit: submitAnswer,
+    submit: submission.submit,
     currentAnswerId: submission.currentAnswerId,
   };
 
@@ -114,6 +103,7 @@ export default function DailyInterview() {
             recording={recordingProps}
             submission={submissionProps}
             status={status}
+            onComplete={complete}
           />
         </Paper>
       </Container>

@@ -9,17 +9,18 @@ interface AnswerReviewProps {
   recording: InterviewRecording;
   submission: InterviewSubmission;
   status: InterviewStatus;
+  onComplete: (interviewId: string) => void;
 }
 
-export default function AnswerReview({ session, recording, submission, status }: AnswerReviewProps) {
-  const { currentQuestion, isLastQuestion, toNextQuestion, completeInterview } = session;
-  const { retry } = recording;
+export default function AnswerReview({ session, recording, submission, status, onComplete }: AnswerReviewProps) {
+  const { currentQuestion, isLastQuestion, toNextQuestion } = session;
+  const { retry, mediaBlobUrl } = recording; // Added mediaBlobUrl extraction
   const { submit, isSubmitting, currentAnswerId } = submission;
   const { interviewId } = status;
 
   // Auto-submit when component mounts (Review phase starts)
   useEffect(() => {
-    submit();
+    submit(currentQuestion, mediaBlobUrl ?? null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on mount
 
@@ -63,7 +64,7 @@ export default function AnswerReview({ session, recording, submission, status }:
         retry={retry}
         isSubmitting={isSubmitting}
         isLastQuestion={isLastQuestion}
-        onNext={isLastQuestion ? completeInterview : toNextQuestion}
+        onNext={() => isLastQuestion && interviewId ? onComplete(interviewId) : toNextQuestion()}
       />
     </>
   );

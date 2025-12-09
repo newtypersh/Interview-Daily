@@ -40,7 +40,6 @@ export interface InterviewSessionState {
   isLastQuestion: boolean;
   toNextQuestion: () => void;
   toPrevQuestion: () => void;
-  completeInterview: () => void;
 }
 
 export interface InterviewRecording {
@@ -49,12 +48,13 @@ export interface InterviewRecording {
   start: () => void;
   stop: () => void;
   retry: () => void;
+  mediaBlobUrl: string | null;
 }
 
 export interface InterviewSubmission {
   isSubmitting: boolean;
   error: Error | null;
-  submit: () => void;
+  submit: (question: Question | undefined, mediaBlobUrl: string | null) => void;
   currentAnswerId?: string | null;
 }
 
