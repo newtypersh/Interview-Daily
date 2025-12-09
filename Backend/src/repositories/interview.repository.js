@@ -85,7 +85,12 @@ export async function createInterview({ userId, questionSetId, day }) {
         // [Step C] 최종 결과 반환 (생성된 면접 + 답변 목록 포함)
         return tx.interview.findUnique({
             where: { id: createdInterview.id },
-            include: { answers: { orderBy: { sequence: "asc" } } },
+            include: { 
+                answers: { 
+                    orderBy: { sequence: "asc" },
+                    include: { question: true }
+                } 
+            },
         });
     });
 }
