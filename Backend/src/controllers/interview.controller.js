@@ -10,7 +10,7 @@ import { StatusCodes } from "http-status-codes";
 // POST /api/interviews/start
 export const startInterview = async (req, res, next) => {
     try {
-        const requestDto = new StartInterviewRequestDto(req.body);
+        const requestDto = new StartInterviewRequestDto(req);
         const payload = requestDto.toServicePayload();
 
         const session = await service.startInterview(payload);
