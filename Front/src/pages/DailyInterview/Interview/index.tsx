@@ -1,27 +1,17 @@
-import { useNavigate } from 'react-router-dom';
 import { useInterviewQuestions } from '../../../react-query/mutation/DailyInterview/useInterviewQuestions';
 import { useInterviewSession } from './hooks/useInterviewSession';
 import { useRecordingManager } from './hooks/useRecordingManager';
 import { useSubmissionManager } from './hooks/useSubmissionManager';
-import { useInterviewCompletion } from '../../../react-query/mutation/DailyInterview/useInterviewCompletion';
+import { useInterviewFinisher } from './hooks/useInterviewFinisher';
 import { handleError } from '../../../utils/errorHandler';
 import DailyInterviewLayout from './components/DailyInterviewLayout';
 
 export default function DailyInterview() {
-  const navigate = useNavigate();
-
   // 1. Data Layer
   const { questions, interviewId, isLoading, error: stepsError } = useInterviewQuestions();
 
   // 2. Completion Logic
-  const { complete } = useInterviewCompletion({
-    onSuccess: (_: unknown, completedInterviewId: string) => {
-      navigate('/daily-interview/feedback', {
-        state: { interviewId: completedInterviewId }
-      });
-    },
-    onError: handleError,
-  });
+  const { complete } = useInterviewFinisher();
 
   // 3. Session Layer
   const session = useInterviewSession({ questions });
