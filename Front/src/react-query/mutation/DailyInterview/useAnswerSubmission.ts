@@ -9,8 +9,8 @@ interface UseAnswerSubmissionProps {
 }
 
 export const useAnswerSubmission = ({ interviewId, onSuccess, onError }: UseAnswerSubmissionProps) => {
-  const { mutate: submitAudio, isPending: isSubmitting, error } = useMutation({
-    mutationFn: async ({ id, mediaUrl }: { id: string; mediaUrl: string }) => {
+  const { mutate: submitAudio, isPending: isSubmitting, error } = useMutation<UploadAudioResponse, Error, { id: string; mediaUrl: string }>({
+    mutationFn: async ({ id, mediaUrl }) => {
       if (!interviewId) throw new Error('Interview ID is missing');
       
       try {

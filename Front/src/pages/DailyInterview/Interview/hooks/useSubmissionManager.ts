@@ -25,7 +25,7 @@ export const useSubmissionManager = ({ interviewId, currentIndex }: UseSubmissio
   const { submitAudio, isSubmitting, error: submissionError } = useAnswerSubmission({
     interviewId,
     onSuccess: handleSubmissionSuccess,
-    onError: handleError,
+    onError: (error) => handleError(error),
   });
 
   const submitAnswer = useCallback((questionId: string | undefined, mediaBlobUrl: string | null) => {
