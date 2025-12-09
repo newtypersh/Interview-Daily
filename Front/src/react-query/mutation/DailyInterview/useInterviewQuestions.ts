@@ -40,8 +40,10 @@ export const useInterviewQuestions = () => {
 
   return {
     questions,
-    interviewId,
-    isLoading,
-    error: error as Error | null,
+    status: {
+      isLoading,
+      error: error as Error | null,
+      interviewId,
+    }
   };
 };

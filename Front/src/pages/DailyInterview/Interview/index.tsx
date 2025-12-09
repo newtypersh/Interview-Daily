@@ -8,7 +8,7 @@ import DailyInterviewLayout from './components/DailyInterviewLayout';
 
 export default function DailyInterview() {
   // 1. Data Layer
-  const { questions, interviewId, isLoading, error: stepsError } = useInterviewQuestions();
+  const { questions, status } = useInterviewQuestions();
 
   // 2. Completion Logic
   const { complete } = useInterviewFinisher();
@@ -21,17 +21,10 @@ export default function DailyInterview() {
 
   // 5. Submission Layer
   const submission = useSubmissionManager({ 
-    interviewId, 
+    interviewId: status.interviewId, 
     currentIndex: session.currentIndex, 
     onError: handleError
   });
-
-  // Construct status object
-  const status = {
-    isLoading,
-    error: stepsError,
-    interviewId,
-  };
 
   // Safety check for currentQuestion (it might be undefined during loading/empty state)
   if (!session.currentQuestion) {
