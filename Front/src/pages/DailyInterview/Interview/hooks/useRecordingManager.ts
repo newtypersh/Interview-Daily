@@ -16,7 +16,7 @@ export const useRecordingManager = ({ resetOnIndexChange }: UseRecordingManagerP
   return {
     isActive: recording.isRecording,
     isStopped: recording.recordingStopped,
-    mediaBlobUrl: recording.mediaBlobUrl,
+    mediaBlobUrl: recording.mediaBlobUrl ?? null,
     start: recording.start,
     stop: recording.stop,
     retry: recording.reset,

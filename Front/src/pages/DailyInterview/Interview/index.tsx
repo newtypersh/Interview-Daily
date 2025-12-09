@@ -24,9 +24,8 @@ export default function DailyInterview() {
   });
 
   // 3. Session Layer
-  const session = useInterviewSession({ totalQuestions: questions.length });
-  const currentQuestion = questions[session.currentIndex];
-
+  const session = useInterviewSession({ questions });
+  
   // 4. Recording Layer (Auto-resets on index change)
   const recording = useRecordingManager({ resetOnIndexChange: session.currentIndex });
 
@@ -45,38 +44,15 @@ export default function DailyInterview() {
   };
 
   // Safety check for currentQuestion (it might be undefined during loading/empty state)
-  if (!currentQuestion) {
+  if (!session.currentQuestion) {
     return null; // Or a loading spinner handled here
   }
 
-  // Construct props for Layout
-  const sessionProps = {
-    ...session,
-    totalQuestions: questions.length,
-    currentQuestion,
-  };
-
-  const recordingProps = {
-    isActive: recording.isActive,
-    isStopped: recording.isStopped,
-    start: recording.start,
-    stop: recording.stop,
-    retry: recording.retry,
-    mediaBlobUrl: recording.mediaBlobUrl ?? null,
-  };
-
-  const submissionProps = {
-    isSubmitting: submission.isSubmitting,
-    error: submission.error,
-    submit: submission.submit,
-    currentAnswerId: submission.currentAnswerId,
-  };
-
   return (
     <DailyInterviewLayout
-      session={sessionProps}
-      recording={recordingProps}
-      submission={submissionProps}
+      session={session}
+      recording={recording}
+      submission={submission}
       status={status}
       onComplete={complete}
     />

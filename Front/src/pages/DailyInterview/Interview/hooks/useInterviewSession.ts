@@ -1,12 +1,16 @@
 import { useState, useCallback } from 'react';
+import type { Question } from '../../../../types';
 
 interface UseInterviewSessionProps {
-  totalQuestions: number;
+  questions: Question[];
 }
 
-export const useInterviewSession = ({ totalQuestions }: UseInterviewSessionProps) => {
+export const useInterviewSession = ({ questions }: UseInterviewSessionProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const totalQuestions = questions.length;
+  const currentQuestion = questions[currentIndex];
+  
   const isFirstQuestion = currentIndex === 0;
   const isLastQuestion = totalQuestions > 0 && currentIndex === totalQuestions - 1;
 
@@ -24,6 +28,8 @@ export const useInterviewSession = ({ totalQuestions }: UseInterviewSessionProps
 
   return {
     currentIndex,
+    totalQuestions,
+    currentQuestion,
     isFirstQuestion,
     isLastQuestion,
     toNextQuestion,
