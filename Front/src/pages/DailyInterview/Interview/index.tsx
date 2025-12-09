@@ -1,15 +1,13 @@
-import { Box, Container, Paper, Stack } from '@mui/material';
+import { Box, Container, Paper } from '@mui/material';
 import InterviewNavigation from './components/InterviewNavigation';
 import QuestionDisplay from './components/QuestionDisplay';
-import RecordingSection from './components/RecordingSection';
-import AnswerReview from './components/AnswerReview';
+import InterviewActionArea from './components/InterviewActionArea';
 import { useInterviewFlow } from './hooks/useInterviewFlow';
 
 export default function DailyInterview() {
   const { session, recording, submission, status } = useInterviewFlow();
 
   const { currentQuestion } = session;
-  const { isStopped } = recording;
 
   // Safety check for currentQuestion (it might be undefined during loading/empty state)
   if (!currentQuestion) {
@@ -39,18 +37,12 @@ export default function DailyInterview() {
 
           <QuestionDisplay currentQuestion={currentQuestion} />
 
-          <Stack spacing={3}>
-            {!isStopped ? (
-              <RecordingSection recording={recording} />
-            ) : (
-              <AnswerReview 
-                session={session}
-                recording={recording} 
-                submission={submission}
-                status={status}
-              />
-            )}
-          </Stack>
+          <InterviewActionArea 
+            session={session}
+            recording={recording}
+            submission={submission}
+            status={status}
+          />
         </Paper>
       </Container>
     </Box>
