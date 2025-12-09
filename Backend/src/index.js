@@ -48,7 +48,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors()); // cors 방식 허용
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+})); // cors 방식 허용
 app.use(express.static('public')); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
