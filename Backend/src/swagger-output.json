@@ -747,18 +747,14 @@
           {
             "name": "body",
             "in": "body",
-            "description": "면접 설정 (질문 수, 카테고리 등)",
-            "required": true,
+            "description": "면접 설정",
+            "required": false,
             "schema": {
               "type": "object",
               "properties": {
-                "questionCount": {
-                  "type": "number",
-                  "example": 5
-                },
-                "category": {
+                "strategy": {
                   "type": "string",
-                  "example": "CS"
+                  "example": "random"
                 }
               }
             }
@@ -782,13 +778,27 @@
                     "success": {
                       "type": "object",
                       "properties": {
-                        "interviewId": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "IN_PROGRESS"
+                        "interview": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "1"
+                            },
+                            "userId": {
+                              "type": "string",
+                              "example": "1"
+                            },
+                            "questionSetId": {
+                              "type": "string",
+                              "example": "1"
+                            },
+                            "answers": {
+                              "type": "array",
+                              "example": [],
+                              "items": {}
+                            }
+                          }
                         }
                       }
                     }
@@ -809,13 +819,27 @@
                     "success": {
                       "type": "object",
                       "properties": {
-                        "interviewId": {
-                          "type": "number",
-                          "example": 1
-                        },
-                        "status": {
-                          "type": "string",
-                          "example": "IN_PROGRESS"
+                        "interview": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "example": "1"
+                            },
+                            "userId": {
+                              "type": "string",
+                              "example": "1"
+                            },
+                            "questionSetId": {
+                              "type": "string",
+                              "example": "1"
+                            },
+                            "answers": {
+                              "type": "array",
+                              "example": [],
+                              "items": {}
+                            }
+                          }
                         }
                       }
                     }
@@ -867,7 +891,7 @@
           "Interview"
         ],
         "summary": "면접 답변 목록 조회",
-        "description": "특정 면접의 모든 질문과 사용자의 답변(오디오 URL 포함)을 조회합니다.",
+        "description": "특정 면접의 모든 질문과 사용자의 답변(오디오 URL, STT 결과 포함)을 조회합니다.",
         "parameters": [
           {
             "name": "interviewId",
@@ -881,7 +905,141 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "questionSetId": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "interviewId": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "questionId": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "sequence": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "questionContent": {
+                            "type": "string",
+                            "example": "질문 내용"
+                          },
+                          "audioUrl": {
+                            "type": "string",
+                            "example": "https://..."
+                          },
+                          "transcriptText": {
+                            "type": "string",
+                            "example": "답변 내용"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2023-01-01T00:00:00Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2023-01-01T00:00:00Z"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "questionSetId": {
+                      "type": "string",
+                      "example": "1"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "interviewId": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "questionId": {
+                            "type": "string",
+                            "example": "1"
+                          },
+                          "sequence": {
+                            "type": "number",
+                            "example": 1
+                          },
+                          "questionContent": {
+                            "type": "string",
+                            "example": "질문 내용"
+                          },
+                          "audioUrl": {
+                            "type": "string",
+                            "example": "https://..."
+                          },
+                          "transcriptText": {
+                            "type": "string",
+                            "example": "답변 내용"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2023-01-01T00:00:00Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2023-01-01T00:00:00Z"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xml": {
+                    "name": "main"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"

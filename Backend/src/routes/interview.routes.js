@@ -13,11 +13,10 @@ router.post("/start", ensureAuth, (req, res, next) => {
         #swagger.description = '새로운 면접 세션을 생성하고 첫 번째 질문 세트를 할당합니다.'
         #swagger.parameters['body'] = {
             in: 'body',
-            description: '면접 설정 (질문 수, 카테고리 등)',
-            required: true,
+            description: '면접 설정',
+            required: false,
             schema: {
-                questionCount: 5,
-                category: 'CS'
+                strategy: "random"
             }
         }
         #swagger.responses[201] = {
@@ -25,8 +24,12 @@ router.post("/start", ensureAuth, (req, res, next) => {
             schema: {
                 resultType: "SUCCESS",
                 success: {
-                    interviewId: 1,
-                    status: "IN_PROGRESS"
+                    interview: {
+                        id: "1",
+                        userId: "1",
+                        questionSetId: "1",
+                        answers: []
+                    }
                 }
             }
         }
