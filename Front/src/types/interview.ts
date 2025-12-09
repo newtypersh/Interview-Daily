@@ -32,6 +32,14 @@ export interface StartInterviewResponse {
   error?: any;
 }
 
+export interface UploadAudioResponse {
+  answer: {
+    id: string;
+    audioUrl: string;
+    transcriptText?: string;
+  };
+}
+
 export interface InterviewSessionState {
   currentQuestion: Question | undefined;
   currentIndex: number;

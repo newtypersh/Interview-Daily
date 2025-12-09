@@ -1,9 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { uploadAnswerAudio } from '../../../apis/interview';
+import type { UploadAudioResponse } from '../../../types/interview';
 
 interface UseAnswerSubmissionProps {
   interviewId: string | null;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: UploadAudioResponse) => void;
   onError: (error: Error) => void;
 }
 

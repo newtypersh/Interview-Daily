@@ -1,5 +1,4 @@
-import { api } from './axios';
-import type { StartInterviewResponse, InterviewDto, InterviewAnswerDto } from '../types/interview';
+import type { StartInterviewResponse, InterviewDto, InterviewAnswerDto, UploadAudioResponse } from '../types/interview';
 
 export const startInterview = async (strategy: string): Promise<StartInterviewResponse> => {
   const response = await api.post<StartInterviewResponse>('/interviews/start', { strategy });
@@ -16,11 +15,11 @@ export const getInterviewAnswers = async (interviewId: string): Promise<Intervie
   return response.data;
 };
 
-export const uploadAnswerAudio = async (interviewId: string, answerId: string, blob: Blob): Promise<{ answer: { id: string; audioUrl: string; transcriptText?: string } }> => {
+export const uploadAnswerAudio = async (interviewId: string, answerId: string, blob: Blob): Promise<UploadAudioResponse> => {
   const formData = new FormData();
   formData.append('file', blob, 'answer.webm');
   
-  const response = await api.post<{ answer: { id: string; audioUrl: string; transcriptText?: string } }>(`/interviews/${interviewId}/answers/${answerId}/audio`, formData, {
+  const response = await api.post<UploadAudioResponse>(`/interviews/${interviewId}/answers/${answerId}/audio`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

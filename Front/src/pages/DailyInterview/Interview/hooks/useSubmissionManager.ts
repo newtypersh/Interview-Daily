@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
 import { handleError } from '../../../../utils/errorHandler';
-import type { Question } from '../../../../types';
+import type { Question, UploadAudioResponse } from '../../../../types';
 
 interface UseSubmissionManagerProps {
   interviewId: string | null;
@@ -16,7 +16,7 @@ export const useSubmissionManager = ({ interviewId, currentIndex }: UseSubmissio
     setCurrentAnswerId(null);
   }, [currentIndex]);
 
-  const handleSubmissionSuccess = useCallback((data: any) => {
+  const handleSubmissionSuccess = useCallback((data: UploadAudioResponse) => {
     if (data?.answer?.id) {
        setCurrentAnswerId(data.answer.id);
     }
