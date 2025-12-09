@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
 import { handleError } from '../../../../utils/errorHandler';
 
@@ -15,7 +15,7 @@ export const useSubmissionManager = ({ interviewId, currentIndex }: UseSubmissio
     setCurrentAnswerId(null);
   }, [currentIndex]);
 
-  const { submitAudio, isSubmitting, error: submissionError } = useAnswerSubmission({
+  const { submit, isSubmitting, error: submissionError } = useAnswerSubmission({
     interviewId,
     onSuccess: (data) => {
       if (data?.answer?.id) {
@@ -25,16 +25,10 @@ export const useSubmissionManager = ({ interviewId, currentIndex }: UseSubmissio
     onError: (error) => handleError(error),
   });
 
-  const submitAnswer = useCallback((questionId: string | undefined, mediaBlobUrl: string | null) => {
-    if (!mediaBlobUrl || !questionId) return;
-    
-    submitAudio({ id: questionId, mediaUrl: mediaBlobUrl });
-  }, [submitAudio]);
-
   return {
     isSubmitting,
     error: submissionError,
-    submit: submitAnswer,
+    submit,
     currentAnswerId,
   };
 };

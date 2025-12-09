@@ -9,7 +9,7 @@ interface UseAnswerSubmissionProps {
 }
 
 export const useAnswerSubmission = ({ interviewId, onSuccess, onError }: UseAnswerSubmissionProps) => {
-  const { mutate: submitAudio, isPending: isSubmitting, error } = useMutation<UploadAudioResponse, Error, { id: string; mediaUrl: string }>({
+  const { mutate: mutateAudio, isPending: isSubmitting, error } = useMutation<UploadAudioResponse, Error, { id: string; mediaUrl: string }>({
     mutationFn: async ({ id, mediaUrl }) => {
       if (!interviewId) throw new Error('Interview ID is missing');
       
@@ -25,8 +25,13 @@ export const useAnswerSubmission = ({ interviewId, onSuccess, onError }: UseAnsw
     onError,
   });
 
+  const submit = (id: string | undefined, mediaUrl: string | null) => {
+    if (!id || !mediaUrl) return;
+    mutateAudio({ id, mediaUrl });
+  };
+
   return {
-    submitAudio,
+    submit,
     isSubmitting,
     error,
   };
