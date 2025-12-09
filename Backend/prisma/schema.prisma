@@ -62,7 +62,7 @@ model InterviewAnswer {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  interview       Interview @relation(fields: [interview_id], references: [id], map: "fk_interviewAnswer_interview")
+  interview       Interview @relation(fields: [interview_id], references: [id], map: "fk_interviewAnswer_interview", onDelete: Cascade)
   question        Question  @relation(fields: [question_id], references: [id], map: "fk_interviewAnswer_question")
   feedbacks       Feedback[]
 
@@ -95,7 +95,7 @@ model Question {
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 
-  questionSet     QuestionSet @relation(fields: [question_set_id], references: [id], map: "fk_question_questionSet")
+  questionSet     QuestionSet @relation(fields: [question_set_id], references: [id], map: "fk_question_questionSet", onDelete: Cascade)
   interviewAnswers InterviewAnswer[]
   feedbacks        Feedback[]
 
@@ -112,7 +112,7 @@ model Feedback {
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
 
-  interviewAnswer     InterviewAnswer @relation(fields: [interview_answer_id], references: [id], map: "fk_feedback_interviewAnswer")
+  interviewAnswer     InterviewAnswer @relation(fields: [interview_answer_id], references: [id], map: "fk_feedback_interviewAnswer", onDelete: Cascade)
   question            Question        @relation(fields: [question_id], references: [id], map: "fk_feedback_question")
 
   @@index([interview_answer_id])
