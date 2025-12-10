@@ -9,9 +9,9 @@ import {
   Stack,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import DashedButton from '../../components/DashedButton';
+import DeleteIconButton from '../../components/DeleteIconButton';
 import { QuestionSetSchema } from '../../schemas/settings';
 import QuestionInput from './QuestionInput';
 import { type QuestionSet } from '../../types';
@@ -37,14 +37,6 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
   const { mutate: deleteSet } = useDeleteQuestionSet();
 
   // Questions logic
-  // Fetch questions only when expanded or to show count?
-  // If we want to show count in header, we need to fetch. 
-  // For now, let's fetch when expanded to save resources if list is long, 
-  // unless we want to preload. 
-  // Given "expanded" is false by default.
-  // Actually, 'QuestionSet' type has 'questions' array. If it's populated, we use it.
-  // But 'useQuestionsQuery' is the source of truth for the *latest* questions if they change.
-  // Let's use the query.
   const { data: questions = [] } = useQuestionsQuery(questionSet.id, expanded);
 
   const { mutate: createQuestion } = useCreateQuestion(questionSet.id);
@@ -121,9 +113,7 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
           <ExpandMoreIcon />
         </IconButton>
         
-        <IconButton onClick={handleDeleteSet} color="error" size="small">
-          <DeleteIcon />
-        </IconButton>
+        <DeleteIconButton onClick={handleDeleteSet} />
       </Box>
 
       <Collapse in={expanded} unmountOnExit>
@@ -140,13 +130,10 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
                 initialText={question.content}
                 onUpdate={handleUpdateQuestion}
               />
-              <IconButton
-                size="small"
-                onClick={() => handleDeleteQuestion(question.id)}
+              <DeleteIconButton 
+                onClick={() => handleDeleteQuestion(question.id)} 
                 sx={{ mt: 0.5 }}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
+              />
             </Box>
           ))}
           <DashedButton
