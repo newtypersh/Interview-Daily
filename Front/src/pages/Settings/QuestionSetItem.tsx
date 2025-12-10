@@ -9,11 +9,9 @@ import {
   Stack,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddIcon from '@mui/icons-material/Add';
-import DashedButton from '../../components/DashedButton';
 import DeleteIconButton from '../../components/DeleteIconButton';
 import { QuestionSetSchema } from '../../schemas/settings';
-import QuestionInput from './QuestionInput';
+import QuestionList from './QuestionList';
 import { type QuestionSet } from '../../types';
 import {
   useUpdateQuestionSet,
@@ -120,34 +118,12 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
         <Divider sx={{ mb: 2 }} />
 
         <Stack spacing={1.5} sx={{ pl: 5, pr: 2, pb: 2 }}>
-          {questions.map((question, qIndex) => (
-            <Box key={question.id} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
-              <Typography sx={{ minWidth: 24, pt: 1, color: 'text.secondary', fontSize: '0.875rem' }}>
-                {qIndex + 1}.
-              </Typography>
-              <QuestionInput
-                id={question.id}
-                initialText={question.content}
-                onUpdate={handleUpdateQuestion}
-              />
-              <DeleteIconButton 
-                onClick={() => handleDeleteQuestion(question.id)} 
-                sx={{ mt: 0.5 }}
-              />
-            </Box>
-          ))}
-          <DashedButton
-            size="small"
-            startIcon={<AddIcon />}
-            onClick={handleAddQuestion}
-            sx={{
-              mt: 1,
-              mx: 'auto',
-              width: 'fit-content'
-            }}
-          >
-            질문 추가
-          </DashedButton>
+          <QuestionList
+            questions={questions}
+            onUpdate={handleUpdateQuestion}
+            onDelete={handleDeleteQuestion}
+            onAdd={handleAddQuestion}
+          />
         </Stack>
       </Collapse>
     </Box>
