@@ -40,10 +40,10 @@ export default function SettingsItem({
   expanded = false,
   onExpandToggle,
   sx,
-  alignItems = 'center',
-  gap = 2,
-  inputVariant = 'standard',
-  indexFormat = (i) => String(i + 1).padStart(2, '0'),
+  alignItems = 'flex-start',
+  gap = 1,
+  inputVariant = 'outlined',
+  indexFormat = (i) => `${i + 1}.`,
   inputPlaceholder,
 }: SettingsItemProps) {
   const [text, setText] = useState(value);

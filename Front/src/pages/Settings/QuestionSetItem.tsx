@@ -91,10 +91,6 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
       onDelete={handleDeleteSet}
       expanded={expanded}
       onExpandToggle={() => setExpanded(!expanded)}
-      inputVariant="outlined"
-      alignItems="flex-start"
-      gap={1}
-      indexFormat={(i) => `${i + 1}.`}
       inputPlaceholder="질문 세트 이름"
     >
       <Divider sx={{ mb: 2 }} />
@@ -109,10 +105,6 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
               value={question.content}
               onUpdate={(val) => handleUpdateQuestion(question.id, val)}
               onDelete={() => handleDeleteQuestion(question.id)}
-              inputVariant="outlined"
-              alignItems="flex-start"
-              gap={1}
-              indexFormat={(i) => `${i + 1}.`}
               inputPlaceholder="질문을 입력하세요"
             />
           )}
