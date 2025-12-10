@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
-import MarkdownPreview from '../../../components/MarkdownPreview';
+import { Box, Typography, Button } from '@mui/material';
+import MarkdownEditor from '../../../components/MarkdownEditor';
 import { type UI_FeedbackTemplate } from '../../../hooks/useFeedbackTemplates';
 import { FeedbackTemplateContentSchema } from '../../../schemas/settings';
 
@@ -50,57 +50,21 @@ export default function FeedbackTemplateItem({
         {template.title}
       </Typography>
       
-      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-        {/* Editor */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-              편집기
-            </Typography>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={handleSaveClick}
-              disabled={isUpdating}
-            >
-              저장
-            </Button>
-          </Box>
-          <TextField
-            multiline
-            fullWidth
-            value={content}
-            onChange={(e) => handleContentChange(e.target.value)}
-            placeholder="마크다운 형식으로 작성하세요..."
-            sx={{
-              flex: 1,
-              '& .MuiInputBase-root': {
-                fontFamily: 'monospace',
-                fontSize: '0.875rem',
-                height: '480px',
-                alignItems: 'flex-start',
-                padding: '16px',
-              },
-              '& .MuiInputBase-input': {
-                height: '100% !important',
-                overflow: 'auto !important',
-                padding: '0 !important',
-              },
-            }}
-          />
-        </Box>
-
-        {/* Preview */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-            미리보기
-          </Typography>
-          <MarkdownPreview
-            content={content}
-            sx={{ height: 'calc(480px - 2px)' }}
-          />
-        </Box>
-      </Box>
+      <MarkdownEditor
+        value={content}
+        onChange={handleContentChange}
+        disabled={isUpdating}
+        actions={
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleSaveClick}
+            disabled={isUpdating}
+          >
+            저장
+          </Button>
+        }
+      />
     </Box>
   );
 }
