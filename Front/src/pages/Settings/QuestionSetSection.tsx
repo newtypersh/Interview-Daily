@@ -1,5 +1,5 @@
-import { Box, Stack, Typography } from '@mui/material';
-import AddButton from './components/AddButton';
+import { Box, Typography, Stack } from '@mui/material';
+import SettingsList from './components/SettingsList';
 import { CATEGORY_LIST, INTERVIEW_CATEGORIES } from '../../constants/interview';
 import { useCreateQuestionSet } from '../../react-query/mutation/useQuestionSetMutations';
 import { useQuestionSetsQuery } from '../../react-query/queries/useQuestionSetsQuery';
@@ -24,16 +24,15 @@ export default function QuestionSetSection() {
             {category.title}
           </Typography>
 
-          <Stack spacing={2}>
-            {questionSets
-              .filter((set) => set.category === category.id)
-              .map((set, index) => (
-                <QuestionSetItem key={set.id} questionSet={set} index={index} />
-              ))}
-            <AddButton onClick={() => handleAddQuestionSet(category.id)}>
-              질문세트 추가하기
-            </AddButton>
-          </Stack>
+          <SettingsList
+            data={questionSets.filter((set) => set.category === category.id)}
+            renderItem={(set, index) => (
+              <QuestionSetItem key={set.id} questionSet={set} index={index} />
+            )}
+            onAdd={() => handleAddQuestionSet(category.id)}
+            addButtonLabel="질문세트 추가하기"
+            gap={2}
+          />
         </Box>
       ))}
     </Stack>
