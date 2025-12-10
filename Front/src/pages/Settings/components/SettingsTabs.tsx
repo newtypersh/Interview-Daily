@@ -1,6 +1,6 @@
-import { Tabs, type TabsProps } from '@mui/material';
+import { Tab, Tabs, type TabsProps } from '@mui/material';
 
-export default function CustomTabs({ sx, ...props }: TabsProps) {
+export default function SettingsTabs(props: TabsProps) {
   return (
     <Tabs
       variant="fullWidth"
@@ -12,9 +12,11 @@ export default function CustomTabs({ sx, ...props }: TabsProps) {
           fontSize: '1rem',
           fontWeight: 600,
         },
-        ...sx,
       }}
       {...props}
-    />
+    >
+      <Tab label="질문 설정" />
+      <Tab label="피드백 템플릿 설정" />
+    </Tabs>
   );
 }

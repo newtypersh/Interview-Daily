@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import {
-  Box,
-  Tab,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import QuestionSetSection from './QuestionSetSection';
 import FeedbackTemplateSection from './FeedbackTemplateSection';
 import PageContainer from '../../components/PageContainer';
 import ContentCard from '../../components/ContentCard';
-import CustomTabs from '../../components/CustomTabs';
+import SettingsTabs from './components/SettingsTabs';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState(0);
@@ -15,13 +12,10 @@ export default function Settings() {
   return (
     <PageContainer>
       <ContentCard>
-        <CustomTabs
+        <SettingsTabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
-        >
-          <Tab label="질문 설정" />
-          <Tab label="피드백 템플릿 설정" />
-        </CustomTabs>
+        />
 
         <Box sx={{ p: { xs: 3, md: 6 } }}>
           {activeTab === 0 ? <QuestionSetSection /> : <FeedbackTemplateSection />}
