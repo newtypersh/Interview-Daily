@@ -1,23 +1,13 @@
 import { useParams, Navigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Paper,
-  Typography,
-  Button,
-  CircularProgress,
-} from '@mui/material';
-import { Send as SendIcon } from '@mui/icons-material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import { useFeedbackForm } from './hooks/useFeedbackForm';
 import { useFeedbackSubmission } from './hooks/useFeedbackSubmission';
-import FeedbackHeader from './components/FeedbackHeader';
-import FeedbackTemplateGuide from './components/FeedbackTemplateGuide';
-import FeedbackList from './components/FeedbackList';
+import FeedbackLayout from './components/FeedbackLayout';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTemplate';
 import { mapInterviewToQuestions } from './utils/feedbackMapper';
 
-export default function Feedback() {
+export default function FeedbackContainer() {
   const { interviewId } = useParams<{ interviewId: string }>();
 
   const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
@@ -66,47 +56,18 @@ export default function Feedback() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'white', py: 6 }}>
-      <Container maxWidth="md">
-        <Paper elevation={3} sx={{ p: { xs: 3, md: 6 }, borderRadius: 3 }}>
-          <FeedbackHeader />
-          <FeedbackTemplateGuide content={templateContent} category={interview?.category} />
-          
-          <Box sx={{ mb: 6 }}>
-            <FeedbackList
-              questions={questions}
-              feedbacks={feedbacks}
-              playingAudio={playingAudio}
-              onPlayAudio={handlePlayAudio}
-              onRatingChange={handleRatingChange}
-              onContentChange={handleContentChange}
-            />
-          </Box>
-
-          <Box sx={{ mt: 6 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              endIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
-              onClick={submit}
-              disabled={isSubmitting}
-              sx={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                py: 2,
-                fontSize: '1.125rem',
-                fontWeight: 600,
-                '&:hover': {
-                  background: 'linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)',
-                },
-              }}
-            >
-              피드백 제출 완료
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+    <FeedbackLayout
+      questions={questions}
+      feedbacks={feedbacks}
+      templateContent={templateContent}
+      category={interview.category}
+      playingAudio={playingAudio}
+      isSubmitting={isSubmitting}
+      onPlayAudio={handlePlayAudio}
+      onRatingChange={handleRatingChange}
+      onContentChange={handleContentChange}
+      onSubmit={submit}
+    />
   );
 }
 
