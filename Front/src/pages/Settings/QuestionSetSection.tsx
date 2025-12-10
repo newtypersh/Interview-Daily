@@ -1,6 +1,5 @@
-import { Add as AddIcon } from '@mui/icons-material';
 import { Box, Stack, Typography } from '@mui/material';
-import DashedButton from '../../components/DashedButton';
+import AddButton from './components/AddButton';
 import { CATEGORY_LIST, INTERVIEW_CATEGORIES } from '../../constants/interview';
 import { useCreateQuestionSet } from '../../react-query/mutation/useQuestionSetMutations';
 import { useQuestionSetsQuery } from '../../react-query/queries/useQuestionSetsQuery';
@@ -31,13 +30,9 @@ export default function QuestionSetSection() {
               .map((set, index) => (
                 <QuestionSetItem key={set.id} questionSet={set} index={index} />
               ))}
-            <DashedButton
-              fullWidth
-              startIcon={<AddIcon />}
-              onClick={() => handleAddQuestionSet(category.id)}
-            >
+            <AddButton onClick={() => handleAddQuestionSet(category.id)}>
               질문세트 추가하기
-            </DashedButton>
+            </AddButton>
           </Stack>
         </Box>
       ))}

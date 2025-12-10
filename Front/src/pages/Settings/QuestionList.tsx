@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import DashedButton from '../../components/DashedButton';
+import AddButton from './components/AddButton';
 import DeleteIconButton from '../../components/DeleteIconButton';
 import QuestionInput from './QuestionInput';
 import { type Question } from '../../types';
@@ -41,18 +40,9 @@ export default function QuestionList({ questions, onUpdate, onDelete, onAdd }: Q
           />
         </Box>
       ))}
-      <DashedButton
-        size="small"
-        startIcon={<AddIcon />}
-        onClick={onAdd}
-        sx={{
-          mt: 1,
-          mx: 'auto',
-          width: 'fit-content',
-        }}
-      >
+      <AddButton onClick={onAdd} sx={{ mt: 1 }}>
         질문 추가
-      </DashedButton>
+      </AddButton>
     </>
   );
 }
