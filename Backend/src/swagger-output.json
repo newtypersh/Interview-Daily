@@ -1133,13 +1133,6 @@
             "description": "답변(질문) ID"
           },
           {
-            "name": "content-type",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
             "name": "file",
             "in": "formData",
             "required": true,

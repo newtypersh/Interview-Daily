@@ -7,11 +7,11 @@ import {
   Collapse,
   Divider,
   Stack,
-  Button,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import DashedButton from '../../components/DashedButton';
 import { QuestionSetSchema } from '../../schemas/settings';
 import QuestionInput from './QuestionInput';
 import { type QuestionSet } from '../../types';
@@ -149,20 +149,18 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
               </IconButton>
             </Box>
           ))}
-          <Button
-            variant="outlined"
+          <DashedButton
             size="small"
             startIcon={<AddIcon />}
             onClick={handleAddQuestion}
             sx={{
-              borderStyle: 'dashed',
               mt: 1,
               mx: 'auto',
               width: 'fit-content'
             }}
           >
             질문 추가
-          </Button>
+          </DashedButton>
         </Stack>
       </Collapse>
     </Box>

@@ -1,9 +1,10 @@
-import { Box, Stack, Typography, Button } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
-import QuestionSetItem from './QuestionSetItem';
-import { useQuestionSetsQuery } from '../../react-query/queries/useQuestionSetsQuery';
-import { useCreateQuestionSet } from '../../react-query/mutation/useQuestionSetMutations';
+import { Box, Stack, Typography } from '@mui/material';
+import DashedButton from '../../components/DashedButton';
 import { CATEGORY_LIST, INTERVIEW_CATEGORIES } from '../../constants/interview';
+import { useCreateQuestionSet } from '../../react-query/mutation/useQuestionSetMutations';
+import { useQuestionSetsQuery } from '../../react-query/queries/useQuestionSetsQuery';
+import QuestionSetItem from './QuestionSetItem';
 
 export default function QuestionSetSection() {
   const { data: questionSets = [] } = useQuestionSetsQuery();
@@ -30,25 +31,13 @@ export default function QuestionSetSection() {
               .map((set, index) => (
                 <QuestionSetItem key={set.id} questionSet={set} index={index} />
               ))}
-            <Button
-              variant="outlined"
+            <DashedButton
               fullWidth
               startIcon={<AddIcon />}
               onClick={() => handleAddQuestionSet(category.id)}
-              sx={{
-                borderStyle: 'dashed',
-                borderWidth: 2,
-                color: 'text.secondary',
-                borderColor: 'divider',
-                '&:hover': {
-                  borderStyle: 'dashed',
-                  borderWidth: 2,
-                  borderColor: 'text.secondary',
-                },
-              }}
             >
               질문세트 추가하기
-            </Button>
+            </DashedButton>
           </Stack>
         </Box>
       ))}

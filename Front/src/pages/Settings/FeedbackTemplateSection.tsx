@@ -9,8 +9,7 @@ import {
   Snackbar,
   CircularProgress,
 } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import MarkdownPreview from '../../components/MarkdownPreview';
 
 import { type UI_FeedbackTemplate, useFeedbackTemplates } from '../../hooks/useFeedbackTemplates';
 import { FeedbackTemplateContentSchema } from '../../schemas/settings';
@@ -141,28 +140,10 @@ export default function FeedbackTemplateSection() {
                 <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
                   미리보기
                 </Typography>
-                <Box
-                  sx={{
-                    border: '1px solid #e0e0e0',
-                    borderRadius: 1,
-                    p: 2,
-                    height: 'calc(480px - 2px)',
-                    overflowY: 'auto',
-                    bgcolor: '#fcfcfc',
-                    boxSizing: 'border-box',
-                    '& h1, & h2, & h3': { fontWeight: 600, mt: 2, mb: 1 },
-                    '& h1': { fontSize: '1.5rem' },
-                    '& h2': { fontSize: '1.25rem' },
-                    '& h3': { fontSize: '1.1rem' },
-                    '& p': { mb: 1 },
-                    '& ul, & ol': { pl: 3, mb: 1 },
-                    '& li': { mb: 0.5 },
-                  }}
-                >
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {getContent(template)}
-                  </ReactMarkdown>
-                </Box>
+                <MarkdownPreview
+                  content={getContent(template)}
+                  sx={{ height: 'calc(480px - 2px)' }}
+                />
               </Box>
             </Box>
           </Box>

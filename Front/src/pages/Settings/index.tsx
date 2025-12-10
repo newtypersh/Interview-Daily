@@ -1,44 +1,32 @@
 import { useState } from 'react';
 import {
   Box,
-  Container,
-  Paper,
-  Tabs,
   Tab,
 } from '@mui/material';
 import QuestionSetSection from './QuestionSetSection';
 import FeedbackTemplateSection from './FeedbackTemplateSection';
+import PageContainer from '../../components/PageContainer';
+import ContentCard from '../../components/ContentCard';
+import CustomTabs from '../../components/CustomTabs';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5', py: 8 }}>
-      <Container maxWidth="lg">
-        <Paper elevation={3} sx={{ borderRadius: 3, overflow: 'hidden' }}>
-          <Tabs
-            value={activeTab}
-            onChange={(_, newValue) => setActiveTab(newValue)}
-            variant="fullWidth"
-            sx={{
-              borderBottom: 1,
-              borderColor: 'divider',
-              '& .MuiTab-root': {
-                py: 2,
-                fontSize: '1rem',
-                fontWeight: 600,
-              },
-            }}
-          >
-            <Tab label="질문 설정" />
-            <Tab label="피드백 템플릿 설정" />
-          </Tabs>
+    <PageContainer>
+      <ContentCard>
+        <CustomTabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+        >
+          <Tab label="질문 설정" />
+          <Tab label="피드백 템플릿 설정" />
+        </CustomTabs>
 
-          <Box sx={{ p: { xs: 3, md: 6 } }}>
-            {activeTab === 0 ? <QuestionSetSection /> : <FeedbackTemplateSection />}
-          </Box>
-        </Paper>
-      </Container>
-    </Box>
+        <Box sx={{ p: { xs: 3, md: 6 } }}>
+          {activeTab === 0 ? <QuestionSetSection /> : <FeedbackTemplateSection />}
+        </Box>
+      </ContentCard>
+    </PageContainer>
   );
 }
