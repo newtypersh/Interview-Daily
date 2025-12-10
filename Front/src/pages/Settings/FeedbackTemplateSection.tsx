@@ -5,11 +5,10 @@ import {
   TextField,
   Button,
   Stack,
-  Alert,
-  Snackbar,
   CircularProgress,
 } from '@mui/material';
 import MarkdownPreview from '../../components/MarkdownPreview';
+import { CustomSnackbar, useSnackbar } from '../../components/snackbar/CustomSnackbar';
 
 import { type UI_FeedbackTemplate, useFeedbackTemplates } from '../../hooks/useFeedbackTemplates';
 import { FeedbackTemplateContentSchema } from '../../schemas/settings';
@@ -18,20 +17,7 @@ export default function FeedbackTemplateSection() {
   const { templates, isLoading, updateTemplate, isUpdating } = useFeedbackTemplates();
   const [editedContent, setEditedContent] = useState<Record<string, string>>({});
   
-  // Snackbar state
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
-
-  const showSnackbar = (message: string, severity: 'success' | 'error') => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setSnackbarOpen(true);
-  };
+  const { open, message, severity, showSnackbar, closeSnackbar } = useSnackbar();
 
   const getContent = (template: UI_FeedbackTemplate) => {
     return editedContent[template.type] ?? template.content;
@@ -91,6 +77,7 @@ export default function FeedbackTemplateSection() {
       <Stack spacing={4}>
         {templates.map((template) => (
           <Box key={template.type}>
+            {/* ... keeping existing content structure ... */}
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
               {template.title}
             </Typography>
@@ -150,16 +137,12 @@ export default function FeedbackTemplateSection() {
         ))}
       </Stack>
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <CustomSnackbar
+        open={open}
+        message={message}
+        severity={severity}
+        onClose={closeSnackbar}
+      />
     </>
   );
 }
