@@ -5,18 +5,26 @@ import {
   TextField,
   IconButton,
   Collapse,
+  Divider,
   Stack,
   Button,
-  Divider,
 } from '@mui/material';
-import {
-  ExpandMore as ExpandMoreIcon,
-  Delete as DeleteIcon,
-  Add as AddIcon,
-} from '@mui/icons-material';
-import type { QuestionSet } from '../../types';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import { QuestionSetSchema } from '../../schemas/settings';
 import QuestionInput from './QuestionInput';
-import { useQuestionSetActions } from '../../hooks/useQuestionSetActions';
+import { type QuestionSet } from '../../types';
+import {
+  useUpdateQuestionSet,
+  useDeleteQuestionSet,
+} from '../../react-query/mutation/useQuestionSetMutations';
+import {
+  useCreateQuestion,
+  useUpdateQuestion,
+  useDeleteQuestion,
+} from '../../react-query/mutation/useQuestionMutations';
+import { useQuestionsQuery } from '../../react-query/queries/useQuestionsQuery';
 
 interface QuestionSetItemProps {
   questionSet: QuestionSet;
@@ -25,48 +33,84 @@ interface QuestionSetItemProps {
 
 export default function QuestionSetItem({ questionSet, index }: QuestionSetItemProps) {
   const [expanded, setExpanded] = useState(false);
-  
-  const {
-    questions,
-    createQuestion,
-    updateQuestion,
-    deleteQuestion,
-    deleteSet,
-    updateSet,
-  } = useQuestionSetActions(questionSet.id, expanded);
+  const { mutate: updateSet } = useUpdateQuestionSet();
+  const { mutate: deleteSet } = useDeleteQuestionSet();
+
+  // Questions logic
+  // Fetch questions only when expanded or to show count?
+  // If we want to show count in header, we need to fetch. 
+  // For now, let's fetch when expanded to save resources if list is long, 
+  // unless we want to preload. 
+  // Given "expanded" is false by default.
+  // Actually, 'QuestionSet' type has 'questions' array. If it's populated, we use it.
+  // But 'useQuestionsQuery' is the source of truth for the *latest* questions if they change.
+  // Let's use the query.
+  const { data: questions = [] } = useQuestionsQuery(questionSet.id, expanded);
+
+  const { mutate: createQuestion } = useCreateQuestion(questionSet.id);
+  const { mutate: updateQuestion } = useUpdateQuestion(questionSet.id);
+  const { mutate: deleteQuestion } = useDeleteQuestion(questionSet.id);
+
+  const handleUpdateSet = (name: string) => {
+    updateSet({ id: questionSet.id, name });
+  };
+
+  const handleDeleteSet = () => {
+    if (confirm('정말로 이 질문 세트를 삭제하시겠습니까?')) {
+      deleteSet(questionSet.id);
+    }
+  };
 
   const handleAddQuestion = () => {
     createQuestion('새 질문');
   };
 
-  const handleUpdateQuestion = (questionId: string, content: string) => {
-    updateQuestion({ questionId, content });
+  const handleUpdateQuestion = (id: string | number, content: string) => {
+    updateQuestion({ questionId: String(id), content });
+  };
+
+  const handleDeleteQuestion = (id: string) => {
+    deleteQuestion(id);
   };
 
   return (
-    <Box
-      sx={{
-        border: '1px solid #e0e0e0',
-        borderRadius: 1,
-        p: 2,
-        bgcolor: 'white',
-      }}
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-        <Typography sx={{ width: 32, color: 'text.secondary' }}>
-          {index + 1}.
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          p: 1.5,
+          bgcolor: expanded ? 'grey.50' : 'transparent',
+          borderRadius: 1,
+        }}
+      >
+        <Typography sx={{ color: 'text.secondary', fontWeight: 600 }}>
+          {String(index + 1).padStart(2, '0')}
         </Typography>
+        
         <TextField
           defaultValue={questionSet.name}
-          size="small"
+          variant="standard"
           fullWidth
+          InputProps={{ disableUnderline: !expanded }}
+          inputProps={{ sx: { fontWeight: 600 } }}
           onBlur={(e) => {
             const newName = e.target.value.trim();
             if (newName && newName !== questionSet.name) {
-              updateSet(newName);
+              const validation = QuestionSetSchema.safeParse({ name: newName });
+              if (!validation.success) {
+                alert(validation.error.issues[0]?.message || 'Invalid name');
+                e.target.value = questionSet.name; // reset to original
+                return;
+              }
+              handleUpdateSet(newName);
+            } else if (!newName) {
+                e.target.value = questionSet.name;
             }
           }}
         />
+        
         <IconButton
           onClick={() => setExpanded(!expanded)}
           sx={{
@@ -76,15 +120,16 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
         >
           <ExpandMoreIcon />
         </IconButton>
-        <IconButton onClick={() => deleteSet()} color="error">
+        
+        <IconButton onClick={handleDeleteSet} color="error" size="small">
           <DeleteIcon />
         </IconButton>
       </Box>
 
-      <Collapse in={expanded}>
+      <Collapse in={expanded} unmountOnExit>
         <Divider sx={{ mb: 2 }} />
 
-        <Stack spacing={1.5}>
+        <Stack spacing={1.5} sx={{ pl: 5, pr: 2, pb: 2 }}>
           {questions.map((question, qIndex) => (
             <Box key={question.id} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
               <Typography sx={{ minWidth: 24, pt: 1, color: 'text.secondary', fontSize: '0.875rem' }}>
@@ -97,7 +142,7 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
               />
               <IconButton
                 size="small"
-                onClick={() => deleteQuestion(question.id)}
+                onClick={() => handleDeleteQuestion(question.id)}
                 sx={{ mt: 0.5 }}
               >
                 <DeleteIcon fontSize="small" />
@@ -112,6 +157,8 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
             sx={{
               borderStyle: 'dashed',
               mt: 1,
+              mx: 'auto',
+              width: 'fit-content'
             }}
           >
             질문 추가

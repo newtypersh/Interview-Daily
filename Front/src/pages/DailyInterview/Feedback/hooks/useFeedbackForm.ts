@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
+import type { FeedbackItem } from '../../../../schemas/feedback';
 
-export interface QuestionFeedback {
-  rating: number;
-  content: string;
-}
+export type QuestionFeedback = FeedbackItem;
 
 export interface Question {
   id: string;

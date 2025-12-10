@@ -1,52 +1,111 @@
+import { useState } from 'react';
 import {
   Box,
-  Stack,
   Typography,
-  Button,
   TextField,
-  Snackbar,
+  Button,
+  Stack,
   Alert,
+  Snackbar,
+  CircularProgress,
 } from '@mui/material';
-import { Save as SaveIcon } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
-import { useFeedbackTemplateEditor } from '../../hooks/useFeedbackTemplateEditor';
+import remarkGfm from 'remark-gfm';
+
+import { type UI_FeedbackTemplate, useFeedbackTemplates } from '../../hooks/useFeedbackTemplates';
+import { FeedbackTemplateContentSchema } from '../../schemas/settings';
 
 export default function FeedbackTemplateSection() {
-  const {
-    templates,
-    isUpdating,
-    getContent,
-    handleContentChange,
-    handleSave,
-    snackbarOpen,
-    snackbarMessage,
-    snackbarSeverity,
-    handleSnackbarClose,
-  } = useFeedbackTemplateEditor();
+  const { templates, isLoading, updateTemplate, isUpdating } = useFeedbackTemplates();
+  const [editedContent, setEditedContent] = useState<Record<string, string>>({});
+  
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const showSnackbar = (message: string, severity: 'success' | 'error') => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarOpen(true);
+  };
+
+  const getContent = (template: UI_FeedbackTemplate) => {
+    return editedContent[template.type] ?? template.content;
+  };
+
+  const handleContentChange = (type: string, value: string) => {
+    setEditedContent((prev) => ({
+      ...prev,
+      [type]: value,
+    }));
+  };
+
+  const handleSave = (template: UI_FeedbackTemplate) => {
+    const content = getContent(template);
+    
+    // Zod Validation
+    const validation = FeedbackTemplateContentSchema.safeParse({ content });
+    
+    if (!validation.success) {
+      // FIX: Use .issues instead of .errors
+      showSnackbar(validation.error.issues[0].message, 'error');
+      return;
+    }
+
+    updateTemplate(
+      {
+        category: template.type,
+        content,
+      },
+      {
+        onSuccess: () => {
+          showSnackbar('템플릿이 저장되었습니다.', 'success');
+          // Clear local edit state after successful save so it falls back to the (now updated) server data
+          setEditedContent((prev) => {
+            const newState = { ...prev };
+            delete newState[template.type];
+            return newState;
+          });
+        },
+        onError: () => {
+          showSnackbar('템플릿 저장에 실패했습니다.', 'error');
+        },
+      }
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <>
       <Stack spacing={4}>
         {templates.map((template) => (
-          <Box
-            key={template.type}
-            sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3, bgcolor: 'white' }}
-          >
-            <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+          <Box key={template.type}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
               {template.title}
             </Typography>
-
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+            
+            <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
               {/* Editor */}
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                    편집
+                    편집기
                   </Typography>
                   <Button
                     variant="contained"
                     size="small"
-                    startIcon={<SaveIcon />}
                     onClick={() => handleSave(template)}
                     disabled={isUpdating}
                   >
@@ -78,7 +137,7 @@ export default function FeedbackTemplateSection() {
               </Box>
 
               {/* Preview */}
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
                   미리보기
                 </Typography>
@@ -100,7 +159,9 @@ export default function FeedbackTemplateSection() {
                     '& li': { mb: 0.5 },
                   }}
                 >
-                  <ReactMarkdown>{getContent(template)}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {getContent(template)}
+                  </ReactMarkdown>
                 </Box>
               </Box>
             </Box>

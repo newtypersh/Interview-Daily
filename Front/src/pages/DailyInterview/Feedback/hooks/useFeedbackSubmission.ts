@@ -1,5 +1,6 @@
 import { useSubmitFeedback } from '../../../../react-query/mutation/useSubmitFeedback';
 import type { Question, QuestionFeedback } from './useFeedbackForm';
+import { FeedbackSubmissionSchema } from '../../../../schemas/feedback';
 
 interface UseFeedbackSubmissionProps {
   interviewId: string | undefined;
@@ -13,6 +14,17 @@ export const useFeedbackSubmission = ({ interviewId, questions, feedbacks }: Use
   const submit = () => {
     if (!interviewId) return;
 
+    // Zod Validation (Validating Raw Form State)
+    const validationResult = FeedbackSubmissionSchema.safeParse({
+      interviewId,
+      feedbacks
+    });
+
+    if (!validationResult.success) {
+      alert(validationResult.error.issues[0].message);
+      return;
+    }
+
     const formattedFeedbacks = Object.entries(feedbacks)
       .map(([questionId, feedback]) => {
         const question = questions.find((q) => q.id === questionId);
@@ -25,11 +37,6 @@ export const useFeedbackSubmission = ({ interviewId, questions, feedbacks }: Use
         };
       })
       .filter((item): item is { answerId: string; score: number; comment: string } => item !== null);
-
-    if (formattedFeedbacks.length === 0) {
-      alert('제출할 피드백이 없습니다.');
-      return;
-    }
 
     submitFeedback(
       { feedbacks: formattedFeedbacks },
