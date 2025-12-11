@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@mui/material';
 import ContentBox from '../../../components/ContentBox';
 import MarkdownEditor from '../../../components/MarkdownEditor';
-import { type UI_FeedbackTemplate } from '../hooks/useFeedbackTemplates';
+import { type UI_FeedbackTemplate } from '../types';
 import { FeedbackTemplateContentSchema } from '../../../schemas/settings';
 
 interface FeedbackTemplateItemProps {
@@ -19,15 +19,6 @@ export default function FeedbackTemplateItem({
   showSnackbar,
 }: FeedbackTemplateItemProps) {
   const [content, setContent] = useState(template.content);
-
-  // Sync state if template content updates from server (optional, but good practice)
-  // Actually, if we are editing, we might not want to overwrite user's work. 
-  // But for now let's assume local state takes precedence only during edit.
-  // A simple way is to initialize state props.
-  // The Parent logic was: `editedContent[type] ?? template.content`.
-  // So if we type, we are "dirty".
-  // Let's replicate this behavior simply:
-  // We maintain local content. 
 
   const handleContentChange = (value: string) => {
     setContent(value);

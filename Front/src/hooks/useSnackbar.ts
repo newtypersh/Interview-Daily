@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 type SnackbarSeverity = 'success' | 'error' | 'warning' | 'info';
 
-interface UseSnackbarReturn {
+export interface UseSnackbarReturn {
   snackbarOpen: boolean;
   snackbarMessage: string;
   snackbarSeverity: SnackbarSeverity;

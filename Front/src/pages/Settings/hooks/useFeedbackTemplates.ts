@@ -1,14 +1,10 @@
 import { useMemo } from 'react';
 
-import { INTERVIEW_CATEGORIES, CATEGORY_TITLES, CATEGORY_LIST } from '../../../constants/interview';
+import { CATEGORY_TITLES, CATEGORY_LIST } from '../../../constants/interview';
 import { useFeedbackTemplatesQuery } from '../../../react-query/queries/useFeedbackTemplatesQuery';
 import { useUpdateFeedbackTemplate } from '../../../react-query/mutation/useFeedbackTemplateMutations';
 
-export interface UI_FeedbackTemplate {
-  type: keyof typeof INTERVIEW_CATEGORIES;
-  title: string;
-  content: string;
-}
+import type { UI_FeedbackTemplate } from '../types';
 
 export const useFeedbackTemplates = () => {
   const { data: rawTemplates = [], isLoading, error } = useFeedbackTemplatesQuery();

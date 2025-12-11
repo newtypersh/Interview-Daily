@@ -5,7 +5,8 @@ import {
 } from '@mui/material';
 import { CustomSnackbar, useSnackbar } from '../../components/snackbar/CustomSnackbar';
 
-import { type UI_FeedbackTemplate, useFeedbackTemplates } from './hooks/useFeedbackTemplates';
+import { useFeedbackTemplates } from './hooks/useFeedbackTemplates';
+import type { UI_FeedbackTemplate } from './types';
 import FeedbackTemplateItem from './components/FeedbackTemplateItem';
 
 export default function FeedbackTemplateSection() {

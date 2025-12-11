@@ -1,30 +1,22 @@
 import { useState } from 'react';
-import { useFeedbackTemplates, type UI_FeedbackTemplate } from './useFeedbackTemplates';
-import { useSnackbar } from '../../../hooks/useSnackbar';
+import { useFeedbackTemplates } from './useFeedbackTemplates';
+import type { UI_FeedbackTemplate } from '../types';
+import { useSnackbar, type UseSnackbarReturn } from '../../../hooks/useSnackbar';
 
-interface UseFeedbackTemplateEditorReturn {
+interface UseFeedbackTemplateEditorReturn extends UseSnackbarReturn {
   templates: UI_FeedbackTemplate[];
   isUpdating: boolean;
   getContent: (template: UI_FeedbackTemplate) => string;
   handleContentChange: (type: string, content: string) => void;
   handleSave: (template: UI_FeedbackTemplate) => void;
-  snackbarOpen: boolean;
-  snackbarMessage: string;
-  snackbarSeverity: 'success' | 'error' | 'warning' | 'info';
-  handleSnackbarClose: () => void;
 }
 
 export const useFeedbackTemplateEditor = (): UseFeedbackTemplateEditorReturn => {
   const { templates, updateTemplate, isUpdating } = useFeedbackTemplates();
   const [edits, setEdits] = useState<Record<string, string>>({});
   
-  const { 
-    snackbarOpen, 
-    snackbarMessage, 
-    snackbarSeverity, 
-    openSnackbar, 
-    closeSnackbar 
-  } = useSnackbar();
+  const snackbar = useSnackbar();
+  const { openSnackbar } = snackbar;
 
   const handleContentChange = (type: string, content: string) => {
     setEdits((prev) => ({ ...prev, [type]: content }));
@@ -55,9 +47,6 @@ export const useFeedbackTemplateEditor = (): UseFeedbackTemplateEditorReturn => 
     getContent,
     handleContentChange,
     handleSave,
-    snackbarOpen,
-    snackbarMessage,
-    snackbarSeverity,
-    handleSnackbarClose: closeSnackbar,
+    ...snackbar,
   };
 };
