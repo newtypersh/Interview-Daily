@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getFeedbackTemplateByCategory } from '../../apis/feedbackTemplate';
+import { getFeedbackTemplateByCategory } from '../../apis/feedbackTemplate/index';
 
 export const useFeedbackTemplate = (category: string | undefined | null) => {
   const { data: templates, isLoading, error } = useQuery({
