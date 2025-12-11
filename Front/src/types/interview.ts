@@ -10,6 +10,7 @@ export interface InterviewAnswerDto {
   updatedAt: string | null;
   questionContent: string;
   transcriptText?: string;
+  feedbacks?: { rating: number; feedbackText?: string }[];
 }
 
 export interface InterviewDto {

@@ -7,6 +7,7 @@ export interface FeedbackQuestion {
   answerId: string;
   audioUrl: string | null;
   transcript?: string;
+  feedbacks?: { rating: number; feedbackText?: string }[];
 }
 
 export const mapInterviewToQuestions = (answers: InterviewAnswerDto[] | undefined): FeedbackQuestion[] => {
@@ -19,5 +20,6 @@ export const mapInterviewToQuestions = (answers: InterviewAnswerDto[] | undefine
     answerId: a.id, // 답변 고유 ID도 필요할 수 있으므로 저장 (useFeedbackForm에서 활용 가능성)
     audioUrl: a.audioUrl,
     transcript: a.transcriptText,
+    feedbacks: a.feedbacks,
   }));
 };

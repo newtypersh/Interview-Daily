@@ -10,6 +10,7 @@ export interface Question {
   transcript?: string;
   audioUrl?: string | null;
   answerId?: string;
+  feedbacks?: { rating: number; feedbackText?: string }[];
 }
 
 export const useFeedbackForm = (questions: Question[], defaultContent?: string) => {
@@ -23,6 +24,17 @@ export const useFeedbackForm = (questions: Question[], defaultContent?: string) 
       let hasChanges = false;
 
       questions.forEach(q => {
+        // If feedback exists in the question data (from backend), use it
+        if (q.feedbacks && q.feedbacks.length > 0 && !newFeedbacks[q.id]) {
+          const fb = q.feedbacks[0];
+          newFeedbacks[q.id] = { 
+            rating: fb.rating, 
+            content: fb.feedbackText || defaultContent || '' 
+          };
+          hasChanges = true;
+          return;
+        }
+
         // If feedback for this question doesn't exist, create it
         if (!newFeedbacks[q.id]) {
           newFeedbacks[q.id] = { rating: 0, content: defaultContent || '' };

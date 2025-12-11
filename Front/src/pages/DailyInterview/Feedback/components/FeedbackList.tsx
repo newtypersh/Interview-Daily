@@ -27,7 +27,7 @@ export default function FeedbackList({
           question={q}
           index={index}
           answer={q.transcript || '답변 내용이 없습니다.'}
-          feedback={feedbacks[q.id]}
+          feedback={feedbacks[q.id] || { rating: 0, content: "" }}
           isPlaying={playingAudio === q.id}
           onPlayAudio={() => q.audioUrl && onPlayAudio(q.id)}
           onRatingChange={onRatingChange}
