@@ -43,6 +43,6 @@ export type InterviewSession = {
 }
 
 
-export * from './history';
+
 export * from './interview';
 

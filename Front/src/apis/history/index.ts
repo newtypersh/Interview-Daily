@@ -1,5 +1,5 @@
-import { api } from './axios';
-import type { InterviewHistoryResponse } from '../types';
+import { api } from '../axios';
+import type { InterviewHistoryResponse } from './types';
 
 export const getInterviews = async (
   limit: number,
