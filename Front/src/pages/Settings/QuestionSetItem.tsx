@@ -3,7 +3,7 @@ import { Divider, Stack } from '@mui/material';
 import { QuestionSetSchema, QuestionContentSchema } from '../../schemas/settings';
 import SettingsList from './components/SettingsList';
 import SettingsItem from './components/SettingsItem';
-import { type QuestionSet } from '../../types';
+import { type QuestionSet } from '../../apis/questionSet/types';
 import {
   useUpdateQuestionSet,
   useDeleteQuestionSet,

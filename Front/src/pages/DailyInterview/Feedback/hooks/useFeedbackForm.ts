@@ -1,11 +1,10 @@
+```typescript
 import { useState, useEffect } from 'react';
 import type { FeedbackItem } from '../../../../schemas/feedback';
+import type { Question } from '../../../../apis/questionSet/types';
 
 export type QuestionFeedback = FeedbackItem;
 
-export interface Question {
-  id: string;
-  content: string;
   order: number;
   transcript?: string;
   audioUrl?: string | null;

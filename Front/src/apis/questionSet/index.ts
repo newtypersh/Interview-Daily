@@ -1,5 +1,5 @@
-import { api } from './axios';
-import type { Question, QuestionSet } from '../types';
+import { api } from '../axios';
+import type { Question, QuestionSet } from './types';
 
 // Question Set APIs
 export const getQuestionSets = async (): Promise<QuestionSet[]> => {

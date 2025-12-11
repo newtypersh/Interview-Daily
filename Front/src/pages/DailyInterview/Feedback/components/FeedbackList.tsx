@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material';
 import FeedbackItem from './FeedbackItem';
-import type { Question, QuestionFeedback } from '../hooks/useFeedbackForm';
+import type { Question } from '../../../../apis/questionSet/types';
+import type { QuestionFeedback } from '../hooks/useFeedbackForm';
 
 interface FeedbackListProps {
   questions: Question[];

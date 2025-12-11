@@ -1,9 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  createQuestionSet,
-  updateQuestionSet,
-  deleteQuestionSet,
-} from '../../apis/questionSet';
+import { createQuestionSet, deleteQuestionSet, updateQuestionSet } from '../apis/questionSet';
+import type { QuestionSet } from '../apis/questionSet/types';
 import { INTERVIEW_CATEGORIES } from '../../constants/interview';
 import { QUERY_KEY } from '../queries/useQuestionSetsQuery';
 
