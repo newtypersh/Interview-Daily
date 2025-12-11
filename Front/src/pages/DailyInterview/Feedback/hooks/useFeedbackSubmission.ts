@@ -1,4 +1,5 @@
 import { useSubmitFeedback } from '../../../../react-query/mutation/useSubmitFeedback';
+import { useNavigate } from 'react-router-dom';
 import type { Question, QuestionFeedback } from './useFeedbackForm';
 import { FeedbackSubmissionSchema } from '../../../../schemas/feedback';
 
@@ -9,6 +10,7 @@ interface UseFeedbackSubmissionProps {
 }
 
 export const useFeedbackSubmission = ({ interviewId, questions, feedbacks }: UseFeedbackSubmissionProps) => {
+  const navigate = useNavigate();
   const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId || '');
 
   const submit = () => {
@@ -48,6 +50,7 @@ export const useFeedbackSubmission = ({ interviewId, questions, feedbacks }: Use
       {
         onSuccess: () => {
           alert('피드백이 성공적으로 제출되었습니다.');
+          navigate('/');
         },
         onError: () => {
           alert('피드백 제출에 실패했습니다.');
