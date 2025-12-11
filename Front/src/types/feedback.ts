@@ -1,7 +1,7 @@
 export interface FeedbackSubmissionItem {
   answerId: string;
-  score: number;
-  comment: string;
+  rating: number;
+  feedbackText: string;
 }
 
 export interface FeedbackSubmissionRequest {

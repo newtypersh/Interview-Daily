@@ -98,7 +98,7 @@ export async function completeInterview({ interviewId, userId }) {
 
 export async function submitFeedbacks({ userId, interviewId, feedbacks }) {
     // 1. 면접 존재 및 소유자 확인
-    await repo.findInterviewById({ interviewId, userId });
+    await repo.findInterviewById(interviewId, userId);
 
     // 2. 피드백 일괄 저장
     const savedCount = await repo.createFeedbacksBulk({ feedbacks });

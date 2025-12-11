@@ -4,6 +4,7 @@ import {
     StartInterviewRequestDto, 
     UploadAnswerAudioRequestDto,
     CompleteInterviewRequestDto,
+    CreateFeedbackRequestDto,
  } from "../dtos/interview.request.dto.js";
 import { StatusCodes } from "http-status-codes";
 

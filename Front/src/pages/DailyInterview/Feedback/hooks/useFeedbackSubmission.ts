@@ -32,11 +32,16 @@ export const useFeedbackSubmission = ({ interviewId, questions, feedbacks }: Use
 
         return {
           answerId: question.answerId,
-          score: feedback.rating,
-          comment: feedback.content,
+          rating: feedback.rating,
+          feedbackText: feedback.content,
         };
       })
-      .filter((item): item is { answerId: string; score: number; comment: string } => item !== null);
+      .filter((item): item is { answerId: string; rating: number; feedbackText: string } => item !== null && item.rating > 0);
+
+    if (formattedFeedbacks.length === 0) {
+      alert('평가를 완료하고 싶은 항목에 점수를 매겨주세요.');
+      return;
+    }
 
     submitFeedback(
       { feedbacks: formattedFeedbacks },
