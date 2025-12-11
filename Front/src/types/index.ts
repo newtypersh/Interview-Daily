@@ -42,7 +42,7 @@ export type InterviewSession = {
   feedbacks: Feedback[];
 }
 
-export * from './feedbackTemplate';
+
 export * from './history';
 export * from './interview';
 

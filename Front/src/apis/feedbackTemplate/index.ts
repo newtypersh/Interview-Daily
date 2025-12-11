@@ -1,10 +1,10 @@
-import { api } from './axios';
+import { api } from '../axios';
 import type { 
   FeedbackTemplateDto, 
   GetFeedbackTemplatesResponse, 
   UpdateFeedbackTemplateRequest, 
   UpdateFeedbackTemplateResponse 
-} from '../types';
+} from './types';
 
 export const getFeedbackTemplates = async (): Promise<FeedbackTemplateDto[]> => {
   const response = await api.get<GetFeedbackTemplatesResponse>('/feedback-templates');
