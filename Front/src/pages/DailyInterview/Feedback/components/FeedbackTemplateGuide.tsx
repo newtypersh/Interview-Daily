@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material';
+import MarkdownPreview from '../../../../components/MarkdownPreview';
 
 interface FeedbackTemplateGuideProps {
   content: string | undefined;
@@ -13,9 +14,18 @@ export default function FeedbackTemplateGuide({ content, category }: FeedbackTem
       <Typography variant="h6" gutterBottom color="primary">
         💡 피드백 가이드 ({category || 'General'})
       </Typography>
-      <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-        {content}
-      </Typography>
+      <MarkdownPreview 
+        content={content} 
+        sx={{ 
+          border: 'none', 
+          bgcolor: 'transparent', 
+          p: 0, 
+          height: 'auto',
+          'div.markdown-preview': {
+            whiteSpace: 'pre-wrap' // Preserve existing whitespace behavior if needed, or let markdown handle it
+          }
+        }} 
+      />
     </Box>
   );
 }
