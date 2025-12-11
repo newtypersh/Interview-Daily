@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { startInterview } from '../../../apis/interview';
+import type { StartInterviewResponse } from '../../../apis/interview/types';
 import { handleError } from '../../../utils/errorHandler';
 import type { Question } from '../../../types';
 

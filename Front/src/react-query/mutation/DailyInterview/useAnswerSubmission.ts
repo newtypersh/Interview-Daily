@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { uploadAnswerAudio } from '../../../apis/interview';
-import type { UploadAudioResponse } from '../../../types/interview';
+import type { UploadAudioResponse } from '../../../apis/interview/types';
 
 interface UseAnswerSubmissionProps {
   interviewId: string | null;

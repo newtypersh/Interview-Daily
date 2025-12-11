@@ -1,4 +1,4 @@
-import type { Question } from './index';
+import type { Question } from '../../types';
 
 export interface InterviewAnswerDto {
   id: string;

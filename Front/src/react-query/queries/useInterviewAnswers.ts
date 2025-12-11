@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getInterviewAnswers } from '../../apis/interview';
-import type { InterviewDto } from '../../types';
+import type { InterviewDto } from '../../apis/interview/types';
 
 export const useInterviewAnswers = (interviewId: string | null) => {
   const { data, isLoading, error } = useQuery({
