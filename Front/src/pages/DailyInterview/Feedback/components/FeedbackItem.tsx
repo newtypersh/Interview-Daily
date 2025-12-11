@@ -14,6 +14,7 @@ import {
   Pause as PauseIcon,
 } from '@mui/icons-material';
 import type { Question, QuestionFeedback } from '../hooks/useFeedbackForm';
+import ContentBox from '../../../../components/ContentBox';
 
 interface FeedbackItemProps {
   question: Question;
@@ -37,15 +38,7 @@ export default function FeedbackItem({
   onContentChange,
 }: FeedbackItemProps) {
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 2,
-        p: { xs: 3, md: 4 },
-      }}
-    >
+    <ContentBox>
       <Stack spacing={3}>
         {/* Question */}
         <Box>
@@ -148,6 +141,6 @@ export default function FeedbackItem({
           />
         </Box>
       </Stack>
-    </Paper>
+    </ContentBox>
   );
 }

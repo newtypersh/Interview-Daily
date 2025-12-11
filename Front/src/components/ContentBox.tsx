@@ -2,7 +2,7 @@ import { Box, Typography, type SxProps, type Theme } from '@mui/material';
 import { type ReactNode } from 'react';
 
 interface ContentBoxProps {
-  title: ReactNode;
+  title?: ReactNode;
   children: ReactNode;
   sx?: SxProps<Theme>;
 }
@@ -18,9 +18,11 @@ export default function ContentBox({ title, children, sx }: ContentBoxProps) {
         ...sx,
       }}
     >
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-        {title}
-      </Typography>
+      {title && (
+        <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+          {title}
+        </Typography>
+      )}
       {children}
     </Box>
   );
