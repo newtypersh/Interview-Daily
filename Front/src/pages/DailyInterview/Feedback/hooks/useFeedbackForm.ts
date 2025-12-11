@@ -1,11 +1,10 @@
-```typescript
 import { useState, useEffect } from 'react';
 import type { FeedbackItem } from '../../../../schemas/feedback';
-import type { Question } from '../../../../apis/questionSet/types';
+import type { Question as ApiQuestion } from '../../../../apis/questionSet/types';
 
 export type QuestionFeedback = FeedbackItem;
 
-  order: number;
+export interface Question extends ApiQuestion {
   transcript?: string;
   audioUrl?: string | null;
   answerId?: string;
@@ -76,8 +75,6 @@ export const useFeedbackForm = (questions: Question[], defaultContent?: string) 
       setTimeout(() => setPlayingAudio(null), 3000); // 임시로 3초 후 자동 정지
     }
   };
-
-
 
   return {
     feedbacks,
