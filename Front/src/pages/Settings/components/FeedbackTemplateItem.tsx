@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Button } from '@mui/material';
+import ContentBox from '../../../components/ContentBox';
 import MarkdownEditor from '../../../components/MarkdownEditor';
 import { type UI_FeedbackTemplate } from '../../../hooks/useFeedbackTemplates';
 import { FeedbackTemplateContentSchema } from '../../../schemas/settings';
@@ -45,11 +46,7 @@ export default function FeedbackTemplateItem({
   };
 
   return (
-    <Box>
-      <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-        {template.title}
-      </Typography>
-      
+    <ContentBox title={template.title}>
       <MarkdownEditor
         value={content}
         onChange={handleContentChange}
@@ -65,6 +62,6 @@ export default function FeedbackTemplateItem({
           </Button>
         }
       />
-    </Box>
+    </ContentBox>
   );
 }

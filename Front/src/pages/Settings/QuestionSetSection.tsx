@@ -1,4 +1,5 @@
-import { Box, Typography, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
+import ContentBox from '../../components/ContentBox';
 import SettingsList from './components/SettingsList';
 import { CATEGORY_LIST, INTERVIEW_CATEGORIES } from '../../constants/interview';
 import { useCreateQuestionSet } from '../../react-query/mutation/useQuestionSetMutations';
@@ -16,14 +17,7 @@ export default function QuestionSetSection() {
   return (
     <Stack spacing={4}>
       {CATEGORY_LIST.map((category) => (
-        <Box
-          key={category.id}
-          sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 3, bgcolor: 'white' }}
-        >
-          <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
-            {category.title}
-          </Typography>
-
+        <ContentBox key={category.id} title={category.title}>
           <SettingsList
             data={questionSets.filter((set) => set.category === category.id)}
             renderItem={(set, index) => (
@@ -33,7 +27,7 @@ export default function QuestionSetSection() {
             addButtonLabel="질문세트 추가하기"
             gap={2}
           />
-        </Box>
+        </ContentBox>
       ))}
     </Stack>
   );

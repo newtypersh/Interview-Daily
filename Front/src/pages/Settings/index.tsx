@@ -18,7 +18,7 @@ export default function Settings() {
         />
 
         <Box sx={{ p: { xs: 3, md: 6 } }}>
-          {activeTab === 0 ? <QuestionSetSection /> : <FeedbackTemplateSection />}
+            {activeTab === 0 ? <QuestionSetSection /> : <FeedbackTemplateSection />}
         </Box>
       </ContentCard>
     </PageContainer>

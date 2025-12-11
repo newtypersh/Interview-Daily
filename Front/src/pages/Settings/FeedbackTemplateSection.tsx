@@ -38,25 +38,22 @@ export default function FeedbackTemplateSection() {
   }
 
   return (
-    <>
-      <Stack spacing={4}>
-        {templates.map((template) => (
-          <FeedbackTemplateItem
-            key={template.type}
-            template={template}
-            onSave={handleSave}
-            isUpdating={isUpdating}
-            showSnackbar={showSnackbar}
-          />
-        ))}
-      </Stack>
-
+    <Stack spacing={4}>
+      {templates.map((template) => (
+        <FeedbackTemplateItem
+          key={template.type}
+          template={template}
+          onSave={handleSave}
+          isUpdating={isUpdating}
+          showSnackbar={showSnackbar}
+        />
+      ))}
       <CustomSnackbar
         open={open}
         message={message}
         severity={severity}
         onClose={closeSnackbar}
       />
-    </>
+    </Stack>
   );
 }
