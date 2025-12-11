@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@mui/material';
 import ContentBox from '../../../components/ContentBox';
 import MarkdownEditor from '../../../components/MarkdownEditor';
-import { type UI_FeedbackTemplate } from '../../../hooks/useFeedbackTemplates';
+import { type UI_FeedbackTemplate } from '../hooks/useFeedbackTemplates';
 import { FeedbackTemplateContentSchema } from '../../../schemas/settings';
 
 interface FeedbackTemplateItemProps {

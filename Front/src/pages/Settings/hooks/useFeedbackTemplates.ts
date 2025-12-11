@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { INTERVIEW_CATEGORIES, CATEGORY_TITLES, CATEGORY_LIST } from '../constants/interview';
-import { useFeedbackTemplatesQuery } from '../react-query/queries/useFeedbackTemplatesQuery';
-import { useUpdateFeedbackTemplate } from '../react-query/mutation/useFeedbackTemplateMutations';
+import { INTERVIEW_CATEGORIES, CATEGORY_TITLES, CATEGORY_LIST } from '../../../constants/interview';
+import { useFeedbackTemplatesQuery } from '../../../react-query/queries/useFeedbackTemplatesQuery';
+import { useUpdateFeedbackTemplate } from '../../../react-query/mutation/useFeedbackTemplateMutations';
 
 export interface UI_FeedbackTemplate {
   type: keyof typeof INTERVIEW_CATEGORIES;

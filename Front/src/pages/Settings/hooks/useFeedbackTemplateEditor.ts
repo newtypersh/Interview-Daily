@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useFeedbackTemplates, type UI_FeedbackTemplate } from './useFeedbackTemplates';
-import { useSnackbar } from './useSnackbar';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 interface UseFeedbackTemplateEditorReturn {
   templates: UI_FeedbackTemplate[];
