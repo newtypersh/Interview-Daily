@@ -6,7 +6,7 @@ export const useInterviewHistory = (limit: number = 20) => {
   return useInfiniteQuery<InterviewHistoryResponse, Error>({
     queryKey: ['interviewHistory', limit],
     queryFn: ({ pageParam }) => {
-      const { cursorCreatedAt, cursorId } = pageParam as { cursorCreatedAt?: string; cursorId?: number } || {};
+      const { cursorCreatedAt, cursorId } = pageParam as { cursorCreatedAt?: string; cursorId?: number };
       return getInterviews(limit, cursorCreatedAt, cursorId);
     },
     initialPageParam: {},

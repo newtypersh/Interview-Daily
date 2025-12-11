@@ -6,7 +6,7 @@ export const getInterviews = async (
   cursorCreatedAt?: string,
   cursorId?: number
 ) => {
-  const params: Record<string, any> = { limit };
+  const params: Record<string, string | number> = { limit };
   if (cursorCreatedAt) params.cursorCreatedAt = cursorCreatedAt;
   if (cursorId) params.cursorId = cursorId;
 
