@@ -145,7 +145,7 @@ export async function findInterviewById(interviewId, userId) {
                 orderBy: { sequence: "asc" },
                 include: { 
                     question: true, // 각 답변에 연결된 질문도 함께 로드
-                    feedback: true, // 각 답변에 연결된 피드백도 함께 로드
+                    feedbacks: true, // 각 답변에 연결된 피드백도 함께 로드
                 },
             }
         }

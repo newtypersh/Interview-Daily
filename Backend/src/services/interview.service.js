@@ -77,19 +77,20 @@ export async function completeInterview({ interviewId, userId }) {
 
     // 5. 프론트엔드에 필요한 데이터 구조로 조합하여 반환
     return {
-        id: interview.id,
+        id: String(interview.id),
         status: interview.status,
         category: category,
         answers: interview.answers.map(ans => ({
-            id: ans.id,
+            id: String(ans.id),
             sequence: ans.sequence,
             question: ans.question.content,
             audioUrl: ans.audio_url,
-            transcript: ans.transcript_text
+            transcript: ans.transcript_text,
+            feedbacks: ans.feedbacks || [] 
         })),
         // ✅ 수정: template은 단일 객체이므로 .map() 사용 불가 -> 배열로 감싸기
         templates: template ? [{
-            id: template.id,
+            id: String(template.id),
             content: template.template_text
         }] : []
     };
