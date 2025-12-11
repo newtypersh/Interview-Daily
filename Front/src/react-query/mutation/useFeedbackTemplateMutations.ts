@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateFeedbackTemplate } from '../../apis/feedbackTemplate';
+import { updateFeedbackTemplate } from '../../apis/feedbackTemplate/index';
 
 export const useUpdateFeedbackTemplate = () => {
   const queryClient = useQueryClient();
