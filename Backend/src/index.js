@@ -31,12 +31,18 @@ passport.deserializeUser((user, done) => done(null, user));
 const app = express();
 const port = process.env.PORT;
 
-// 공통 응답을 사용할 수 있는 헬퍼 함수 등록
+// 배포 환경에서 프록시(Nginx, LB 등)를 신뢰해야 secure 쿠키가 동작함
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
+// ... helper methods ...
+
 app.use((req, res, next) => {
   res.success = (success) => {
     return res.json({ resultType: "SUCCESS", error: null, success });
   };
-
+// ...
   res.error = ({ errorCode = "unknown", reason = null, data = null }) => {
     return res.json({
       resultType: "FAIL",
@@ -49,14 +55,14 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true,
 })); // cors 방식 허용
 app.use(express.static('public')); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
-// Global Logger
+// ... Global Logger ...
 app.use((req, res, next) => {
   console.log(`[Global Request] ${req.method} ${req.url}`);
   next();
@@ -66,6 +72,9 @@ app.use(
   session({
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     },
     resave: false,
     saveUninitialized: false,

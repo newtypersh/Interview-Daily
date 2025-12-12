@@ -9,7 +9,8 @@
     "swagger": "node src/swagger.js",
     "prestart": "npm run swagger",
     "start": "node src/index.js",
-    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js\""
+    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js\"",
+    "postinstall": "prisma generate"
   },
   "author": "",
   "license": "ISC",
