@@ -1,10 +1,10 @@
 import { Stack } from '@mui/material';
 import FeedbackItem from './FeedbackItem';
-import type { Question } from '../../../../apis/questionSet/types';
+import type { FeedbackQuestion } from '../utils/feedbackMapper';
 import type { QuestionFeedback } from '../hooks/useFeedbackForm';
 
 interface FeedbackListProps {
-  questions: Question[];
+  questions: FeedbackQuestion[];
   feedbacks: Record<string, QuestionFeedback>;
   playingAudio: string | null;
   onPlayAudio: (id: string) => void;

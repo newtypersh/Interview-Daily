@@ -3,11 +3,11 @@ import { Send as SendIcon } from '@mui/icons-material';
 import FeedbackHeader from './FeedbackHeader';
 import FeedbackTemplateGuide from './FeedbackTemplateGuide';
 import FeedbackList from './FeedbackList';
-import type { Question } from '../../../../apis/questionSet/types';
+import type { FeedbackQuestion } from '../utils/feedbackMapper';
 import type { QuestionFeedback as UserFeedback } from '../hooks/useFeedbackForm';
 
 interface FeedbackLayoutProps {
-  questions: Question[];
+  questions: FeedbackQuestion[];
   feedbacks: Record<string, UserFeedback>;
   templateContent?: string;
   category?: string;

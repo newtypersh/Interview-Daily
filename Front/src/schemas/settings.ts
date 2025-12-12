@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { Question, QuestionSet } from '../apis/questionSet/types';
+
 
 // 질문 세트 이름 (예: "React 면접 대비")
 export const QuestionSetSchema = z.object({

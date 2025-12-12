@@ -13,7 +13,7 @@ export default function FeedbackContainer() {
   const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
   
   // 카테고리 기반 템플릿 조회
-  const { templates } = useFeedbackTemplate(interview?.category);
+  const { template: templates } = useFeedbackTemplate(interview?.category);
   const templateContent = templates?.[0]?.templateText; // 첫 번째 템플릿 사용
   
   // API 데이터를 UI 포맷으로 변환
