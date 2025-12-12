@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { completeInterview } from '../../../apis/interview';
-import { handleError } from '../../../utils/errorHandler';
 
 interface UseInterviewCompletionProps {
   onSuccess: (data: any, variables: string, context: unknown) => void;
@@ -8,13 +7,10 @@ interface UseInterviewCompletionProps {
 }
 
 export const useInterviewCompletion = ({ onSuccess, onError }: UseInterviewCompletionProps) => {
-  const { mutate: complete, isPending: isCompleting, error } = useMutation({
-    mutationFn: (interviewId: string) => completeInterview(interviewId),
+  const { mutate: complete, isPending: isCompleting, error } = useMutation<any, Error, string>({
+    mutationFn: (interviewId) => completeInterview(interviewId),
     onSuccess,
-    onError: (err: any) => {
-      handleError(err, '인터뷰를 완료하는 중 문제가 발생했습니다.');
-      onError(err);
-    }
+    onError,
   });
 
   return {
