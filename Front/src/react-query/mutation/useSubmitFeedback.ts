@@ -3,7 +3,7 @@ import { submitFeedbacks } from '../../apis/feedback/index';
 import type { FeedbackSubmissionRequest } from '../../apis/feedback/types';
 
 export const useSubmitFeedback = (interviewId: string) => {
-  return useMutation({
-    mutationFn: (data: FeedbackSubmissionRequest) => submitFeedbacks(interviewId, data),
+  return useMutation<void, Error, FeedbackSubmissionRequest>({
+    mutationFn: (data) => submitFeedbacks(interviewId, data),
   });
 };
