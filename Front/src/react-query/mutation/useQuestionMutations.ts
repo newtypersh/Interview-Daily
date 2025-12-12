@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createQuestion, deleteQuestion, updateQuestion } from '../../apis/questionSet/index';
+import type { Question } from '../../apis/questionSet/types';
 
 export const useCreateQuestion = (questionSetId: string) => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (content: string) => createQuestion(questionSetId, content),
+  return useMutation<Question, Error, string>({
+    mutationFn: (content) => createQuestion(questionSetId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['questions', questionSetId] });
     },
@@ -13,9 +14,8 @@ export const useCreateQuestion = (questionSetId: string) => {
 
 export const useUpdateQuestion = (questionSetId: string) => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ questionId, content }: { questionId: string; content: string }) =>
-      updateQuestion(questionSetId, questionId, content),
+  return useMutation<Question, Error, { questionId: string; content: string }>({
+    mutationFn: ({ questionId, content }) => updateQuestion(questionSetId, questionId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['questions', questionSetId] });
     },
@@ -24,8 +24,8 @@ export const useUpdateQuestion = (questionSetId: string) => {
 
 export const useDeleteQuestion = (questionSetId: string) => {
   const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (questionId: string) => deleteQuestion(questionSetId, questionId),
+  return useMutation<void, Error, string>({
+    mutationFn: (questionId) => deleteQuestion(questionSetId, questionId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['questions', questionSetId] });
     },
