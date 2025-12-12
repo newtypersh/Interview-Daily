@@ -10,8 +10,8 @@ export const getInterviews = async (
   if (cursorCreatedAt) params.cursorCreatedAt = cursorCreatedAt;
   if (cursorId) params.cursorId = cursorId;
 
-  const response = await api.get<InterviewHistoryResponse>('/history', {
+  const response = await api.get<{ success: InterviewHistoryResponse }>('/history/interviews', {
     params,
   });
-  return response.data;
+  return response.data.success;
 };

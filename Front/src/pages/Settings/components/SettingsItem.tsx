@@ -103,7 +103,7 @@ export default function SettingsItem({
           placeholder={inputPlaceholder}
           size={inputVariant === 'outlined' ? 'small' : 'medium'}
           InputProps={{ 
-            disableUnderline: inputVariant === 'standard' && !expanded && !children 
+            ...(inputVariant === 'standard' && !expanded && !children && { disableUnderline: true })
           }}
           inputProps={{ sx: { fontWeight: 600 } }}
         />
