@@ -10,23 +10,25 @@ export const useInterviewQuestions = () => {
   const [interviewId, setInterviewId] = useState<string | null>(null);
   const initialized = useRef(false);
 
-  const { mutate, isPending: isLoading, error } = useMutation({
-    mutationFn: (strategy: string) => startInterview(strategy),
+  const { mutate, isPending: isLoading, error } = useMutation<StartInterviewResponse, Error, string>({
+    mutationFn: (strategy) => startInterview(strategy),
     onSuccess: (data) => {
       if (data.success && data.success.interview) {
         const { interview } = data.success;
         setInterviewId(interview.id);
         
-        const mappedQuestions: Question[] = interview.answers.map((answer: { id: string; questionContent: string; sequence: number }) => ({
-          id: answer.id, 
-          content: answer.questionContent,
-          order: answer.sequence,
-        })).sort((a: Question, b: Question) => a.order - b.order);
+        const mappedQuestions: Question[] = interview.answers
+          .map((answer) => ({
+            id: answer.id, 
+            content: answer.questionContent,
+            order: answer.sequence,
+          }))
+          .sort((a, b) => a.order - b.order);
 
         setQuestions(mappedQuestions);
       }
     },
-    onError: (err: any) => {
+    onError: (err) => {
       handleError(err, '인터뷰를 시작하는 중 문제가 발생했습니다.');
     }
   });
