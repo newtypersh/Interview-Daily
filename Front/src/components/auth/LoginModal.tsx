@@ -6,7 +6,7 @@ import {
   Box,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import googleLoginButton from '../../assets/google_Login_button.svg';
+import googleLoginButton from '../../assets/google_login_button.svg';
 
 interface LoginModalProps {
   isOpen: boolean;
