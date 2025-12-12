@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createQuestion, deleteQuestion, updateQuestion } from '../../apis/questionSet/index';
-import type { Question } from '../../apis/questionSet/types';
 
 export const useCreateQuestion = (questionSetId: string) => {
   const queryClient = useQueryClient();

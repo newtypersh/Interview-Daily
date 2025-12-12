@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { getInterviewAnswers } from '../../apis/interview';
-import type { InterviewDto } from '../../apis/interview/types';
 
 interface UseTranscriptProps {
   interviewId: string | null;
@@ -15,7 +14,7 @@ export const useTranscript = ({ interviewId, answerId }: UseTranscriptProps) => 
     refetchInterval: (query) => {
       if (!query.state.data) return 1000;
       
-      const interview = query.state.data as InterviewDto;
+      const interview = query.state.data;
       const answer = interview.answers.find(a => a.id === answerId);
       
       // Stop polling if we have a non-empty transcript
@@ -27,7 +26,7 @@ export const useTranscript = ({ interviewId, answerId }: UseTranscriptProps) => 
   });
 
   const transcript = interviewId && answerId && interviewData
-    ? (interviewData as InterviewDto).answers.find(a => a.id === answerId)?.transcriptText || ''
+    ? interviewData.answers.find(a => a.id === answerId)?.transcriptText || ''
     : '';
 
   const isTranscribing = !!answerId && !transcript;
