@@ -8,8 +8,6 @@ export const useFeedbackTemplate = (category: string | undefined | null) => {
     enabled: !!category,
   });
 
-  // Since we expect a single active template for the interview context usually, 
-  // or maybe a list. The component can handle the list.
   return {
     templates,
     isLoading,
