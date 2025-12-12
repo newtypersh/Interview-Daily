@@ -79,3 +79,20 @@ export interface InterviewContextType {
   submission: InterviewSubmission;
   status: InterviewStatus;
 }
+export interface CompleteInterviewResponse {
+  id: string;
+  status: string;
+  category: string;
+  answers: {
+    id: string;
+    sequence: number;
+    question: string;
+    audioUrl: string | null;
+    transcript?: string;
+    feedbacks: { rating: number; feedbackText?: string }[];
+  }[];
+  templates: {
+    id: string;
+    content: string;
+  }[];
+}

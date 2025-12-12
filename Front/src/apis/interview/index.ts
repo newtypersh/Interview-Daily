@@ -1,5 +1,5 @@
 import { api } from '../axios';
-import type { StartInterviewResponse, InterviewDto, UploadAudioResponse } from './types';
+import type { StartInterviewResponse, InterviewDto, UploadAudioResponse, CompleteInterviewResponse } from './types';
 
 export const startInterview = async (strategy: string): Promise<StartInterviewResponse> => {
   const response = await api.post<StartInterviewResponse>('/interviews/start', { strategy });
@@ -33,7 +33,7 @@ export const submitFeedbacks = async (interviewId: string, feedbacks: { answerId
   return response.data.success;
 };
 
-export const completeInterview = async (interviewId: string): Promise<any> => {
-    const response = await api.post(`/interviews/${interviewId}/complete`);
-    return response.data;
+export const completeInterview = async (interviewId: string): Promise<CompleteInterviewResponse> => {
+    const response = await api.post<{ success: { data: CompleteInterviewResponse } }>(`/interviews/${interviewId}/complete`);
+    return response.data.success.data;
 };
