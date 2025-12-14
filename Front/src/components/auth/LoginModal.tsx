@@ -16,7 +16,10 @@ interface LoginModalProps {
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const handleGoogleLogin = () => {
-    window.location.href = '/oauth2/login/google';
+    // 백엔드 주소를 환경 변수에서 가져옵니다. (없으면 상대 경로로 동작하여 프록시 타게 됨)
+    // VITE_API_URL에 /api가 포함되어 있다면 제거합니다.
+    const baseURL = (import.meta.env.VITE_API_URL || '').replace(/\/api$/, ''); 
+    window.location.href = `${baseURL}/oauth2/login/google`;
   };
 
   return (
