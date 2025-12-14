@@ -14,7 +14,6 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      // LoginModal과 동일하게, VITE_API_URL에서 /api를 제거한 baseURL 사용
       const baseURL = (import.meta.env.VITE_API_URL || '').replace(/\/api$/, '');
       await api.post('/oauth2/logout', {}, { baseURL });
     } catch (error) {
