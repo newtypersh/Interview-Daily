@@ -5,11 +5,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsx scripts/build.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "swagger": "node src/swagger.js",
     "prestart": "npm run swagger",
-    "start": "node src/index.js",
-    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/index.js\"",
+    "start": "node dist/index.cjs",
+    "dev": "nodemon -e js,json,prisma,ts --exec \"prisma generate && tsx src/index.ts\"",
     "postinstall": "prisma generate"
   },
   "author": "",
@@ -37,6 +38,15 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@tsconfig/node20": "^20.1.8",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.18.2",
+    "@types/passport": "^1.0.17",
+    "@types/passport-google-oauth20": "^2.0.17",
+    "@types/swagger-ui-express": "^4.1.8",
+    "esbuild": "^0.27.1",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.9.3"
   }
 }
