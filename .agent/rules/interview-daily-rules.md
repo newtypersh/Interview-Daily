@@ -67,6 +67,7 @@ src/
 - **Styling**: Prioritize **Tailwind CSS**. Use Emotion only when dynamic styling is required.
 - **Data Fetching**: Use **React Query** (`useQuery`, `useMutation`) for server state. Avoid `useEffect` for data fetching.
 - **Types**: Define generic types in `src/types`, specific types co-located with components. Avoid `any`.
+- **Type Definitions**: Use `type` instead of `interface` for all object definitions to ensure consistency and avoid declaration merging.
 ### Backend Rules
 - **Architecture**: SOA (Service Oriented Architecture) with Layered Pattern.
 - **Layers**:
