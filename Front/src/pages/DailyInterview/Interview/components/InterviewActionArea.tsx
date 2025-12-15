@@ -4,7 +4,7 @@ import RecordingSection from './RecordingSection';
 import AnswerReview from './AnswerReview';
 import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../../../../apis/interview/types';
 
-interface InterviewActionAreaProps {
+type InterviewActionAreaProps = {
   session: InterviewSessionState;
   recording: InterviewRecording;
   submission: InterviewSubmission;

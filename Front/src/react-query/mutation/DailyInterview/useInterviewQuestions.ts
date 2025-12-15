@@ -20,7 +20,7 @@ export const useInterviewQuestions = () => {
         const mappedQuestions: Question[] = interview.answers
           .map((answer) => ({
             id: answer.id, 
-            content: answer.questionContent,
+            content: answer.questionContent ?? null,
             order: answer.sequence,
             questionSetId: '', // Dummy for UI mapped question
             createdAt: '',

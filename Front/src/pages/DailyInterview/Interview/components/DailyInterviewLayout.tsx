@@ -6,7 +6,7 @@ import type { Question } from '../../../../apis/questionSet/types';
 import type { InterviewLoadingStatus, InterviewRecording, InterviewSubmission, InterviewSessionState } from '../../../../apis/interview/types';
 
 // Extended Session Type for Props
-export interface DailyInterviewLayoutProps {
+type DailyInterviewLayoutProps = {
   session: InterviewSessionState & {
     totalQuestions: number;
     currentQuestion: Question;

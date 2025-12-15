@@ -6,7 +6,7 @@ import FeedbackList from './FeedbackList';
 import type { FeedbackQuestion } from '../utils/feedbackMapper';
 import type { QuestionFeedback as UserFeedback } from '../hooks/useFeedbackForm';
 
-interface FeedbackLayoutProps {
+type FeedbackLayoutProps = {
   questions: FeedbackQuestion[];
   feedbacks: Record<string, UserFeedback>;
   templateContent?: string;

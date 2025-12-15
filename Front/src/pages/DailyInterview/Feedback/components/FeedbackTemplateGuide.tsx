@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import MarkdownPreview from '../../../../components/MarkdownPreview';
 
-interface FeedbackTemplateGuideProps {
+type FeedbackTemplateGuideProps = {
   content: string | undefined;
   category: string | undefined;
 }

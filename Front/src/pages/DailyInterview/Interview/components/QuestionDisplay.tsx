@@ -1,7 +1,7 @@
 import { Typography, Paper } from '@mui/material';
 import type { Question } from '../../../../apis/questionSet/types';
 
-interface QuestionDisplayProps {
+type QuestionDisplayProps = {
   currentQuestion: Question | undefined;
 }
 

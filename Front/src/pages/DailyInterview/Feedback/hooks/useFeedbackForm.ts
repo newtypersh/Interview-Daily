@@ -4,14 +4,14 @@ import type { Question as ApiQuestion } from '../../../../apis/questionSet/types
 
 export type QuestionFeedback = FeedbackItem;
 
-export interface Question extends Partial<ApiQuestion> {
+export type Question = Partial<ApiQuestion> & {
   id: string;
   content: string;
   transcript?: string;
   audioUrl?: string | null;
   answerId?: string;
   feedbacks?: { rating: number; feedbackText?: string }[];
-}
+};
 
 export const useFeedbackForm = (questions: Question[], defaultContent?: string) => {
   const [feedbacks, setFeedbacks] = useState<Record<string, QuestionFeedback>>({});

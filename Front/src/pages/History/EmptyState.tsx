@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-interface EmptyStateProps {
+type EmptyStateProps = {
   message?: string;
 }
 

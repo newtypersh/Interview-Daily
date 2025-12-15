@@ -16,7 +16,7 @@ import {
 import type { QuestionFeedback } from '../hooks/useFeedbackForm';
 import ContentBox from '../../../../components/ContentBox';
 
-interface FeedbackItemProps {
+type FeedbackItemProps = {
   question: { content: string | null; id: string };
   index: number;
   answer: string;

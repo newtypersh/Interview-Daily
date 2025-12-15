@@ -2,7 +2,7 @@ import { Stack, LinearProgress, Typography, Box, IconButton } from '@mui/materia
 import { NavigateNext, NavigateBefore } from '@mui/icons-material';
 import type { InterviewSessionState } from '../../../../apis/interview/types';
 
-interface InterviewNavigationProps {
+type InterviewNavigationProps = {
   session: InterviewSessionState;
 }
 

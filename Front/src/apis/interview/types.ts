@@ -1,47 +1,51 @@
 import type { Question } from '../questionSet/types';
 
-export interface InterviewAnswerDto {
+export type InterviewStatus = 'IN_PROGRESS' | 'COMPLETED';
+
+export type InterviewAnswer = {
   id: string;
   interviewId: string;
   questionId: string;
   sequence: number;
   audioUrl: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-  questionContent: string;
+  createdAt: string;
+  updatedAt: string;
+  // Hydrated fields from API
+  questionContent?: string;
   transcriptText?: string;
   feedbacks?: { rating: number; feedbackText?: string }[];
-}
+};
 
-export interface InterviewDto {
+export type Interview = {
   id: string;
   userId: string;
   questionSetId: string;
   category?: string;
+  status: InterviewStatus;
   day: string | null;
   interviewedAt: string | null;
-  createdAt: string | null;
-  updatedAt: string | null;
-  answers: InterviewAnswerDto[];
-}
+  createdAt: string;
+  updatedAt: string;
+  answers: InterviewAnswer[];
+};
 
-export interface StartInterviewResponse {
+export type StartInterviewResponse = {
   resultType: string;
   success: {
-    interview: InterviewDto;
+    interview: Interview;
   };
   error?: any;
-}
+};
 
-export interface UploadAudioResponse {
+export type UploadAudioResponse = {
   answer: {
     id: string;
     audioUrl: string;
     transcriptText?: string;
   };
-}
+};
 
-export interface InterviewSessionState {
+export type InterviewSessionState = {
   currentQuestion: Question | undefined;
   currentIndex: number;
   totalQuestions: number;
@@ -49,37 +53,38 @@ export interface InterviewSessionState {
   isLastQuestion: boolean;
   toNextQuestion: () => void;
   toPrevQuestion: () => void;
-}
+};
 
-export interface InterviewRecording {
+export type InterviewRecording = {
   isActive: boolean;
   isStopped: boolean;
   start: () => void;
   stop: () => void;
   retry: () => void;
   mediaBlobUrl: string | null;
-}
+};
 
-export interface InterviewSubmission {
+export type InterviewSubmission = {
   isSubmitting: boolean;
   error: Error | null;
   submit: (questionId: string | undefined, mediaBlobUrl: string | null) => void;
   currentAnswerId?: string | null;
-}
+};
 
-export interface InterviewLoadingStatus {
+export type InterviewLoadingStatus = {
   isLoading: boolean;
   error: Error | null;
   interviewId: string | null;
-}
+};
 
-export interface InterviewContextType {
+export type InterviewContextType = {
   session: InterviewSessionState;
   recording: InterviewRecording;
   submission: InterviewSubmission;
   status: InterviewLoadingStatus;
-}
-export interface CompleteInterviewResponse {
+};
+
+export type CompleteInterviewResponse = {
   id: string;
   status: string;
   category: string;
@@ -95,30 +100,6 @@ export interface CompleteInterviewResponse {
     id: string;
     content: string;
   }[];
-}
-
-export type InterviewStatus = 'IN_PROGRESS' | 'COMPLETED';
-
-export type Interview = {
-  id: string;
-  userId: string;
-  questionSetId: string;
-  status: InterviewStatus;
-  interviewedAt: string | null;
-  day: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-export type InterviewAnswer = {
-  id: string;
-  interviewId: string;
-  questionId: string;
-  sequence: number;
-  audioUrl: string | null;
-  transcriptText: string | null;
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type Feedback = {

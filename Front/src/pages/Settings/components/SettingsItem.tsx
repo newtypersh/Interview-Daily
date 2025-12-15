@@ -12,7 +12,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIconButton from '../../../components/DeleteIconButton';
 import type { ZodSchema } from 'zod';
 
-interface SettingsItemProps {
+type SettingsItemProps = {
   index: number;
   value: string;
   onUpdate: (value: string) => void;

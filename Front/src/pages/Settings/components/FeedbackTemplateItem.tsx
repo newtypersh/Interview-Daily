@@ -5,7 +5,7 @@ import MarkdownEditor from '../../../components/MarkdownEditor';
 import { type UI_FeedbackTemplate } from '../types';
 import { FeedbackTemplateContentSchema } from '../../../schemas/settings';
 
-interface FeedbackTemplateItemProps {
+type FeedbackTemplateItemProps = {
   template: UI_FeedbackTemplate;
   onSave: (template: UI_FeedbackTemplate, content: string) => void;
   isUpdating: boolean;

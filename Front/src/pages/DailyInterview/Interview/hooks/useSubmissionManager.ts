@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAnswerSubmission } from '../../../../react-query/mutation/DailyInterview/useAnswerSubmission';
 import { handleError } from '../../../../utils/errorHandler';
 
-interface UseSubmissionManagerProps {
+type UseSubmissionManagerProps = {
   interviewId: string | null;
   currentIndex: number;
 }

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecording } from '../../../../hooks/useRecording';
 
-interface UseRecordingManagerProps {
+type UseRecordingManagerProps = {
   resetOnIndexChange: number;
 }
 

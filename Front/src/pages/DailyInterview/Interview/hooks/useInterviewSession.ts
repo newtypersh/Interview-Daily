@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Question } from '../../../../apis/questionSet/types';
 
-interface UseInterviewSessionProps {
+type UseInterviewSessionProps = {
   questions: Question[];
 }
 

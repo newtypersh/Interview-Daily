@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { completeInterview } from '../../../apis/interview';
 import type { CompleteInterviewResponse } from '../../../apis/interview/types';
 
-interface UseInterviewCompletionProps {
+type UseInterviewCompletionProps = {
   onSuccess: (data: CompleteInterviewResponse, variables: string, context: unknown) => void;
   onError: (error: Error) => void;
 }

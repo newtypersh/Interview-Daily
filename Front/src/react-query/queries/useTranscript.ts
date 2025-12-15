@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getInterviewAnswers } from '../../apis/interview';
 
-interface UseTranscriptProps {
+type UseTranscriptProps = {
   interviewId: string | null;
   answerId: string | null;
 }

@@ -3,7 +3,7 @@ import FeedbackItem from './FeedbackItem';
 import type { FeedbackQuestion } from '../utils/feedbackMapper';
 import type { QuestionFeedback } from '../hooks/useFeedbackForm';
 
-interface FeedbackListProps {
+type FeedbackListProps = {
   questions: FeedbackQuestion[];
   feedbacks: Record<string, QuestionFeedback>;
   playingAudio: string | null;

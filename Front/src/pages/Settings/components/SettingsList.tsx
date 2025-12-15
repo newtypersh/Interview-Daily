@@ -2,7 +2,7 @@ import { Stack, type SxProps, type Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 import AddButton from './AddButton';
 
-interface SettingsListProps<T> {
+type SettingsListProps<T> = {
   data: T[];
   renderItem: (item: T, index: number) => ReactNode;
   onAdd: () => void;

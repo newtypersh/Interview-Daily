@@ -2,7 +2,7 @@ import { Box, Button, Alert, Typography } from '@mui/material';
 import { Mic as MicIcon, Stop as StopIcon, FiberManualRecord as RecordIcon } from '@mui/icons-material';
 import type { InterviewRecording } from '../../../../apis/interview/types';
 
-interface RecordingSectionProps {
+type RecordingSectionProps = {
   recording: InterviewRecording;
 }
 

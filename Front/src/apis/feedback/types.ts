@@ -1,9 +1,9 @@
-export interface FeedbackSubmissionItem {
+export type FeedbackSubmissionItem = {
   answerId: string;
   rating: number;
   feedbackText: string;
-}
+};
 
-export interface FeedbackSubmissionRequest {
+export type FeedbackSubmissionRequest = {
   feedbacks: FeedbackSubmissionItem[];
-}
+};

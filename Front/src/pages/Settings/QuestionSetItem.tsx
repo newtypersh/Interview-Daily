@@ -15,7 +15,7 @@ import {
 } from '../../react-query/mutation/useQuestionMutations';
 import { useQuestionsQuery } from '../../react-query/queries/useQuestionsQuery';
 
-interface QuestionSetItemProps {
+type QuestionSetItemProps = {
   questionSet: QuestionSet;
   index: number;
 }

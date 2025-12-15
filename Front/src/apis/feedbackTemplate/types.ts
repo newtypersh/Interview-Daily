@@ -1,4 +1,3 @@
-
 export type FeedbackCategory = 'JOB' | 'PERSONAL' | 'MOTIVATION';
 
 export type FeedbackTemplate = {
@@ -10,25 +9,23 @@ export type FeedbackTemplate = {
   updatedAt: string;
 };
 
-export type FeedbackTemplateDto = FeedbackTemplate;
-
-export interface GetFeedbackTemplatesResponse {
+export type GetFeedbackTemplatesResponse = {
   resultType: string;
   success: {
-    templates: FeedbackTemplateDto[];
+    templates: FeedbackTemplate[];
   };
   error: any;
-}
+};
 
-export interface UpdateFeedbackTemplateRequest {
+export type UpdateFeedbackTemplateRequest = {
   category: FeedbackCategory;
   content: string;
-}
+};
 
-export interface UpdateFeedbackTemplateResponse {
+export type UpdateFeedbackTemplateResponse = {
   resultType: string;
   success: {
-    template: FeedbackTemplateDto;
+    template: FeedbackTemplate;
   };
   error: any;
-}
+};

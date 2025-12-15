@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Question, QuestionFeedback } from './useFeedbackForm';
 import { FeedbackSubmissionSchema } from '../../../../schemas/feedback';
 
-interface UseFeedbackSubmissionProps {
+type UseFeedbackSubmissionProps = {
   interviewId: string | undefined;
   questions: Question[];
   feedbacks: Record<string, QuestionFeedback>;

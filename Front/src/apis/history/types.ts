@@ -1,11 +1,11 @@
-export interface InterviewHistoryItem {
+export type InterviewHistoryItem = {
   id: number;
   createdAt: string;
   totalScore: number;
   questionCount: number;
 }
 
-export interface InterviewHistoryResponse {
+export type InterviewHistoryResponse = {
   data: InterviewHistoryItem[];
   pagination: {
     nextCursorCreatedAt: string | null;

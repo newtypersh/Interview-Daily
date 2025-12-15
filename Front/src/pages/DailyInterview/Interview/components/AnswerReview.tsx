@@ -4,7 +4,7 @@ import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon, Check as CheckI
 import { useTranscript } from '../../../../react-query/queries/useTranscript';
 import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../../../../apis/interview/types';
 
-interface AnswerReviewProps {
+type AnswerReviewProps = {
   session: InterviewSessionState;
   recording: InterviewRecording;
   submission: InterviewSubmission;
