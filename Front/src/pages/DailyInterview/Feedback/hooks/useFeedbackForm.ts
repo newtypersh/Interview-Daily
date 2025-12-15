@@ -4,7 +4,9 @@ import type { Question as ApiQuestion } from '../../../../apis/questionSet/types
 
 export type QuestionFeedback = FeedbackItem;
 
-export interface Question extends ApiQuestion {
+export interface Question extends Partial<ApiQuestion> {
+  id: string;
+  content: string;
   transcript?: string;
   audioUrl?: string | null;
   answerId?: string;

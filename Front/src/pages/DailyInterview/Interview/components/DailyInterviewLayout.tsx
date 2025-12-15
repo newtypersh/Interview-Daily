@@ -2,7 +2,8 @@ import { Box, Container, Paper } from '@mui/material';
 import InterviewNavigation from './InterviewNavigation';
 import QuestionDisplay from './QuestionDisplay';
 import InterviewActionArea from './InterviewActionArea';
-import type { Question, InterviewStatus, InterviewRecording, InterviewSubmission, InterviewSessionState } from '../../../../types';
+import type { Question } from '../../../../apis/questionSet/types';
+import type { InterviewLoadingStatus, InterviewRecording, InterviewSubmission, InterviewSessionState } from '../../../../apis/interview/types';
 
 // Extended Session Type for Props
 export interface DailyInterviewLayoutProps {
@@ -12,7 +13,7 @@ export interface DailyInterviewLayoutProps {
   };
   recording: InterviewRecording;
   submission: InterviewSubmission;
-  status: InterviewStatus;
+  status: InterviewLoadingStatus;
   onComplete: (interviewId: string) => void;
 }
 

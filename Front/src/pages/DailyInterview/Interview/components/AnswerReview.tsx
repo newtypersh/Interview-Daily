@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { Paper, Stack, Box, Typography, Divider, Button, CircularProgress } from '@mui/material';
 import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon, Check as CheckIcon } from '@mui/icons-material';
 import { useTranscript } from '../../../../react-query/queries/useTranscript';
-import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewStatus } from '../../../../types';
+import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../../../../apis/interview/types';
 
 interface AnswerReviewProps {
   session: InterviewSessionState;
   recording: InterviewRecording;
   submission: InterviewSubmission;
-  status: InterviewStatus;
+  status: InterviewLoadingStatus;
   onComplete: (interviewId: string) => void;
 }
 

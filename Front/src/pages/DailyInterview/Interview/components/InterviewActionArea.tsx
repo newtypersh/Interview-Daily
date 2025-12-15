@@ -2,13 +2,13 @@
 import { Stack } from '@mui/material';
 import RecordingSection from './RecordingSection';
 import AnswerReview from './AnswerReview';
-import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewStatus } from '../../../../types';
+import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../../../../apis/interview/types';
 
 interface InterviewActionAreaProps {
   session: InterviewSessionState;
   recording: InterviewRecording;
   submission: InterviewSubmission;
-  status: InterviewStatus;
+  status: InterviewLoadingStatus;
   onComplete: (interviewId: string) => void;
 }
 

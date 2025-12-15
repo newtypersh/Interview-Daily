@@ -1,11 +1,16 @@
-export interface FeedbackTemplateDto {
+
+export type FeedbackCategory = 'JOB' | 'PERSONAL' | 'MOTIVATION';
+
+export type FeedbackTemplate = {
   id: string;
   userId: string;
-  category: 'JOB' | 'PERSONAL' | 'MOTIVATION';
-  templateText: string;
+  category: FeedbackCategory;
+  templateText: string | null;
   createdAt: string;
   updatedAt: string;
-}
+};
+
+export type FeedbackTemplateDto = FeedbackTemplate;
 
 export interface GetFeedbackTemplatesResponse {
   resultType: string;
@@ -16,7 +21,7 @@ export interface GetFeedbackTemplatesResponse {
 }
 
 export interface UpdateFeedbackTemplateRequest {
-  category: 'JOB' | 'PERSONAL' | 'MOTIVATION';
+  category: FeedbackCategory;
   content: string;
 }
 

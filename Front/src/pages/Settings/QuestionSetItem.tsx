@@ -102,7 +102,7 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
             <SettingsItem
               key={question.id}
               index={index}
-              value={question.content}
+              value={question.content || ''}
               onUpdate={(val) => handleUpdateQuestion(question.id, val)}
               onDelete={() => handleDeleteQuestion(question.id)}
               inputPlaceholder="질문을 입력하세요"

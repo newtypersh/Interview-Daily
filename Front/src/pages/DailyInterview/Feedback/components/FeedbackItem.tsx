@@ -13,11 +13,11 @@ import {
   PlayArrow as PlayArrowIcon,
   Pause as PauseIcon,
 } from '@mui/icons-material';
-import type { Question, QuestionFeedback } from '../hooks/useFeedbackForm';
+import type { QuestionFeedback } from '../hooks/useFeedbackForm';
 import ContentBox from '../../../../components/ContentBox';
 
 interface FeedbackItemProps {
-  question: Question;
+  question: { content: string | null; id: string };
   index: number;
   answer: string;
   feedback: QuestionFeedback;

@@ -1,6 +1,7 @@
-import type { InterviewAnswerDto } from '../../../../types';
+import type { InterviewAnswerDto } from '../../../../apis/interview/types';
+import type { Question as ApiQuestion } from '../../../../apis/questionSet/types';
 
-export interface FeedbackQuestion {
+export interface FeedbackQuestion extends Partial<ApiQuestion> {
   id: string;
   content: string;
   order: number;

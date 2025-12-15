@@ -22,6 +22,9 @@ export const useInterviewQuestions = () => {
             id: answer.id, 
             content: answer.questionContent,
             order: answer.sequence,
+            questionSetId: '', // Dummy for UI mapped question
+            createdAt: '',
+            updatedAt: '',
           }))
           .sort((a, b) => a.order - b.order);
 
