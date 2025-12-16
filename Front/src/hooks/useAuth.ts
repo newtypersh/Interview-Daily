@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../apis/axios";
 
+
 const checkLoginStatus = async (): Promise<boolean> => {
     try {
         await api.get('/users/me');
