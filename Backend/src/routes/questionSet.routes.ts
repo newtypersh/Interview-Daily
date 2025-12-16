@@ -38,7 +38,7 @@ router.post("/", ensureAuth, (req, res, next) => {
             description: '질문 세트 정보',
             required: true,
             schema: {
-                title: "CS 면접 대비",
+                name: "CS 면접 대비",
                 category: "CS",
                 description: "운영체제, 네트워크 위주"
             }
@@ -79,7 +79,7 @@ router.patch("/:setId", ensureAuth, (req, res, next) => {
             in: 'body',
             description: '수정할 내용',
             schema: {
-                title: "수정된 제목",
+                name: "수정된 제목",
                 description: "수정된 설명"
             }
         }
