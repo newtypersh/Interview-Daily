@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsx scripts/build.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "swagger": "node src/swagger.js",
+    "swagger": "tsx src/swagger.ts",
     "prestart": "npm run swagger",
     "start": "node dist/index.cjs",
     "dev": "nodemon -e js,json,prisma,ts --exec \"prisma generate && tsx src/index.ts\"",
@@ -48,6 +48,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "esbuild": "^0.27.1",
     "nodemon": "^3.1.10",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
