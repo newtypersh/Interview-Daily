@@ -1,9 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getInterviews } from '../../apis/history';
-import type { InterviewHistoryResponse } from '../../apis/history/types';
+import type { InterviewHistoryData } from '../../schemas/history';
 
 export const useInterviewHistory = (limit: number = 20) => {
-  return useInfiniteQuery<InterviewHistoryResponse, Error>({
+  return useInfiniteQuery<InterviewHistoryData, Error>({
     queryKey: ['interviewHistory', limit],
     queryFn: ({ pageParam }) => {
       const { cursorCreatedAt, cursorId } = pageParam as { cursorCreatedAt?: string; cursorId?: number };
