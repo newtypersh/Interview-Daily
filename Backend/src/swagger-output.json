@@ -159,7 +159,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
+                "name": {
                   "type": "string",
                   "example": "CS 면접 대비"
                 },
@@ -269,7 +269,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "title": {
+                "name": {
                   "type": "string",
                   "example": "수정된 제목"
                 },
