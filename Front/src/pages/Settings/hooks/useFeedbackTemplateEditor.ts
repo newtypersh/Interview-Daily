@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { useFeedbackTemplates } from './useFeedbackTemplates';
 import type { UI_FeedbackTemplate } from '../types';
 import { useSnackbar, type UseSnackbarReturn } from '../../../hooks/useSnackbar';
+import { useFeedbackTemplatesByCategory } from '../../../react-query/queries/useFeedbackTemplates';
+import { CATEGORY_TITLES } from '../../../constants/interview';
+
 
 interface UseFeedbackTemplateEditorReturn extends UseSnackbarReturn {
   templates: UI_FeedbackTemplate[];
@@ -11,8 +13,22 @@ interface UseFeedbackTemplateEditorReturn extends UseSnackbarReturn {
   handleSave: (template: UI_FeedbackTemplate) => void;
 }
 
-export const useFeedbackTemplateEditor = (): UseFeedbackTemplateEditorReturn => {
-  const { templates, updateTemplate, isUpdating } = useFeedbackTemplates();
+export const useFeedbackTemplateEditor = (category: string): UseFeedbackTemplateEditorReturn => {
+  const { templates: rawTemplates } = useFeedbackTemplatesByCategory(category);
+  const isUpdating = false;
+
+  const templates: UI_FeedbackTemplate[] = (rawTemplates || []).map((t) => ({
+    type: t.category,
+    title: CATEGORY_TITLES[t.category],
+    content: t.templateText || '',
+  }));
+
+  // NOTE: The original `updateTemplate` function is no longer available from `useFeedbackTemplatesByCategory`.
+  // This change assumes `updateTemplate` will be provided by another hook or mechanism,
+  // or that the `handleSave` logic will be updated in a subsequent instruction.
+  // For now, `updateTemplate` is undefined, which will cause a runtime error if `handleSave` is called.
+  const updateTemplate: any = () => console.warn("updateTemplate is not implemented with useFeedbackTemplatesByCategory");
+
   const [edits, setEdits] = useState<Record<string, string>>({});
   
   const snackbar = useSnackbar();

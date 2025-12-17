@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { CATEGORY_TITLES, CATEGORY_LIST } from '../../../constants/interview';
-import { useFeedbackTemplatesQuery } from '../../../react-query/queries/useFeedbackTemplatesQuery';
+import { useFeedbackTemplates as useFeedbackTemplatesQuery } from '../../../react-query/queries/useFeedbackTemplates';
 import { useUpdateFeedbackTemplate } from '../../../react-query/mutation/useFeedbackTemplateMutations';
 
 import type { UI_FeedbackTemplate } from '../types';
