@@ -1,6 +1,8 @@
 import express from "express";
 import * as ctrl from "../controllers/questionSet.controller.js";
 import { ensureAuth } from "../middleware/authMiddleware.js";
+import { validate } from "../middleware/validate.js";
+import * as schemas from "../schemas/questionSet.schema.js";
 
 const router = express.Router();
 
@@ -28,7 +30,7 @@ router.get("/:setId/questions", ensureAuth, (req, res, next) => {
 
 
 // POST /api/question-sets (질문세트 생성 - 인증 필요)
-router.post("/", ensureAuth, (req, res, next) => {
+router.post("/", ensureAuth, validate(schemas.createQuestionSetSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['QuestionSet']
         #swagger.summary = '질문 세트 생성'
@@ -49,7 +51,7 @@ router.post("/", ensureAuth, (req, res, next) => {
 
 
 // POST /api/question-sets/:setId/questions
-router.post("/:setId/questions", ensureAuth, (req, res, next) => {
+router.post("/:setId/questions", ensureAuth, validate(schemas.createQuestionSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['QuestionSet']
         #swagger.summary = '질문 추가'
@@ -69,7 +71,7 @@ router.post("/:setId/questions", ensureAuth, (req, res, next) => {
 
 
 // PATCH /api/question-sets/:setId (질문세트 수정)
-router.patch("/:setId", ensureAuth, (req, res, next) => {
+router.patch("/:setId", ensureAuth, validate(schemas.updateQuestionSetSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['QuestionSet']
         #swagger.summary = '질문 세트 수정'
@@ -89,7 +91,7 @@ router.patch("/:setId", ensureAuth, (req, res, next) => {
 
 
 // PATCH /api/question-sets/:setId/questions/:questionId (개별 질문 수정)
-router.patch("/:setId/questions/:questionId", ensureAuth, (req, res, next) => {
+router.patch("/:setId/questions/:questionId", ensureAuth, validate(schemas.updateQuestionSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['QuestionSet']
         #swagger.summary = '질문 수정'
