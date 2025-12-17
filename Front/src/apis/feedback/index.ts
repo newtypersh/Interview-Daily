@@ -1,6 +1,11 @@
 import { api } from '../axios';
-import type { FeedbackSubmissionRequest, FeedbackSubmissionResult, FeedbackSubmissionResponse } from '../../schemas/feedback';
-import { FeedbackSubmissionRequestSchema, FeedbackSubmissionResponseSchema } from '../../schemas/feedback';
+import { 
+  FeedbackSubmissionRequestSchema, 
+  FeedbackSubmissionResponseSchema,
+  type FeedbackSubmissionRequest,
+  type FeedbackSubmissionResponse,
+  type FeedbackSubmissionResult,
+} from '../../schemas/feedback';
 
 export const submitFeedbacks = async (interviewId: string, data: FeedbackSubmissionRequest): Promise<FeedbackSubmissionResult> => {
   // Validate Request
