@@ -14,9 +14,19 @@ router.get('/', ensureAuth,
             description: '조회 성공',
             schema: {
                 resultType: "SUCCESS",
-                success: [
-                    { id: 1, category: "CS", content: "..." }
-                ]
+                error: null,
+                success: {
+                    templates: [
+                        { 
+                            id: "1", 
+                            userId: "1", 
+                            category: "JOB", 
+                            templateText: "면접관이 직무 관련 경험에 대해 심층적으로 질문함...", 
+                            createdAt: "2023-12-01T00:00:00.000Z", 
+                            updatedAt: "2023-12-01T00:00:00.000Z" 
+                        }
+                    ]
+                }
             }
         }
     */
@@ -31,11 +41,27 @@ router.get('/:category', ensureAuth,
         #swagger.summary = '카테고리별 템플릿 조회'
         #swagger.parameters['category'] = {
             in: 'path',
-            description: '조회할 템플릿 카테고리 (예: CS, BE, FE)',
+            description: '조회할 템플릿 카테고리 (JOB, PERSONAL, MOTIVATION)',
             required: true
         }
         #swagger.responses[200] = {
-            description: '조회 성공'
+            description: '조회 성공',
+            schema: {
+                resultType: "SUCCESS",
+                error: null,
+                success: {
+                    templates: [
+                        { 
+                            id: "1", 
+                            userId: "1", 
+                            category: "JOB", 
+                            templateText: "...", 
+                            createdAt: "...", 
+                            updatedAt: "..." 
+                        }
+                    ]
+                }
+            }
         }
     */
     ctrl.getFeedbackTemplatesByCategory
@@ -50,7 +76,7 @@ router.patch('/:category', ensureAuth,
         #swagger.description = '특정 카테고리의 피드백 템플릿 내용을 수정합니다.'
         #swagger.parameters['category'] = {
             in: 'path',
-            description: '수정할 템플릿 카테고리',
+            description: '수정할 템플릿 카테고리 (JOB, PERSONAL, MOTIVATION)',
             required: true
         }
         #swagger.parameters['body'] = {
@@ -62,7 +88,21 @@ router.patch('/:category', ensureAuth,
             }
         }
         #swagger.responses[200] = {
-            description: '수정 성공'
+            description: '수정 성공',
+            schema: {
+                resultType: "SUCCESS",
+                error: null,
+                success: {
+                    template: { 
+                        id: "1", 
+                        userId: "1", 
+                        category: "JOB", 
+                        templateText: "수정된 내용...", 
+                        createdAt: "...", 
+                        updatedAt: "..." 
+                    }
+                }
+            }
         }
     */
     ctrl.updateFeedbackTemplate
