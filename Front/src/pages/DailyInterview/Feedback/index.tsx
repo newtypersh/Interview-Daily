@@ -4,7 +4,7 @@ import { useFeedbackForm } from './hooks/useFeedbackForm';
 import { useFeedbackSubmission } from './hooks/useFeedbackSubmission';
 import FeedbackLayout from './components/FeedbackLayout';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
-import { useFeedbackTemplate } from '../../../react-query/queries/useFeedbackTemplate';
+import { useFeedbackTemplatesByCategory } from '../../../react-query/queries/useFeedbackTemplates';
 import { mapInterviewToQuestions } from './utils/feedbackMapper';
 
 export default function FeedbackContainer() {
@@ -13,7 +13,7 @@ export default function FeedbackContainer() {
   const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
   
   // 카테고리 기반 템플릿 조회
-  const { template: templates } = useFeedbackTemplate(interview?.category);
+  const { templates } = useFeedbackTemplatesByCategory(interview?.category);
   const templateContent = templates?.[0]?.templateText || undefined; // 첫 번째 템플릿 사용
   
   // API 데이터를 UI 포맷으로 변환
