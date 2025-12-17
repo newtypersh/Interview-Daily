@@ -35,7 +35,8 @@
     "prisma": "^6.18.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.8",
