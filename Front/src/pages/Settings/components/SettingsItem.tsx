@@ -12,22 +12,25 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIconButton from '../../../components/DeleteIconButton';
 import type { ZodSchema } from 'zod';
 
+type SettingsItemOptions = {
+  alignItems?: 'center' | 'flex-start';
+  gap?: number;
+  inputVariant?: 'standard' | 'outlined' | 'filled';
+  indexFormat?: (index: number) => string;
+  placeholder?: string;
+  validationSchema?: ZodSchema;
+  sx?: SxProps<Theme>;
+}
+
 type SettingsItemProps = {
   index: number;
   value: string;
   onUpdate: (value: string) => void;
   onDelete: () => void;
-  validationSchema?: ZodSchema;
   children?: React.ReactNode;
   expanded?: boolean;
   onExpandToggle?: () => void;
-  sx?: SxProps<Theme>;
-  // Style props
-  alignItems?: 'center' | 'flex-start';
-  gap?: number;
-  inputVariant?: 'standard' | 'outlined' | 'filled';
-  indexFormat?: (index: number) => string;
-  inputPlaceholder?: string;
+  options?: SettingsItemOptions;
 }
 
 export default function SettingsItem({
@@ -35,39 +38,58 @@ export default function SettingsItem({
   value,
   onUpdate,
   onDelete,
-  validationSchema,
   children,
   expanded = false,
   onExpandToggle,
-  sx,
-  alignItems = 'flex-start',
-  gap = 1,
-  inputVariant = 'outlined',
-  indexFormat = (i) => `${i + 1}.`,
-  inputPlaceholder,
+  options = {},
 }: SettingsItemProps) {
+  const {
+    alignItems = 'flex-start',
+    gap = 1,
+    inputVariant = 'outlined',
+    indexFormat = (i) => `${i + 1}.`,
+    placeholder: inputPlaceholder,
+    validationSchema,
+    sx,
+  } = options;
   const [text, setText] = useState(value);
+  /* New State for Validation */
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setText(value);
+    setError(null); 
   }, [value]);
 
-  const handleBlur = () => {
+  const handleValidate = (val: string): { success: boolean; msg?: string } => {
+      if (!validationSchema) return { success: true };
+      
+      const res = validationSchema.safeParse(val);
+      if (res.success) return { success: true };
+      
+      const firstError = res.error.issues[0]?.message;
+      return { success: false, msg: firstError };
+  };
+
+  const onBlurHandler = () => {
     const trimmed = text.trim();
+    
+    if (validationSchema) {
+        const { success, msg } = handleValidate(trimmed);
+        if (!success) {
+            setError(msg || 'Invalid input');
+            return;
+        }
+    }
+    
     if (trimmed && trimmed !== value) {
-      if (validationSchema) {
-        // Validation logic if needed
-      }
       onUpdate(trimmed);
+      setError(null);
     } else if (!trimmed && value) {
        setText(value);
     }
   };
 
-  const handleValidateAndSave = () => {
-     handleBlur();
-  }
- 
   return (
     <Box sx={sx}>
       <Box
@@ -95,12 +117,17 @@ export default function SettingsItem({
 
         <TextField
           value={text}
-          onChange={(e) => setText(e.target.value)}
-          onBlur={handleValidateAndSave}
+          onChange={(e) => {
+             setText(e.target.value);
+             if (error) setError(null);
+          }}
+          onBlur={onBlurHandler}
           variant={inputVariant}
           fullWidth
           multiline
           placeholder={inputPlaceholder}
+          error={!!error}
+          helperText={error}
           size={inputVariant === 'outlined' ? 'small' : 'medium'}
           InputProps={{ 
             ...(inputVariant === 'standard' && !expanded && !children && { disableUnderline: true })

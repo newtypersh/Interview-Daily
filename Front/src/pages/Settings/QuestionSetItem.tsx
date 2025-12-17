@@ -3,7 +3,7 @@ import { Divider, Stack } from '@mui/material';
 import { QuestionSetNameSchema, QuestionContentStringSchema } from '../../schemas/settings';
 import SettingsList from './components/SettingsList';
 import SettingsItem from './components/SettingsItem';
-import { type QuestionSet } from '../../apis/questionSet/types';
+import { type QuestionSet } from '../../schemas/questionSet';
 import {
   useUpdateQuestionSet,
   useDeleteQuestionSet,
@@ -56,15 +56,17 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
   };
 
   return (
-    <SettingsItem
+      <SettingsItem
       index={index}
       value={questionSet.name}
       onUpdate={handleUpdateSet}
       onDelete={handleDeleteSet}
-      validationSchema={QuestionSetNameSchema}
       expanded={expanded}
       onExpandToggle={() => setExpanded(!expanded)}
-      inputPlaceholder="질문 세트 이름"
+      options={{
+        validationSchema: QuestionSetNameSchema,
+        placeholder: "질문 세트 이름"
+      }}
     >
       <Divider sx={{ mb: 2 }} />
 
@@ -78,8 +80,10 @@ export default function QuestionSetItem({ questionSet, index }: QuestionSetItemP
               value={question.content || ''}
               onUpdate={(val) => handleUpdateQuestion(question.id, val)}
               onDelete={() => handleDeleteQuestion(question.id)}
-              validationSchema={QuestionContentStringSchema}
-              inputPlaceholder="질문을 입력하세요"
+              options={{
+                validationSchema: QuestionContentStringSchema,
+                placeholder: "질문을 입력하세요"
+              }}
             />
           )}
           onAdd={handleAddQuestion}
