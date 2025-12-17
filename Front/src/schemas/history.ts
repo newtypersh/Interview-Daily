@@ -8,13 +8,18 @@ export const InterviewHistoryItemSchema = z.object({
 });
 
 export const InterviewHistoryResponseSchema = z.object({
-  data: z.array(InterviewHistoryItemSchema),
-  pagination: z.object({
-    nextCursorCreatedAt: z.string().nullable(),
-    nextCursorId: z.number().nullable(),
-    hasNext: z.boolean(),
+  resultType: z.string(),
+  success: z.object({
+    data: z.array(InterviewHistoryItemSchema),
+    pagination: z.object({
+      nextCursorCreatedAt: z.string().nullable(),
+      nextCursorId: z.number().nullable(),
+      hasNext: z.boolean(),
+    }),
   }),
+  error: z.any().nullable().optional(),
 });
 
 export type InterviewHistoryItem = z.infer<typeof InterviewHistoryItemSchema>;
 export type InterviewHistoryResponse = z.infer<typeof InterviewHistoryResponseSchema>;
+export type InterviewHistoryData = InterviewHistoryResponse['success'];
