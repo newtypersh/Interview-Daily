@@ -1,5 +1,5 @@
 import { api } from '../axios';
-import type { InterviewHistoryResponse } from './types';
+import { InterviewHistoryResponseSchema, type InterviewHistoryResponse } from '../../schemas/history';
 
 export const getInterviews = async (
   limit: number,
@@ -13,5 +13,6 @@ export const getInterviews = async (
   const response = await api.get<{ success: InterviewHistoryResponse }>('/history/interviews', {
     params,
   });
-  return response.data.success;
+  
+  return InterviewHistoryResponseSchema.parse(response.data.success);
 };

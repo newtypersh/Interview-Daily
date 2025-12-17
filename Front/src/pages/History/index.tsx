@@ -13,6 +13,7 @@ export default function History() {
     isFetchingNextPage,
     isLoading,
     isError,
+    error,
   } = useInterviewHistory();
 
   const { ref, inView } = useInView();
@@ -33,8 +34,13 @@ export default function History() {
 
   if (isError) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, flexDirection: 'column', alignItems: 'center', gap: 1 }}>
         <Typography color="error">기록을 불러오는 중 오류가 발생했습니다.</Typography>
+        {import.meta.env.DEV && (
+            <Typography variant="caption" color="text.secondary">
+              {error?.message}
+            </Typography>
+        )}
       </Box>
     );
   }
