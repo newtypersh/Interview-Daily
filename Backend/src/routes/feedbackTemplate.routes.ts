@@ -1,6 +1,8 @@
 import express from 'express';
 import * as ctrl from "../controllers/feedbackTemplate.controller.js";
 import { ensureAuth } from '../middleware/authMiddleware.js';
+import { validate } from '../middleware/validate.js';
+import * as schemas from '../schemas/feedbackTemplate.schema.js';
 
 const router = express.Router();
 
@@ -35,7 +37,7 @@ router.get('/', ensureAuth,
 
 
 // GET /api/feedback-templates/:category
-router.get('/:category', ensureAuth, 
+router.get('/:category', ensureAuth, validate(schemas.getFeedbackTemplatesByCategorySchema), 
     /* 
         #swagger.tags = ['FeedbackTemplate']
         #swagger.summary = '카테고리별 템플릿 조회'
@@ -69,7 +71,7 @@ router.get('/:category', ensureAuth,
 
 
 // PATCH /api/feedback-templates/:category
-router.patch('/:category', ensureAuth, 
+router.patch('/:category', ensureAuth, validate(schemas.updateFeedbackTemplateSchema), 
     /* 
         #swagger.tags = ['FeedbackTemplate']
         #swagger.summary = '피드백 템플릿 수정'
