@@ -9,23 +9,8 @@ export class StartInterviewRequestDto {
         this.userId = (req.user as any)?.id;
         this.strategy = req.body?.strategy;
 
-        this.validate();
-        this.normalize();   
-    }
-
-    validate() {
         if (!this.userId) {
             throw new UnauthorizedError("로그인이 필요합니다.");
-        }
-
-        if (this.strategy && !["random", "JOB", "PERSONAL", "MOTIVATION"].includes(this.strategy)) {
-            throw new BadRequestError("유효하지 않은 strategy입니다.");
-        }
-    }
-
-    normalize() {
-        if (!this.strategy) {
-            this.strategy = "random";
         }
     }
 
@@ -49,21 +34,11 @@ export class UploadAnswerAudioRequestDto {
         this.answerId = req.params?.answerId;
         this.file = (req as any).file;
 
-        this.validate();
-    }
-
-    validate() {
-        // 1. 인증 확인
         if (!this.userId) {
             throw new UnauthorizedError("로그인이 필요합니다.");
         }
 
-        // 2. 필수 파라미터 확인
-        if (!this.interviewId || !this.answerId) {
-            throw new BadRequestError("interviewId와 answerId가 필요합니다.");
-        }
-
-        // 3. 파일 존재 확인
+        // Zod validates params. File presence check:
         if (!this.file) {
             throw new BadRequestError("오디오 파일이 필요합니다.");
         }
@@ -87,16 +62,8 @@ export class CompleteInterviewRequestDto {
         this.userId = (req.user as any)?.id;
         this.interviewId = req.params?.interviewId;
 
-        this.validate();
-    }
-
-    validate() {
         if (!this.userId) {
             throw new UnauthorizedError("로그인이 필요합니다.");
-        }
-
-        if (!this.interviewId) {
-            throw new BadRequestError("interviewId가 필요합니다.");
         }
     }
 
@@ -118,23 +85,7 @@ export class CreateFeedbackRequestDto {
         this.interviewId = req.params?.interviewId;
         this.feedbacks = req.body?.feedbacks;
 
-        this.validate();
-    }
-
-    validate() {
         if (!this.userId) throw new UnauthorizedError("로그인이 필요합니다.");
-        if (!this.interviewId) throw new BadRequestError("interviewId가 필요합니다.");
-
-        if (!this.feedbacks || !Array.isArray(this.feedbacks) || this.feedbacks.length === 0) {
-            throw new BadRequestError("피드백 데이터가 올바르지 않습니다.");
-        }
-
-        for (const item of this.feedbacks) {
-            if (!item.answerId) throw new BadRequestError("answerId가 누락되었습니다.");
-            if (item.rating === undefined || item.rating < 1 || item.rating > 5) {
-                throw new BadRequestError("점수는 1에서 5 사이여야 합니다.");
-            }
-        }
     }
 
     toServicePayload() {
@@ -144,7 +95,7 @@ export class CreateFeedbackRequestDto {
             feedbacks: this.feedbacks.map(f => ({
                 interviewAnswerId: f.answerId, // Mapped to Service expected key
                 rating: f.rating,
-                feedbackText: f.feedbackText || "",
+                feedbackText: f.feedbackText || f.comment || "",
             }))
         }
     }

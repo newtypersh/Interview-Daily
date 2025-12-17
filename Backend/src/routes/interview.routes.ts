@@ -2,11 +2,13 @@ import express from "express";
 import * as ctrl from "../controllers/interview.controller.js";
 import { ensureAuth } from "../middleware/authMiddleware.js";
 import { audioUploader } from "../middleware/audioUploader.js";
+import { validate } from "../middleware/validate.js";
+import * as schemas from "../schemas/interview.schema.js";
 
 const router = express.Router();
 
 // POST /api/interviews/start
-router.post("/start", ensureAuth, (req, res, next) => {
+router.post("/start", ensureAuth, validate(schemas.startInterviewSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '면접 시작'
@@ -39,7 +41,7 @@ router.post("/start", ensureAuth, (req, res, next) => {
 
 
 // GET /api/interviews/:interviewId/
-router.get("/:interviewId/", ensureAuth, (req, res, next) => {
+router.get("/:interviewId/", ensureAuth, validate(schemas.getInterviewSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '면접 상세 정보 조회'
@@ -50,7 +52,7 @@ router.get("/:interviewId/", ensureAuth, (req, res, next) => {
 
 
 // GET /api/interviews/:interviewId/answers
-router.get("/:interviewId/answers", ensureAuth, (req, res, next) => {
+router.get("/:interviewId/answers", ensureAuth, validate(schemas.getInterviewAnswersSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '면접 답변 목록 조회'
@@ -81,7 +83,7 @@ router.get("/:interviewId/answers", ensureAuth, (req, res, next) => {
 
 
 // POST /api/interviews/:interviewId/feedbacks
-router.post("/:interviewId/feedbacks", ensureAuth, (req, res, next) => {
+router.post("/:interviewId/feedbacks", ensureAuth, validate(schemas.submitFeedbacksSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '피드백 제출'
@@ -105,7 +107,7 @@ router.post("/:interviewId/feedbacks", ensureAuth, (req, res, next) => {
 
 // POST /api/interviews/:interviewId/answers/:answerId/audio
 
-router.post("/:interviewId/answers/:answerId/audio", ensureAuth, audioUploader.single("file"), (req, res, next) => {
+router.post("/:interviewId/answers/:answerId/audio", ensureAuth, validate(schemas.uploadAnswerAudioSchema), audioUploader.single("file"), (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '답변 오디오 업로드'
@@ -125,7 +127,7 @@ router.post("/:interviewId/answers/:answerId/audio", ensureAuth, audioUploader.s
 
 
 // POST /api/interviews/:interviewId/complete   
-router.post("/:interviewId/complete", ensureAuth, (req, res, next) => {
+router.post("/:interviewId/complete", ensureAuth, validate(schemas.completeInterviewSchema), (req, res, next) => {
     /* 
         #swagger.tags = ['Interview']
         #swagger.summary = '면접 종료'
