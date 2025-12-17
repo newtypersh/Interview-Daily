@@ -3,20 +3,20 @@ import { UnauthorizedError } from "../errors.js";
 
 export class GetInterviewHistoryRequestDto {
     userId: string | undefined;
-    limit: string | undefined;
+    limit: number;
     cursorCreatedAt: string | undefined;
-    cursorId: string | undefined;
+    cursorId: number | undefined;
 
     constructor(req: Request) {
         this.userId = (req.user as any)?.id;
+        
+        // Zod middleware has already transformed these types
         const query = req.query as any;
-        this.limit = query?.limit;
-        this.cursorCreatedAt = query?.cursorCreatedAt;
-        this.cursorId = query?.cursorId;
-        this.validate();
-    }
+        this.limit = query.limit; 
+        this.cursorCreatedAt = query.cursorCreatedAt;
+        this.cursorId = query.cursorId;
 
-    validate() {
+        // Basic auth check
         if (!this.userId) {
             throw new UnauthorizedError("로그인이 필요합니다.");
         }
@@ -25,7 +25,7 @@ export class GetInterviewHistoryRequestDto {
     toServicePayload() {
         return {
             userId: this.userId!,
-            limit: this.limit ? parseInt(this.limit) : 20,
+            limit: this.limit,
             cursorCreatedAt: this.cursorCreatedAt || null,
             cursorId: this.cursorId || null,
         };

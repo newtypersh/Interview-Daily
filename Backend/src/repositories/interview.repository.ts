@@ -214,7 +214,7 @@ export async function findFeedbackTemplatesForInterview(interviewId: string | nu
     return templates;
 };
 
-export async function findInterviewsByUserPaginated(userId: string | number | bigint, { limit = 20, cursorCreatedAt = null, cursorId = null }: { limit?: number; cursorCreatedAt?: string | null; cursorId?: string | null }) {
+export async function findInterviewsByUserPaginated(userId: string | number | bigint, { limit = 20, cursorCreatedAt = null, cursorId = null }: { limit?: number; cursorCreatedAt?: string | null; cursorId?: string | number | null }) {
     const uId = toBigInt(userId);
     const take = Number(limit) + 1;
 

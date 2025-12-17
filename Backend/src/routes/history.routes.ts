@@ -1,11 +1,13 @@
 import express from "express";
 import * as ctrl from "../controllers/history.controller.js";
 import { ensureAuth } from "../middleware/authMiddleware.js";
+import { validate } from "../middleware/validate.js";
+import * as schemas from "../schemas/history.schema.js";
 
 const router = express.Router();
 
 // GET /api/history/interviews?limit=20&cursorCreatedAt=2025-...&cursorId=123
-router.get("/interviews", ensureAuth, (req, res, next) => {
+router.get("/interviews", ensureAuth, validate(schemas.getInterviewHistorySchema), (req, res, next) => {
     /* 
         #swagger.tags = ['History']
         #swagger.summary = '면접 기록 조회 (커서 페이징)'
