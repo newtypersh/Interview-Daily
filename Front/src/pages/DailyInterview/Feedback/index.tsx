@@ -19,18 +19,18 @@ export default function FeedbackContainer() {
   // API 데이터를 UI 포맷으로 변환
   const questions = mapInterviewToQuestions(interview?.answers);
 
+  /* Hook Form Integration */
   const {
-    feedbacks,
+    form,
     playingAudio,
-    handleRatingChange,
-    handleContentChange,
     handlePlayAudio,
   } = useFeedbackForm(questions, templateContent);
 
-  const { submit, isSubmitting } = useFeedbackSubmission({
+  const { control, handleSubmit } = form;
+
+  const { onSubmit, isSubmitting } = useFeedbackSubmission({
     interviewId,
     questions,
-    feedbacks
   });
 
   if (!interviewId) {
@@ -58,15 +58,13 @@ export default function FeedbackContainer() {
   return (
     <FeedbackLayout
       questions={questions}
-      feedbacks={feedbacks}
+      control={control}
       templateContent={templateContent}
       category={interview.category}
       playingAudio={playingAudio}
       isSubmitting={isSubmitting}
       onPlayAudio={handlePlayAudio}
-      onRatingChange={handleRatingChange}
-      onContentChange={handleContentChange}
-      onSubmit={submit}
+      onSubmit={handleSubmit(onSubmit)}
     />
   );
 }

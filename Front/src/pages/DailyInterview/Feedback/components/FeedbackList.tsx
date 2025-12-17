@@ -1,24 +1,21 @@
 import { Stack } from '@mui/material';
+import type { Control } from 'react-hook-form';
 import FeedbackItem from './FeedbackItem';
 import type { FeedbackQuestion } from '../utils/feedbackMapper';
-import type { QuestionFeedback } from '../hooks/useFeedbackForm';
+import type { FeedbackFormValues } from '../schemas/form';
 
 type FeedbackListProps = {
   questions: FeedbackQuestion[];
-  feedbacks: Record<string, QuestionFeedback>;
+  control: Control<FeedbackFormValues>;
   playingAudio: string | null;
   onPlayAudio: (id: string) => void;
-  onRatingChange: (id: string, rating: number | null) => void;
-  onContentChange: (id: string, content: string) => void;
 }
 
 export default function FeedbackList({
   questions,
-  feedbacks,
+  control,
   playingAudio,
   onPlayAudio,
-  onRatingChange,
-  onContentChange,
 }: FeedbackListProps) {
   return (
     <Stack spacing={4}>
@@ -28,11 +25,9 @@ export default function FeedbackList({
           question={q}
           index={index}
           answer={q.transcript || '답변 내용이 없습니다.'}
-          feedback={feedbacks[q.id] || { rating: 0, content: "" }}
+          control={control}
           isPlaying={playingAudio === q.id}
           onPlayAudio={() => q.audioUrl && onPlayAudio(q.id)}
-          onRatingChange={onRatingChange}
-          onContentChange={onContentChange}
         />
       ))}
     </Stack>

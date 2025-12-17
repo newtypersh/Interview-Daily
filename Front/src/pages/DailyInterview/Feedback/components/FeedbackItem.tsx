@@ -13,29 +13,26 @@ import {
   PlayArrow as PlayArrowIcon,
   Pause as PauseIcon,
 } from '@mui/icons-material';
-import type { QuestionFeedback } from '../hooks/useFeedbackForm';
+import { Controller, type Control } from 'react-hook-form';
+import type { FeedbackFormValues } from '../schemas/form';
 import ContentBox from '../../../../components/ContentBox';
 
 type FeedbackItemProps = {
   question: { content: string | null; id: string };
   index: number;
   answer: string;
-  feedback: QuestionFeedback;
+  control: Control<FeedbackFormValues>;
   isPlaying: boolean;
   onPlayAudio: (id: string) => void;
-  onRatingChange: (id: string, rating: number | null) => void;
-  onContentChange: (id: string, content: string) => void;
 }
 
 export default function FeedbackItem({
   question,
   index,
   answer,
-  feedback,
+  control,
   isPlaying,
   onPlayAudio,
-  onRatingChange,
-  onContentChange,
 }: FeedbackItemProps) {
   return (
     <ContentBox>
@@ -101,18 +98,21 @@ export default function FeedbackItem({
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
             만족도
           </Typography>
-          <Rating
-            value={feedback.rating}
-            onChange={(_, newValue) => onRatingChange(question.id, newValue)}
-            size="large"
-            sx={{
-              '& .MuiRating-iconFilled': {
-                color: '#667eea',
-              },
-              '& .MuiRating-iconHover': {
-                color: '#764ba2',
-              },
-            }}
+          <Controller
+            name={`feedbacks.${question.id}.rating`}
+            control={control}
+            render={({ field }) => (
+              <Rating
+                {...field}
+                value={field.value || 0}
+                onChange={(_, newValue) => field.onChange(newValue)}
+                size="large"
+                sx={{
+                  '& .MuiRating-iconFilled': { color: '#667eea' },
+                  '& .MuiRating-iconHover': { color: '#764ba2' },
+                }}
+              />
+            )}
           />
         </Box>
 
@@ -121,23 +121,27 @@ export default function FeedbackItem({
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 2 }}>
             피드백
           </Typography>
-          <TextField
-            fullWidth
-            multiline
-            rows={4}
-            value={feedback.content}
-            onChange={(e) => onContentChange(question.id, e.target.value)}
-            placeholder="이 답변에 대한 피드백을 작성해주세요..."
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '&:hover fieldset': {
-                  borderColor: '#667eea',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#667eea',
-                },
-              },
-            }}
+          <Controller
+            name={`feedbacks.${question.id}.content`}
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                value={field.value || ''}
+                fullWidth
+                multiline
+                rows={4}
+                placeholder="이 답변에 대한 피드백을 작성해주세요..."
+                error={!!error}
+                helperText={error?.message}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': { borderColor: '#667eea' },
+                    '&.Mui-focused fieldset': { borderColor: '#667eea' },
+                  },
+                }}
+              />
+            )}
           />
         </Box>
       </Stack>

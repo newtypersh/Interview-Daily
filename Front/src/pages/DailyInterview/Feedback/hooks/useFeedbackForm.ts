@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
-import type { FeedbackItem } from '../../../../schemas/feedback';
-import type { Question as ApiQuestion } from '../../../../apis/questionSet/types';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FeedbackFormSchema, type FeedbackFormValues } from '../schemas/form';
+import type { Question as ApiQuestion } from '../../../../schemas/questionSet.ts';
 
-export type QuestionFeedback = FeedbackItem;
+export type QuestionFeedback = {
+    rating: number;
+    content: string;
+}
 
 export type Question = Partial<ApiQuestion> & {
   id: string;
@@ -14,57 +19,41 @@ export type Question = Partial<ApiQuestion> & {
 };
 
 export const useFeedbackForm = (questions: Question[], defaultContent?: string) => {
-  const [feedbacks, setFeedbacks] = useState<Record<string, QuestionFeedback>>({});
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
-  // Initialize feedbacks or update them when defaultContent changes
+  const form = useForm<FeedbackFormValues>({
+    resolver: zodResolver(FeedbackFormSchema),
+    defaultValues: {
+      feedbacks: {},
+    },
+    mode: 'onBlur', 
+  });
+
+  const { reset } = form;
+
+  // Initialize form values when questions or defaultContent changes
   useEffect(() => {
-    setFeedbacks(prev => {
-      const newFeedbacks = { ...prev };
-      let hasChanges = false;
+    if (questions.length === 0) return;
 
-      questions.forEach(q => {
-        // If feedback exists in the question data (from backend), use it
-        if (q.feedbacks && q.feedbacks.length > 0 && !newFeedbacks[q.id]) {
-          const fb = q.feedbacks[0];
-          newFeedbacks[q.id] = { 
-            rating: fb.rating, 
-            content: fb.feedbackText || defaultContent || '' 
-          };
-          hasChanges = true;
-          return;
-        }
+    const initialFeedbacks: Record<string, QuestionFeedback> = {};
 
-        // If feedback for this question doesn't exist, create it
-        if (!newFeedbacks[q.id]) {
-          newFeedbacks[q.id] = { rating: 0, content: defaultContent || '' };
-          hasChanges = true;
-        } 
-        // If it exists but content is empty and we have a defaultContent, update it
-        else if (!newFeedbacks[q.id].content && defaultContent) {
-          newFeedbacks[q.id] = { ...newFeedbacks[q.id], content: defaultContent };
-          hasChanges = true;
-        }
-      });
-
-      return hasChanges ? newFeedbacks : prev;
+    questions.forEach(q => {
+      // If feedback exists in the question data (from backend), use it
+      if (q.feedbacks && q.feedbacks.length > 0) {
+        const fb = q.feedbacks[0];
+        initialFeedbacks[q.id] = { 
+          rating: fb.rating, 
+          content: fb.feedbackText || defaultContent || '' 
+        };
+      } else {
+        // Default init
+        initialFeedbacks[q.id] = { rating: 0, content: defaultContent || '' };
+      }
     });
-  }, [questions, defaultContent]);
 
+    reset({ feedbacks: initialFeedbacks });
+  }, [questions, defaultContent, reset]);
 
-  const handleRatingChange = (questionId: string, rating: number | null) => {
-    setFeedbacks({
-      ...feedbacks,
-      [questionId]: { ...feedbacks[questionId], rating: rating || 0 }
-    });
-  };
-
-  const handleContentChange = (questionId: string, content: string) => {
-    setFeedbacks({
-      ...feedbacks,
-      [questionId]: { ...feedbacks[questionId], content }
-    });
-  };
 
   const handlePlayAudio = (questionId: string) => {
     if (playingAudio === questionId) {
@@ -73,16 +62,13 @@ export const useFeedbackForm = (questions: Question[], defaultContent?: string) 
     } else {
       setPlayingAudio(questionId);
       // TODO: Start audio playback
-      // 실제 구현 시에는 녹음된 오디오를 재생
-      setTimeout(() => setPlayingAudio(null), 3000); // 임시로 3초 후 자동 정지
+      setTimeout(() => setPlayingAudio(null), 3000); 
     }
   };
 
   return {
-    feedbacks,
+    form,
     playingAudio,
-    handleRatingChange,
-    handleContentChange,
     handlePlayAudio,
   };
 };

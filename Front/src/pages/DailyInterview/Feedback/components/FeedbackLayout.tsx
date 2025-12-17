@@ -1,34 +1,31 @@
 import { Box, Container, Paper, Button, CircularProgress } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
+import { type Control } from 'react-hook-form';
+import type { FeedbackFormValues } from '../schemas/form';
 import FeedbackHeader from './FeedbackHeader';
 import FeedbackTemplateGuide from './FeedbackTemplateGuide';
 import FeedbackList from './FeedbackList';
 import type { FeedbackQuestion } from '../utils/feedbackMapper';
-import type { QuestionFeedback as UserFeedback } from '../hooks/useFeedbackForm';
 
 type FeedbackLayoutProps = {
   questions: FeedbackQuestion[];
-  feedbacks: Record<string, UserFeedback>;
+  control: Control<FeedbackFormValues>;
   templateContent?: string;
   category?: string;
   playingAudio: string | null;
   isSubmitting: boolean;
   onPlayAudio: (url: string) => void;
-  onRatingChange: (answerId: string, score: number | null) => void;
-  onContentChange: (answerId: string, content: string) => void;
   onSubmit: () => void;
 }
 
 export default function FeedbackLayout({
   questions,
-  feedbacks,
+  control,
   templateContent,
   category,
   playingAudio,
   isSubmitting,
   onPlayAudio,
-  onRatingChange,
-  onContentChange,
   onSubmit,
 }: FeedbackLayoutProps) {
   return (
@@ -41,11 +38,9 @@ export default function FeedbackLayout({
           <Box sx={{ mb: 6 }}>
             <FeedbackList
               questions={questions}
-              feedbacks={feedbacks}
+              control={control}
               playingAudio={playingAudio}
               onPlayAudio={onPlayAudio}
-              onRatingChange={onRatingChange}
-              onContentChange={onContentChange}
             />
           </Box>
 
