@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIconButton from '../../../components/DeleteIconButton';
-import type { ZodSchema } from 'zod';
+import type { ZodType } from 'zod';
 
 type SettingsItemOptions = {
   alignItems?: 'center' | 'flex-start';
@@ -18,7 +18,7 @@ type SettingsItemOptions = {
   inputVariant?: 'standard' | 'outlined' | 'filled';
   indexFormat?: (index: number) => string;
   placeholder?: string;
-  validationSchema?: ZodSchema;
+  validationSchema?: ZodType<string>;
   sx?: SxProps<Theme>;
 }
 
@@ -67,8 +67,8 @@ export default function SettingsItem({
       const res = validationSchema.safeParse(val);
       if (res.success) return { success: true };
       
-      const firstError = res.error.issues[0]?.message;
-      return { success: false, msg: firstError };
+      const errorMessages = res.error.issues.map((issue) => issue.message).join(', ');
+      return { success: false, msg: errorMessages };
   };
 
   const onBlurHandler = () => {
