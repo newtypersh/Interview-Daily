@@ -13,7 +13,6 @@ export const InterviewHistoryResponseSchema = z.object({
     data: z.array(InterviewHistoryItemSchema),
     pagination: z.object({
       nextCursorCreatedAt: z.string().nullable(),
-      nextCursorId: z.number().nullable(),
       hasNext: z.boolean(),
     }),
   }),
