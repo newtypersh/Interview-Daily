@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { completeInterview } from '../../../apis/interview';
-import type { CompleteInterviewResponse } from '../../../apis/interview/types';
+import type { CompleteInterviewResponse } from '../../../schemas/interview';
 
 type UseInterviewCompletionProps = {
   onSuccess: (data: CompleteInterviewResponse, variables: string, context: unknown) => void;
@@ -8,9 +8,14 @@ type UseInterviewCompletionProps = {
 }
 
 export const useInterviewCompletion = ({ onSuccess, onError }: UseInterviewCompletionProps) => {
+  const queryClient = useQueryClient();
+
   const { mutate: complete, isPending: isCompleting, error } = useMutation<CompleteInterviewResponse, Error, string>({
     mutationFn: (interviewId) => completeInterview(interviewId),
-    onSuccess,
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: ['interviewHistory'] });
+      onSuccess(data, variables, context);
+    },
     onError,
   });
 
