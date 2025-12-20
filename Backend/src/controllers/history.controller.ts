@@ -15,7 +15,6 @@ export const getHistory = async (req: Request, res: Response, next: NextFunction
             data: items.map(toHistoryResponseDto),
             pagination: {
                 nextCursorCreatedAt: nextCursor?.createdAt || null,
-                nextCursorId: nextCursor?.id ? Number(nextCursor.id) : null,
                 hasNext: !!nextCursor,
             }
         });

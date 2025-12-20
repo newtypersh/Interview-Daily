@@ -23,11 +23,6 @@ router.get("/interviews", ensureAuth, validate(schemas.getInterviewHistorySchema
             description: '페이징 커서: 마지막으로 조회된 면접의 생성일시 (ISO String)',
             type: 'string'
         }
-        #swagger.parameters['cursorId'] = {
-            in: 'query',
-            description: '페이징 커서: 마지막으로 조회된 면접의 ID (중복 방지용)',
-            type: 'integer'
-        }
 
         #swagger.responses[200] = {
             description: '조회 성공',
@@ -44,7 +39,6 @@ router.get("/interviews", ensureAuth, validate(schemas.getInterviewHistorySchema
                     ],
                     pagination: {
                         nextCursorCreatedAt: "2023-11-30T09:00:00.000Z",
-                        nextCursorId: 5,
                         hasNext: true
                     }
                 }

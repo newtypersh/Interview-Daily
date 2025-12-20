@@ -6,15 +6,14 @@ export const useInterviewHistory = (limit: number = 20) => {
   return useInfiniteQuery<InterviewHistoryData, Error>({
     queryKey: ['interviewHistory', limit],
     queryFn: ({ pageParam }) => {
-      const { cursorCreatedAt, cursorId } = pageParam as { cursorCreatedAt?: string; cursorId?: number };
-      return getInterviews(limit, cursorCreatedAt, cursorId);
+      const params = pageParam as { cursorCreatedAt?: string | null };
+      return getInterviews({ limit, ...params });
     },
     initialPageParam: {},
     getNextPageParam: (lastPage) => {
       if (!lastPage.pagination.hasNext) return undefined;
       return {
         cursorCreatedAt: lastPage.pagination.nextCursorCreatedAt,
-        cursorId: lastPage.pagination.nextCursorId,
       };
     },
   });

@@ -214,23 +214,20 @@ export async function findFeedbackTemplatesForInterview(interviewId: string | nu
     return templates;
 };
 
-export async function findInterviewsByUserPaginated(userId: string | number | bigint, { limit = 20, cursorCreatedAt = null, cursorId = null }: { limit?: number; cursorCreatedAt?: string | null; cursorId?: string | number | null }) {
+export async function findInterviewsByUserPaginated(userId: string | number | bigint, { limit = 20, cursorCreatedAt = null }: { limit?: number; cursorCreatedAt?: string | null }) {
     const uId = toBigInt(userId);
     const take = Number(limit) + 1;
 
     const where: Prisma.InterviewWhereInput = { user_id: uId };
 
-    if (cursorCreatedAt && cursorId) {
+    if (cursorCreatedAt) {
         const cursorDate = new Date(cursorCreatedAt);
-        where.OR = [
-            { created_at: { lt: cursorDate } },
-            { AND: [ { created_at: cursorDate }, { id: { lt: toBigInt(cursorId) } } ] },
-        ];
+        where.created_at = { lt: cursorDate };
     }
 
     const rows = await prisma.interview.findMany({
         where,
-        orderBy: [ { created_at: "desc" }, { id: "desc" } ],
+        orderBy: { created_at: "desc" },
         take,
         select: {
             id: true,
@@ -258,7 +255,7 @@ export async function findInterviewsByUserPaginated(userId: string | number | bi
         const last = rows[rows.length - 1];
 
         items = rows.slice(0, -1);
-        nextCursor = { createdAt: last.created_at.toISOString(), id: String(last.id) };
+        nextCursor = { createdAt: last.created_at.toISOString() };
     }
 
     return { items, nextCursor };

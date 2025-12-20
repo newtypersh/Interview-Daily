@@ -5,7 +5,6 @@ export class GetInterviewHistoryRequestDto {
     userId: string | undefined;
     limit: number;
     cursorCreatedAt: string | undefined;
-    cursorId: number | undefined;
 
     constructor(req: Request) {
         this.userId = (req.user as any)?.id;
@@ -14,7 +13,6 @@ export class GetInterviewHistoryRequestDto {
         const query = req.query as any;
         this.limit = query.limit; 
         this.cursorCreatedAt = query.cursorCreatedAt;
-        this.cursorId = query.cursorId;
 
         // Basic auth check
         if (!this.userId) {
@@ -27,7 +25,6 @@ export class GetInterviewHistoryRequestDto {
             userId: this.userId!,
             limit: this.limit,
             cursorCreatedAt: this.cursorCreatedAt || null,
-            cursorId: this.cursorId || null,
         };
     }
 }
