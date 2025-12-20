@@ -16,5 +16,7 @@ export const useInterviewHistory = (limit: number = 20) => {
         cursorCreatedAt: lastPage.pagination.nextCursorCreatedAt,
       };
     },
+    staleTime: Infinity, // 무한대 (invalidateQueries로만 갱신)
+    gcTime: 1000 * 60 * 30, // 30분
   });
 };
