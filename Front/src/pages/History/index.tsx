@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { Box, Container, Typography, CircularProgress, Stack } from '@mui/material';
+import { Box, Container, Typography, CircularProgress, Stack, Button } from '@mui/material';
 import { useInterviewHistory } from '../../react-query/queries/useInterviewHistory';
 import HistoryItem from './HistoryItem';
 import EmptyState from './EmptyState';
@@ -15,14 +13,6 @@ export default function History() {
     isError,
     error,
   } = useInterviewHistory();
-
-  const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (inView && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [inView, hasNextPage, fetchNextPage]);
 
   if (isLoading) {
     return (
@@ -64,13 +54,18 @@ export default function History() {
              <EmptyState message="아직 면접 기록이 없습니다." />
         )}
 
-        {isFetchingNextPage && (
+        {hasNextPage && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <CircularProgress size={24} />
+            <Button 
+              variant="outlined" 
+              onClick={() => fetchNextPage()} 
+              disabled={isFetchingNextPage}
+              size="large"
+            >
+              {isFetchingNextPage ? <CircularProgress size={24} color="inherit" /> : '더보기'}
+            </Button>
           </Box>
         )}
-
-        <div ref={ref} style={{ height: 20 }} />
       </Container>
     </Box>
   );
