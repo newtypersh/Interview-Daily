@@ -1,11 +1,12 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getInterviews } from '../../apis/history';
 
-export const useInterviewHistory = (limit: number = 20) => {
+export const useInterviewHistory = () => {
+  const LIMIT = 20;
   return useInfiniteQuery({
-    queryKey: ['interviewHistory', limit],
+    queryKey: ['interviewHistory'],
     queryFn: ({ pageParam }) => {
-      return getInterviews({ limit, cursorCreatedAt: pageParam });
+      return getInterviews({ limit: LIMIT, cursorCreatedAt: pageParam });
     },
     initialPageParam: null as string | null, // 타입 추론을 위해 명시
     getNextPageParam: (lastPage) => {
