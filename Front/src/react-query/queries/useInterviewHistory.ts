@@ -1,8 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getInterviews } from '../../apis/history';
 
+const LIMIT = 20;
+
 export const useInterviewHistory = () => {
-  const LIMIT = 20;
   return useInfiniteQuery({
     queryKey: ['interviewHistory'],
     queryFn: ({ pageParam }) => {
