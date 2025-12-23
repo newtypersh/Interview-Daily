@@ -1,6 +1,7 @@
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { prisma } from "./db.config.js";
 import { createUserAndDefaults } from "./services/user.service.js";
+import { BadRequestError } from "./errors.js";
 
 // googleStarategy(Options 객체, VerifyCallback 함수)
 // Options 객체: clientID, clientSecret, callbackURL, scope
@@ -23,7 +24,7 @@ export const googleStrategy = new GoogleStrategy(
 const googleVerify = async (profile: any) => {
   const email = profile.emails?.[0]?.value;
   if (!email) {
-    throw new Error(`profile.email was not found: ${JSON.stringify(profile)}`);
+    throw new BadRequestError("Google 계정에 이메일 정보가 없습니다.", { profile });
   }
 
   const user = await prisma.user.findFirst({ where: { email } });
