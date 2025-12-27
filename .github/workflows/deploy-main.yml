@@ -46,7 +46,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          ssh Interview-Daily 'cd /opt/app && npm install'
+          ssh Interview-Daily 'cd /opt/app && npm install --ignore-scripts'
           ssh Interview-Daily 'cd /opt/app && npx prisma generate'
 
       - name: Apply prisma migrations
