@@ -18,7 +18,7 @@ import { StatusCodes } from "http-status-codes";
 export const listQuestionSets = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await service.listQuestionSets((req.user as any)?.id);
-    return res.status(StatusCodes.OK).success(result);
+    return res.status(StatusCodes.OK).success(result.map(toListItem));
   } catch (err) {
     next(err);
   }
