@@ -42,6 +42,7 @@ jobs:
         run: |
           ssh Interview-Daily 'sudo mkdir -p /opt/app'
           ssh Interview-Daily 'sudo chown ubuntu:ubuntu /opt/app'
+          ssh Interview-Daily 'rm -rf /opt/app/src /opt/app/dist'
           scp -r ./Backend/. Interview-Daily:/opt/app
 
       - name: Install dependencies
