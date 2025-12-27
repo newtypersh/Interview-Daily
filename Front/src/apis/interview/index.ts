@@ -6,11 +6,12 @@ import {
   CompleteInterviewResponseSchema,
   type StartInterviewResponse,
   type Interview,
+  type InterviewAnswer,
   type UploadAudioResponse,
   type CompleteInterviewResponse,
 } from '../../schemas/interview';
 
-export type { StartInterviewResponse, Interview, UploadAudioResponse, CompleteInterviewResponse };
+export type { StartInterviewResponse, Interview, InterviewAnswer, UploadAudioResponse, CompleteInterviewResponse };
 export { StartInterviewResponseSchema, InterviewSchema, UploadAudioResponseSchema, CompleteInterviewResponseSchema };
 import { z } from 'zod';
 

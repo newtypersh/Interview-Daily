@@ -1,5 +1,5 @@
-import type { InterviewAnswer } from '../../../../apis/interview/types';
-import type { Question as ApiQuestion } from '../../../../apis/questionSet/types';
+import type { InterviewAnswer } from '../../../../apis/interview';
+import type { Question as ApiQuestion } from '../../../../apis/questionSet';
 
 export type FeedbackQuestion = Partial<ApiQuestion> & {
   id: string;
