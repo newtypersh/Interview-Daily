@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Paper, Stack, Box, Typography, Divider, Button, CircularProgress } from '@mui/material';
 import { Replay as ReplayIcon, NavigateNext as NavigateNextIcon, Check as CheckIcon } from '@mui/icons-material';
 import { useTranscript } from '../../../../react-query/queries/useTranscript';
-import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../../../../apis/interview/types';
+import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../types';
 
 type AnswerReviewProps = {
   session: InterviewSessionState;

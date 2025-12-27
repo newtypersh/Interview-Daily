@@ -2,7 +2,7 @@
 import { Stack } from '@mui/material';
 import RecordingSection from './RecordingSection';
 import AnswerReview from './AnswerReview';
-import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../../../../apis/interview/types';
+import type { InterviewSessionState, InterviewRecording, InterviewSubmission, InterviewLoadingStatus } from '../types';
 
 type InterviewActionAreaProps = {
   session: InterviewSessionState;

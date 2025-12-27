@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { startInterview } from '../../../apis/interview';
-import type { StartInterviewResponse } from '../../../apis/interview/types';
+import type { StartInterviewResponse } from '../../../apis/interview';
 import { handleError } from '../../../utils/errorHandler';
-import type { Question } from '../../../apis/questionSet/types';
+import type { Question } from '../../../apis/questionSet';
 
 export const useInterviewQuestions = () => {
   const [questions, setQuestions] = useState<Question[]>([]);

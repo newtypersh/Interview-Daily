@@ -2,8 +2,8 @@ import { Box, Container, Paper } from '@mui/material';
 import InterviewNavigation from './InterviewNavigation';
 import QuestionDisplay from './QuestionDisplay';
 import InterviewActionArea from './InterviewActionArea';
-import type { Question } from '../../../../apis/questionSet/types';
-import type { InterviewLoadingStatus, InterviewRecording, InterviewSubmission, InterviewSessionState } from '../../../../apis/interview/types';
+import type { Question } from '../../../../apis/questionSet';
+import type { InterviewLoadingStatus, InterviewRecording, InterviewSubmission, InterviewSessionState } from '../types';
 
 // Extended Session Type for Props
 type DailyInterviewLayoutProps = {

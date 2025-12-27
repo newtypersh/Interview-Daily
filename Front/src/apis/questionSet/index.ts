@@ -5,6 +5,9 @@ import {
   type Question,
   type QuestionSet,
  } from '../../schemas/questionSet';
+
+export type { Question, QuestionSet };
+export { QuestionSetSchema, QuestionSchema };
 import { z } from 'zod';
 
 // Question Set APIs
