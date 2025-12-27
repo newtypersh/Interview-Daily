@@ -48,6 +48,7 @@ jobs:
         run: |
           ssh Interview-Daily 'cd /opt/app && npm install --ignore-scripts'
           ssh Interview-Daily 'cd /opt/app && npx prisma generate'
+          ssh Interview-Daily 'cd /opt/app && npm run build'
 
       - name: Apply prisma migrations
         if: steps.paths-filter.outputs.prisma == 'true'
