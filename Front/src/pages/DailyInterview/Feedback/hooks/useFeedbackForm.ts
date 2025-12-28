@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FeedbackFormSchema, type FeedbackFormValues } from '../schemas/form';
@@ -30,10 +30,23 @@ export const useFeedbackForm = (questions: Question[], defaultContent?: string) 
   });
 
   const { reset } = form;
+  const loadedIdsRef = useRef<string>('');
 
   // Initialize form values when questions or defaultContent changes
   useEffect(() => {
     if (questions.length === 0) return;
+
+    // Create a unique signature for the current set of questions to prevent unnecessary resets
+    // This ensures we only reset the form when the questions themselves change (e.g. new interview),
+    // not when related data like STT transcript updates.
+    const currentIdsSignature = questions.map(q => q.id).join(',');
+    
+    // If signature matches and we have initialized, skip reset to preserve user input
+    if (loadedIdsRef.current === currentIdsSignature) {
+        return;
+    }
+    
+    loadedIdsRef.current = currentIdsSignature;
 
     const initialFeedbacks: Record<string, QuestionFeedback> = {};
 
