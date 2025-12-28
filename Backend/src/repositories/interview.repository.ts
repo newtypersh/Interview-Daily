@@ -76,6 +76,7 @@ export async function createInterview({ userId, questionSetId, day }: { userId: 
         return tx.interview.findUnique({
             where: { id: createdInterview.id },
             include: { 
+                questionSet: { select: { category: true } },
                 answers: { 
                     orderBy: { sequence: "asc" },
                     include: { question: true }

@@ -31,6 +31,7 @@ export function toInterviewDto(i: InterviewWithRelations | null) {
         userId: i.user_id != null ? String(i.user_id) : null,
         questionSetId: i.question_set_id != null ? String(i.question_set_id) : null,
         category: i.questionSet?.category ?? null,
+        status: i.status,
         day: i.day ? i.day.toISOString() : null,
         interviewedAt: i.interviewed_at ? i.interviewed_at.toISOString() : null,
         createdAt: i.created_at ? i.created_at.toISOString() : null,
