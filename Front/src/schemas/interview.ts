@@ -16,8 +16,8 @@ export const InterviewAnswerSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   // Hydrated fields
-  questionContent: z.string().optional(),
-  transcriptText: z.string().optional(),
+  questionContent: z.string().nullable().optional(),
+  transcriptText: z.string().nullable().optional(),
   feedbacks: z.array(InterviewFeedbackSchema).optional(),
 });
 
@@ -46,7 +46,7 @@ export const UploadAudioResponseSchema = z.object({
   answer: z.object({
     id: z.string(),
     audioUrl: z.string(),
-    transcriptText: z.string().optional(),
+    transcriptText: z.string().nullable().optional(),
   }),
 });
 
@@ -55,7 +55,7 @@ export const CompleteInterviewAnswerSchema = z.object({
   sequence: z.number(),
   question: z.string(),
   audioUrl: z.string().nullable(),
-  transcript: z.string().optional(),
+  transcript: z.string().nullable().optional(),
   feedbacks: z.array(InterviewFeedbackSchema),
 });
 
