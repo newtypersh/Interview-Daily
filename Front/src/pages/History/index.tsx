@@ -9,12 +9,12 @@ export default function History() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
+    isPending,
     isError,
     error,
   } = useInterviewHistory();
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <CircularProgress />

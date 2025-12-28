@@ -10,7 +10,7 @@ import {
 } from '../react-query/mutation/useQuestionMutations';
 
 export const useQuestionSetActions = (questionSetId: string, expanded: boolean = false) => {
-  const { data: questions = [], isLoading: isLoadingQuestions } = useQuestionsQuery(
+  const { data: questions = [], isPending: isPendingQuestions } = useQuestionsQuery(
     questionSetId,
     expanded
   );
@@ -24,7 +24,7 @@ export const useQuestionSetActions = (questionSetId: string, expanded: boolean =
 
   return {
     questions,
-    isLoadingQuestions,
+    isPendingQuestions,
     createQuestion,
     updateQuestion,
     deleteQuestion,

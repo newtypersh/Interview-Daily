@@ -10,7 +10,7 @@ export const useFeedbackTemplates = () => {
 };
 
 export const useFeedbackTemplatesByCategory = (category: string | undefined | null) => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ['feedbackTemplates', category],
     queryFn: () => getFeedbackTemplateByCategory(category!),
     enabled: !!category,
@@ -18,7 +18,7 @@ export const useFeedbackTemplatesByCategory = (category: string | undefined | nu
 
   return {
     templates: data,
-    isLoading,
+    isPending,
     error,
   };
 };

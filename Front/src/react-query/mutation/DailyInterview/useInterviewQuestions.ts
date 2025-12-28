@@ -10,7 +10,7 @@ export const useInterviewQuestions = () => {
   const [interviewId, setInterviewId] = useState<string | null>(null);
   const initialized = useRef(false);
 
-  const { mutate, isPending: isLoading, error } = useMutation<StartInterviewResponse, Error, string>({
+  const { mutate, isPending, error } = useMutation<StartInterviewResponse, Error, string>({
     mutationFn: (strategy) => startInterview(strategy),
     onSuccess: (data) => {
       if (data.success && data.success.interview) {
@@ -25,6 +25,7 @@ export const useInterviewQuestions = () => {
             questionSetId: '', // Dummy for UI mapped question
             createdAt: '',
             updatedAt: '',
+            
           }))
           .sort((a, b) => a.order - b.order);
 
@@ -47,7 +48,7 @@ export const useInterviewQuestions = () => {
   return {
     questions,
     status: {
-      isLoading,
+      isPending,
       error: error as Error | null,
       interviewId,
     }

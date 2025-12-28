@@ -10,7 +10,7 @@ import { useAuth } from './hooks/useAuth.ts';
 import { api } from './apis/axios';
 
 function App() {
-  const { data: isLoggedIn, isLoading } = useAuth();
+  const { data: isLoggedIn, isPending } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -23,7 +23,7 @@ function App() {
     }
   };
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <CircularProgress />

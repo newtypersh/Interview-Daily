@@ -7,7 +7,7 @@ import { useUpdateFeedbackTemplate } from '../../../react-query/mutation/useFeed
 import type { UI_FeedbackTemplate } from '../types';
 
 export const useFeedbackTemplates = () => {
-  const { data: rawTemplates = [], isLoading, error } = useFeedbackTemplatesQuery();
+  const { data: rawTemplates = [], isPending, error } = useFeedbackTemplatesQuery();
   const { mutate: updateTemplate, isPending: isUpdating } = useUpdateFeedbackTemplate();
 
   const templates: UI_FeedbackTemplate[] = useMemo(() => {
@@ -26,7 +26,7 @@ export const useFeedbackTemplates = () => {
 
   return {
     templates,
-    isLoading,
+    isPending,
     error,
     updateTemplate,
     isUpdating,

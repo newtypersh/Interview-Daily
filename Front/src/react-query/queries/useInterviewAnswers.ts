@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getInterviewAnswers } from '../../apis/interview';
 
 export const useInterviewAnswers = (interviewId: string | null) => {
-  const { data, isLoading, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ['interview', interviewId, 'answers'],
     queryFn: () => getInterviewAnswers(interviewId!),
     enabled: !!interviewId,
@@ -11,7 +11,7 @@ export const useInterviewAnswers = (interviewId: string | null) => {
 
   return {
     interview: data,
-    isLoading,
+    isPending,
     error,
   };
 };

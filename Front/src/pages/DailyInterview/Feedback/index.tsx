@@ -10,7 +10,7 @@ import { mapInterviewToQuestions } from './utils/feedbackMapper';
 export default function FeedbackContainer() {
   const { interviewId } = useParams<{ interviewId: string }>();
 
-  const { interview, isLoading, error } = useInterviewAnswers(interviewId || null);
+  const { interview, isPending, error } = useInterviewAnswers(interviewId || null);
   
   // 카테고리 기반 템플릿 조회
   const { templates } = useFeedbackTemplatesByCategory(interview?.category);
@@ -37,7 +37,7 @@ export default function FeedbackContainer() {
     return <Navigate to="/" replace />;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'white' }}>
         <CircularProgress />

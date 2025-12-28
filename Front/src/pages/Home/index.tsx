@@ -17,7 +17,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const { data: isLoggedIn = false, isLoading, refetch } = useAuth();
+  const { data: isLoggedIn = false, isPending, refetch } = useAuth();
 
   // 로그인 성공 후 리다이렉트 처리 로직
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Home() {
   };
 
   // 로딩 중일 때 깜빡임 방지
-  if (isLoading) {
+  if (isPending) {
     return (
       <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <CircularProgress />

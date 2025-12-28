@@ -10,7 +10,7 @@ import type { UI_FeedbackTemplate } from './types';
 import FeedbackTemplateItem from './components/FeedbackTemplateItem';
 
 export default function FeedbackTemplateSection() {
-  const { templates, isLoading, updateTemplate, isUpdating } = useFeedbackTemplates();
+  const { templates, isPending, updateTemplate, isUpdating } = useFeedbackTemplates();
   const { open, message, severity, showSnackbar, closeSnackbar } = useSnackbar();
 
   const handleSave = (template: UI_FeedbackTemplate, content: string) => {
@@ -30,7 +30,7 @@ export default function FeedbackTemplateSection() {
     );
   };
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
         <CircularProgress />

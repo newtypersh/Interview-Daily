@@ -27,7 +27,7 @@ export type InterviewSubmission = {
 };
 
 export type InterviewLoadingStatus = {
-  isLoading: boolean;
+  isPending: boolean;
   error: Error | null;
   interviewId: string | null;
 };
