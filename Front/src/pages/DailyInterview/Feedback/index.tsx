@@ -1,5 +1,6 @@
 import { useParams, Navigate } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from '@mui/material';
+import { useMemo } from 'react';
 import { useFeedbackForm } from './hooks/useFeedbackForm';
 import { useFeedbackSubmission } from './hooks/useFeedbackSubmission';
 import FeedbackLayout from './components/FeedbackLayout';
@@ -17,7 +18,7 @@ export default function FeedbackContainer() {
   const templateContent = templates?.[0]?.templateText || undefined; // 첫 번째 템플릿 사용
   
   // API 데이터를 UI 포맷으로 변환
-  const questions = mapInterviewToQuestions(interview?.answers);
+  const questions = useMemo(() => mapInterviewToQuestions(interview?.answers), [interview?.answers]);
 
   /* Hook Form Integration */
   const {
