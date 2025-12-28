@@ -17,17 +17,32 @@ import { z } from 'zod';
 
 export const startInterview = async (strategy: string): Promise<StartInterviewResponse> => {
   const response = await api.post<StartInterviewResponse>('/interviews/start', { strategy });
-  return StartInterviewResponseSchema.parse(response.data);
+  const result = StartInterviewResponseSchema.safeParse(response.data);
+  if (!result.success) {
+    console.error('startInterview validation failed:', result.error);
+    throw new Error('인터뷰 시작 응답 검증에 실패했습니다.');
+  }
+  return result.data;
 };
 
 export const getInterview = async (interviewId: string): Promise<{ interview: Interview }> => {
   const response = await api.get<{ interview: Interview }>(`/interviews/${interviewId}`);
-  return z.object({ interview: InterviewSchema }).parse(response.data);
+  const result = z.object({ interview: InterviewSchema }).safeParse(response.data);
+  if (!result.success) {
+    console.error('getInterview validation failed:', result.error);
+    throw new Error('인터뷰 상세 조회 검증에 실패했습니다.');
+  }
+  return result.data;
 };
 
 export const getInterviewAnswers = async (interviewId: string): Promise<Interview> => {
   const response = await api.get<Interview>(`/interviews/${interviewId}/answers`);
-  return InterviewSchema.parse(response.data);
+  const result = InterviewSchema.safeParse(response.data);
+  if (!result.success) {
+    console.error('getInterviewAnswers validation failed:', result.error);
+    throw new Error('인터뷰 답변 조회 검증에 실패했습니다.');
+  }
+  return result.data;
 };
 
 export const uploadAnswerAudio = async (interviewId: string, answerId: string, blob: Blob): Promise<UploadAudioResponse> => {
@@ -39,14 +54,24 @@ export const uploadAnswerAudio = async (interviewId: string, answerId: string, b
       'Content-Type': 'multipart/form-data',
     },
   });
-  return UploadAudioResponseSchema.parse(response.data);
+  const result = UploadAudioResponseSchema.safeParse(response.data);
+  if (!result.success) {
+    console.error('uploadAnswerAudio validation failed:', result.error);
+    throw new Error('오디오 업로드 응답 검증에 실패했습니다.');
+  }
+  return result.data;
 };
 
 export const submitFeedbacks = async (interviewId: string, feedbacks: { answerId: string; rating: number; feedbackText?: string }[]): Promise<{ message: string; count: number }> => {
   const response = await api.post<{ success: { message: string; count: number } }>(`/interviews/${interviewId}/feedbacks`, { feedbacks });
   // Simple inline validation for this specific response
   const schema = z.object({ message: z.string(), count: z.number() });
-  return schema.parse(response.data.success);
+  const result = schema.safeParse(response.data.success);
+  if (!result.success) {
+    console.error('submitFeedbacks validation failed:', result.error);
+    throw new Error('피드백 제출 응답 검증에 실패했습니다.');
+  }
+  return result.data;
 };
 
 export const completeInterview = async (interviewId: string): Promise<CompleteInterviewResponse> => {
@@ -54,5 +79,10 @@ export const completeInterview = async (interviewId: string): Promise<CompleteIn
     // Note: The API response structure seems to be nested in success.data based on original code
     // Original: return response.data.success.data;
     // Schema matches CompleteInterviewResponse
-    return CompleteInterviewResponseSchema.parse(response.data.success.data);
+    const result = CompleteInterviewResponseSchema.safeParse(response.data.success.data);
+    if (!result.success) {
+      console.error('completeInterview validation failed:', result.error);
+      throw new Error('인터뷰 완료 응답 검증에 실패했습니다.');
+    }
+    return result.data;
 };
