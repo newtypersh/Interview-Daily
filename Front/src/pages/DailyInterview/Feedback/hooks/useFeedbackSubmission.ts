@@ -1,37 +1,30 @@
 import { useSubmitFeedback } from '../../../../react-query/mutation/useSubmitFeedback';
 import { useNavigate } from 'react-router-dom';
 import type { FeedbackItem } from '../utils/feedbackMapper';
-import type { FeedbackFormValues } from '../schemas/form';
+import { type FeedbackFormValues, FeedbackFormSchema } from '../schemas/form';
 
 type UseFeedbackSubmissionProps = {
   interviewId: string | undefined;
   feedbackItems: FeedbackItem[];
 }
 
-export const useFeedbackSubmission = ({ interviewId, feedbackItems }: UseFeedbackSubmissionProps) => {
+export const useFeedbackSubmission = ({ interviewId }: UseFeedbackSubmissionProps) => {
   const navigate = useNavigate();
   const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId || '');
 
   const onSubmit = (data: FeedbackFormValues) => {
     if (!interviewId) return;
 
-    const formattedFeedbacks = Object.entries(data.feedbacks)
-      .map(([questionId, feedback]) => {
-        const item = feedbackItems.find((q) => q.id === questionId);
-        if (!item?.answerId) return null;
+    // Zod Schema Transformation: Filters invalid ratings and maps to API format
+    const payload = FeedbackFormSchema.parse(data);
 
-        return {
-          answerId: item.answerId,
-          rating: feedback.rating,
-          feedbackText: feedback.content,
-        };
-      })
-      .filter((item): item is { answerId: string; rating: number; feedbackText: string } => item !== null && item.rating > 0);
-
-
+    if (payload.feedbacks.length === 0) {
+      alert('평가를 완료하고 싶은 항목에 점수를 매겨주세요.');
+      return;
+    }
 
     submitFeedback(
-      { feedbacks: formattedFeedbacks },
+      { feedbacks: payload.feedbacks },
       {
         onSuccess: () => {
           alert('피드백이 성공적으로 제출되었습니다.');

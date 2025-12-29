@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FeedbackFormSchema, type FeedbackFormValues, type FeedbackFormItem, DEFAULT_FEEDBACK_ITEM } from '../schemas/form';
+import { FeedbackFormInputSchema, type FeedbackFormValues, type FeedbackFormItem, DEFAULT_FEEDBACK_ITEM } from '../schemas/form';
 import type { FeedbackItem } from '../utils/feedbackMapper';
 
 // Zod 스키마에서 추론된 타입 사용
@@ -40,13 +40,15 @@ const getInitialFeedbacks = (feedbackItems: FeedbackItem[], defaultContent?: str
       const fb = q.feedbacks[0];
       initialFeedbacks[q.id] = { 
         rating: fb.rating, 
-        content: fb.feedbackText || defaultContent || '' 
+        content: fb.feedbackText || defaultContent || '',
+        answerId: q.answerId,
       };
     } else {
       // 2. 새로운 피드백 (기본값)
       initialFeedbacks[q.id || ''] = { 
         ...DEFAULT_FEEDBACK_ITEM,
-        content: defaultContent || DEFAULT_FEEDBACK_ITEM.content 
+        content: defaultContent || DEFAULT_FEEDBACK_ITEM.content,
+        answerId: q.answerId,
       };
     }
   });
@@ -60,7 +62,7 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: 
 
   // 2. Form Logic
   const form = useForm<FeedbackFormValues>({
-    resolver: zodResolver(FeedbackFormSchema),
+    resolver: zodResolver(FeedbackFormInputSchema), // Use InputSchema for validation only (no transform here)
     defaultValues: { feedbacks: {} },
     mode: 'onBlur', 
   });
