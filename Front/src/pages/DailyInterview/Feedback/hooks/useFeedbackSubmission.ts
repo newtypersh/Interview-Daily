@@ -1,11 +1,9 @@
 import { useSubmitFeedback } from '../../../../react-query/mutation/useSubmitFeedback';
 import { useNavigate } from 'react-router-dom';
-import type { FeedbackItem } from '../utils/feedbackMapper';
 import { type FeedbackFormValues, FeedbackFormSchema } from '../schemas/form';
 
 type UseFeedbackSubmissionProps = {
   interviewId: string | undefined;
-  feedbackItems: FeedbackItem[];
 }
 
 export const useFeedbackSubmission = ({ interviewId }: UseFeedbackSubmissionProps) => {
