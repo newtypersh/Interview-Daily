@@ -8,6 +8,7 @@ import {
   Divider,
   Rating,
   IconButton,
+  FormHelperText,
 } from '@mui/material';
 import {
   PlayArrow as PlayArrowIcon,
@@ -101,17 +102,22 @@ export default function FeedbackItem({
           <Controller
             name={`feedbacks.${question.id}.rating`}
             control={control}
-            render={({ field }) => (
-              <Rating
-                {...field}
-                value={field.value || 0}
-                onChange={(_, newValue) => field.onChange(newValue)}
-                size="large"
-                sx={{
-                  '& .MuiRating-iconFilled': { color: '#667eea' },
-                  '& .MuiRating-iconHover': { color: '#764ba2' },
-                }}
-              />
+            render={({ field, fieldState: { error } }) => (
+              <Box>
+                <Rating
+                  {...field}
+                  value={field.value || 0}
+                  onChange={(_, newValue) => field.onChange(newValue)}
+                  size="large"
+                  sx={{
+                    '& .MuiRating-iconFilled': { color: '#667eea' },
+                    '& .MuiRating-iconHover': { color: '#764ba2' },
+                  }}
+                />
+                {error && (
+                  <FormHelperText error>{error.message}</FormHelperText>
+                )}
+              </Box>
             )}
           />
         </Box>
