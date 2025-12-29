@@ -75,7 +75,6 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: 
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(FeedbackFormInputSchema), // Use InputSchema for validation only (no transform here)
     values: defaultValues, // 값이 변경되면 폼이 업데이트됨 (reset 효과)
-    mode: 'onBlur', 
   });
 
   return {
