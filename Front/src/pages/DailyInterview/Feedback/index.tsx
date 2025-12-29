@@ -6,37 +6,37 @@ import { useFeedbackSubmission } from './hooks/useFeedbackSubmission';
 import FeedbackLayout from './components/FeedbackLayout';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplatesByCategory } from '../../../react-query/queries/useFeedbackTemplates';
-import { mapInterviewToQuestions } from './utils/feedbackMapper';
+import { mapInterviewToFeedbackItems } from './utils/feedbackMapper';
 
 export default function FeedbackContainer() {
   const { interviewId } = useParams<{ interviewId: string }>();
 
-  const { interview, isPending, error } = useInterviewAnswers(interviewId || null);
+  if (!interviewId) {
+    return <Navigate to="/" replace />;
+  }
+
+  const { interview, isPending, error } = useInterviewAnswers(interviewId);
   
   // 카테고리 기반 템플릿 조회
   const { templates } = useFeedbackTemplatesByCategory(interview?.category);
   const templateContent = templates?.[0]?.templateText || undefined; // 첫 번째 템플릿 사용
   
   // API 데이터를 UI 포맷으로 변환
-  const questions = useMemo(() => mapInterviewToQuestions(interview?.answers), [interview?.answers]);
+  const feedbackItems = useMemo(() => mapInterviewToFeedbackItems(interview?.answers), [interview?.answers]);
 
   /* Hook Form Integration */
   const {
     form,
     playingAudio,
     handlePlayAudio,
-  } = useFeedbackForm(questions, templateContent);
+  } = useFeedbackForm(feedbackItems, templateContent);
 
   const { control, handleSubmit } = form;
 
   const { onSubmit, isSubmitting } = useFeedbackSubmission({
     interviewId,
-    questions,
+    feedbackItems,
   });
-
-  if (!interviewId) {
-    return <Navigate to="/" replace />;
-  }
 
   if (isPending) {
     return (
@@ -58,14 +58,18 @@ export default function FeedbackContainer() {
 
   return (
     <FeedbackLayout
-      questions={questions}
+      feedbackItems={feedbackItems}
       control={control}
       templateContent={templateContent}
       category={interview.category}
       playingAudio={playingAudio}
       isSubmitting={isSubmitting}
       onPlayAudio={handlePlayAudio}
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, (errors) => {
+        if (errors.root) {
+          alert(errors.root.message);
+        }
+      })}
     />
   );
 }

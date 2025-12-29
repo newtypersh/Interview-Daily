@@ -5,10 +5,10 @@ import type { FeedbackFormValues } from '../schemas/form';
 import FeedbackHeader from './FeedbackHeader';
 import FeedbackTemplateGuide from './FeedbackTemplateGuide';
 import FeedbackList from './FeedbackList';
-import type { FeedbackQuestion } from '../utils/feedbackMapper';
+import type { FeedbackItem } from '../utils/feedbackMapper';
 
 type FeedbackLayoutProps = {
-  questions: FeedbackQuestion[];
+  feedbackItems: FeedbackItem[];
   control: Control<FeedbackFormValues>;
   templateContent?: string;
   category?: string;
@@ -19,7 +19,7 @@ type FeedbackLayoutProps = {
 }
 
 export default function FeedbackLayout({
-  questions,
+  feedbackItems,
   control,
   templateContent,
   category,
@@ -37,7 +37,7 @@ export default function FeedbackLayout({
 
           <Box sx={{ mb: 6 }}>
             <FeedbackList
-              questions={questions}
+              feedbackItems={feedbackItems}
               control={control}
               playingAudio={playingAudio}
               onPlayAudio={onPlayAudio}

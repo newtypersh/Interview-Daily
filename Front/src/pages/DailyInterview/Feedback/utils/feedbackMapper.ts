@@ -1,7 +1,8 @@
 import type { InterviewAnswer } from '../../../../apis/interview';
 import type { Question as ApiQuestion } from '../../../../apis/questionSet';
 
-export type FeedbackQuestion = Partial<ApiQuestion> & {
+// 변경: FeedbackQuestion -> FeedbackItem
+export type FeedbackItem = Partial<ApiQuestion> & {
   id: string;
   content: string;
   order: number;
@@ -11,7 +12,7 @@ export type FeedbackQuestion = Partial<ApiQuestion> & {
   feedbacks?: { rating: number; feedbackText?: string }[];
 };
 
-export const mapInterviewToQuestions = (answers: InterviewAnswer[] | undefined): FeedbackQuestion[] => {
+export const mapInterviewToFeedbackItems = (answers: InterviewAnswer[] | undefined): FeedbackItem[] => {
   if (!answers) return [];
 
   return answers.map(a => ({

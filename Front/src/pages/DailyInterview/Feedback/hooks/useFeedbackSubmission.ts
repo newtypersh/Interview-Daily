@@ -1,14 +1,14 @@
 import { useSubmitFeedback } from '../../../../react-query/mutation/useSubmitFeedback';
 import { useNavigate } from 'react-router-dom';
-import type { Question } from './useFeedbackForm';
+import type { FeedbackItem } from '../utils/feedbackMapper';
 import type { FeedbackFormValues } from '../schemas/form';
 
 type UseFeedbackSubmissionProps = {
   interviewId: string | undefined;
-  questions: Question[];
+  feedbackItems: FeedbackItem[];
 }
 
-export const useFeedbackSubmission = ({ interviewId, questions }: UseFeedbackSubmissionProps) => {
+export const useFeedbackSubmission = ({ interviewId, feedbackItems }: UseFeedbackSubmissionProps) => {
   const navigate = useNavigate();
   const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId || '');
 
@@ -17,22 +17,18 @@ export const useFeedbackSubmission = ({ interviewId, questions }: UseFeedbackSub
 
     const formattedFeedbacks = Object.entries(data.feedbacks)
       .map(([questionId, feedback]) => {
-        const question = questions.find((q) => q.id === questionId);
-        if (!question?.answerId) return null;
+        const item = feedbackItems.find((q) => q.id === questionId);
+        if (!item?.answerId) return null;
 
         return {
-          answerId: question.answerId,
+          answerId: item.answerId,
           rating: feedback.rating,
           feedbackText: feedback.content,
         };
       })
       .filter((item): item is { answerId: string; rating: number; feedbackText: string } => item !== null && item.rating > 0);
 
-    // Minimum 1 feedback check (though schema might have checked it, explicit check is safe)
-    if (formattedFeedbacks.length === 0) {
-      alert('평가를 완료하고 싶은 항목에 점수를 매겨주세요.');
-      return;
-    }
+
 
     submitFeedback(
       { feedbacks: formattedFeedbacks },

@@ -1,83 +1,92 @@
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FeedbackFormSchema, type FeedbackFormValues } from '../schemas/form';
-import type { Question as ApiQuestion } from '../../../../schemas/questionSet.ts';
+import { FeedbackFormSchema, type FeedbackFormValues, type FeedbackFormItem, DEFAULT_FEEDBACK_ITEM } from '../schemas/form';
+import type { FeedbackItem } from '../utils/feedbackMapper';
 
-export type QuestionFeedback = {
-    rating: number;
-    content: string;
-}
+// Zod 스키마에서 추론된 타입 사용
+export type QuestionFeedback = FeedbackFormItem;
 
-export type Question = Partial<ApiQuestion> & {
-  id: string;
-  content: string;
-  transcript?: string;
-  audioUrl?: string | null;
-  answerId?: string;
-  feedbacks?: { rating: number; feedbackText?: string }[];
-};
 
-export const useFeedbackForm = (questions: Question[], defaultContent?: string) => {
+/**
+ * 오디오 재생 상태 관리 Hook
+ */
+const useFeedbackAudio = () => {
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
+  const handlePlayAudio = (questionId: string) => {
+    if (playingAudio === questionId) {
+      setPlayingAudio(null);
+      // TODO: Stop audio playback logic here
+    } else {
+      setPlayingAudio(questionId);
+      // TODO: Start audio playback logic here
+      setTimeout(() => setPlayingAudio(null), 3000); 
+    }
+  };
+
+  return { playingAudio, handlePlayAudio };
+};
+
+/**
+ * 초기 피드백 데이터 생성 Helper
+ */
+const getInitialFeedbacks = (feedbackItems: FeedbackItem[], defaultContent?: string): Record<string, FeedbackFormItem> => {
+  const initialFeedbacks: Record<string, FeedbackFormItem> = {};
+
+  feedbackItems.forEach((q) => {
+    if (q.feedbacks && q.feedbacks.length > 0) {
+      // 1. 서버에 저장된 피드백이 있는 경우
+      const fb = q.feedbacks[0];
+      initialFeedbacks[q.id] = { 
+        rating: fb.rating, 
+        content: fb.feedbackText || defaultContent || '' 
+      };
+    } else {
+      // 2. 새로운 피드백 (기본값)
+      initialFeedbacks[q.id || ''] = { 
+        ...DEFAULT_FEEDBACK_ITEM,
+        content: defaultContent || DEFAULT_FEEDBACK_ITEM.content 
+      };
+    }
+  });
+
+  return initialFeedbacks;
+};
+
+export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: string) => {
+  // 1. Audio Logic
+  const { playingAudio, handlePlayAudio } = useFeedbackAudio();
+
+  // 2. Form Logic
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(FeedbackFormSchema),
-    defaultValues: {
-      feedbacks: {},
-    },
+    defaultValues: { feedbacks: {} },
     mode: 'onBlur', 
   });
 
   const { reset } = form;
   const loadedIdsRef = useRef<string>('');
 
-  // Initialize form values when questions or defaultContent changes
+  // 3. Initialization Effect
   useEffect(() => {
-    if (questions.length === 0) return;
+    if (feedbackItems.length === 0) return;
 
-    // Create a unique signature for the current set of questions to prevent unnecessary resets
-    // This ensures we only reset the form when the questions themselves change (e.g. new interview),
-    // not when related data like STT transcript updates.
-    const currentIdsSignature = questions.map(q => q.id).join(',');
+    // 데이터 갱신 여부 확인 (Signature Pattern)
+    const currentIdsSignature = feedbackItems.map(q => q.id).join(',');
     
-    // If signature matches and we have initialized, skip reset to preserve user input
+    // 이미 로드된 데이터셋이면 스킵 (사용자 입력 유지)
     if (loadedIdsRef.current === currentIdsSignature) {
         return;
     }
     
     loadedIdsRef.current = currentIdsSignature;
 
-    const initialFeedbacks: Record<string, QuestionFeedback> = {};
-
-    questions.forEach(q => {
-      // If feedback exists in the question data (from backend), use it
-      if (q.feedbacks && q.feedbacks.length > 0) {
-        const fb = q.feedbacks[0];
-        initialFeedbacks[q.id] = { 
-          rating: fb.rating, 
-          content: fb.feedbackText || defaultContent || '' 
-        };
-      } else {
-        // Default init
-        initialFeedbacks[q.id] = { rating: 0, content: defaultContent || '' };
-      }
-    });
-
-    reset({ feedbacks: initialFeedbacks });
-  }, [questions, defaultContent, reset]);
-
-
-  const handlePlayAudio = (questionId: string) => {
-    if (playingAudio === questionId) {
-      setPlayingAudio(null);
-      // TODO: Stop audio playback
-    } else {
-      setPlayingAudio(questionId);
-      // TODO: Start audio playback
-      setTimeout(() => setPlayingAudio(null), 3000); 
-    }
-  };
+    // 초기값 계산 및 리셋
+    const initialValues = getInitialFeedbacks(feedbackItems, defaultContent);
+    reset({ feedbacks: initialValues });
+    
+  }, [feedbackItems, defaultContent, reset]);
 
   return {
     form,
