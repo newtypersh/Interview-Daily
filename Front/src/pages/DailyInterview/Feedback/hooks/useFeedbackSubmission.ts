@@ -16,11 +16,6 @@ export const useFeedbackSubmission = ({ interviewId }: UseFeedbackSubmissionProp
     // Zod Schema Transformation: Filters invalid ratings and maps to API format
     const payload = FeedbackFormSchema.parse(data);
 
-    if (payload.feedbacks.length === 0) {
-      alert('평가를 완료하고 싶은 항목에 점수를 매겨주세요.');
-      return;
-    }
-
     submitFeedback(
       { feedbacks: payload.feedbacks },
       {
