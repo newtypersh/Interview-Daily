@@ -76,7 +76,7 @@ const useFeedbackDefaultValues = (feedbackItems: FeedbackItem[], defaultContent?
 
 
 
-export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: string, interviewId?: string) => {
+export const useFeedbackForm = (feedbackItems: FeedbackItem[], interviewId: string, defaultContent?: string) => {
   // 1. Initial Values Logic
   const defaultValues = useFeedbackDefaultValues(feedbackItems, defaultContent);
 

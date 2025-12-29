@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { type FeedbackFormValues, FeedbackFormSchema } from '../schemas/form';
 
 type UseFeedbackSubmissionProps = {
-  interviewId: string | undefined;
+  interviewId: string;
 }
 
 export const useFeedbackSubmission = ({ interviewId }: UseFeedbackSubmissionProps) => {
   const navigate = useNavigate();
-  const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId || '');
+  // interviewId는 상위 컴포넌트에서 보장됨
+  const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId);
 
   const onSubmit = (data: FeedbackFormValues) => {
-    if (!interviewId) return;
 
     // Zod Schema Transformation: Filters invalid ratings and maps to API format
     const payload = FeedbackFormSchema.parse(data);

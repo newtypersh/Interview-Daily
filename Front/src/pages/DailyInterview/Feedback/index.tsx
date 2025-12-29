@@ -30,7 +30,7 @@ export default function FeedbackContainer() {
     handlePlayAudio,
     submitHandler,
     isSubmitting,
-  } = useFeedbackForm(feedbackItems, templateContent, interviewId);
+  } = useFeedbackForm(feedbackItems, interviewId!, templateContent);
 
   const { control } = form;
 
