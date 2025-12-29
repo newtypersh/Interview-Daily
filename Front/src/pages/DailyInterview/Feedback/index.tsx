@@ -35,7 +35,6 @@ export default function FeedbackContainer() {
 
   const { onSubmit, isSubmitting } = useFeedbackSubmission({
     interviewId,
-    feedbackItems,
   });
 
   if (isPending) {
