@@ -2,7 +2,8 @@ import { useParams, Navigate } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useMemo } from 'react';
 import { useFeedbackForm } from './hooks/useFeedbackForm';
-import FeedbackLayout from './components/FeedbackLayout';
+// import FeedbackLayout from './components/FeedbackLayout';
+import FeedbackLayoutLegacy from './components/FeedbackLayoutLegacy';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplatesByCategory } from '../../../react-query/queries/useFeedbackTemplates';
 import { mapInterviewToFeedbackItems } from './utils/feedbackMapper';
@@ -25,14 +26,14 @@ export default function FeedbackContainer() {
 
   /* Hook Form Integration */
   const {
-    form,
+    // form,
     playingAudio,
     handlePlayAudio,
-    submitHandler,
-    isSubmitting,
+    // submitHandler,
+    // isSubmitting,
   } = useFeedbackForm(feedbackItems, interviewId!, templateContent);
 
-  const { control } = form;
+  // const { control } = form;
 
   if (isPending) {
     return (
@@ -53,16 +54,12 @@ export default function FeedbackContainer() {
   }
 
   return (
-    <FeedbackLayout
+    <FeedbackLayoutLegacy
       feedbackItems={feedbackItems}
-      control={control}
       templateContent={templateContent}
       category={interview.category}
       playingAudio={playingAudio}
-      isSubmitting={isSubmitting}
       onPlayAudio={handlePlayAudio}
-      onSubmit={submitHandler}
     />
   );
 }
-
