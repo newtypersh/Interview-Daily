@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FeedbackFormInputSchema, type FeedbackFormValues, type FeedbackFormItem, DEFAULT_FEEDBACK_ITEM } from '../schemas/form';
@@ -61,34 +61,22 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: 
   const { playingAudio, handlePlayAudio } = useFeedbackAudio();
 
   // 2. Form Logic
+  // 데이터 갱신 여부 확인 (Signature Pattern) -> ID 조합이 바뀔 때만 초기값 재계산
+  const idsSignature = feedbackItems.map(q => q.id).join(',');
+  
+  const defaultValues = useMemo(() => {
+    if (feedbackItems.length === 0) return { feedbacks: {} };
+    
+    const initialValues = getInitialFeedbacks(feedbackItems, defaultContent);
+    return { feedbacks: initialValues };
+    // feedbackItems가 바뀌더라도 idsSignature가 같으면(즉, 같은 질문셋이면) 재계산하지 않음
+  }, [idsSignature, defaultContent]);
+
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(FeedbackFormInputSchema), // Use InputSchema for validation only (no transform here)
-    defaultValues: { feedbacks: {} },
+    values: defaultValues, // 값이 변경되면 폼이 업데이트됨 (reset 효과)
     mode: 'onBlur', 
   });
-
-  const { reset } = form;
-  const loadedIdsRef = useRef<string>('');
-
-  // 3. Initialization Effect
-  useEffect(() => {
-    if (feedbackItems.length === 0) return;
-
-    // 데이터 갱신 여부 확인 (Signature Pattern)
-    const currentIdsSignature = feedbackItems.map(q => q.id).join(',');
-    
-    // 이미 로드된 데이터셋이면 스킵 (사용자 입력 유지)
-    if (loadedIdsRef.current === currentIdsSignature) {
-        return;
-    }
-    
-    loadedIdsRef.current = currentIdsSignature;
-
-    // 초기값 계산 및 리셋
-    const initialValues = getInitialFeedbacks(feedbackItems, defaultContent);
-    reset({ feedbacks: initialValues });
-    
-  }, [feedbackItems, defaultContent, reset]);
 
   return {
     form,
