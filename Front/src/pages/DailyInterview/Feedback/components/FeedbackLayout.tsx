@@ -6,6 +6,7 @@ import FeedbackHeader from './FeedbackHeader';
 import FeedbackTemplateGuide from './FeedbackTemplateGuide';
 import FeedbackList from './FeedbackList';
 import type { FeedbackItem } from '../utils/feedbackMapper';
+import { useRenderCount } from '../../../../hooks/useRenderCount';
 
 type FeedbackLayoutProps = {
   feedbackItems: FeedbackItem[];
@@ -28,6 +29,7 @@ export default function FeedbackLayout({
   onPlayAudio,
   onSubmit,
 }: FeedbackLayoutProps) {
+  useRenderCount('FeedbackLayout'); // 렌더링 카운트 측정
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'white', py: 6 }}>
       <Container maxWidth="md">

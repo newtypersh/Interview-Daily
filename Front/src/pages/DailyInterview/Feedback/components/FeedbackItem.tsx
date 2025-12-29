@@ -15,6 +15,7 @@ import {
   Pause as PauseIcon,
 } from '@mui/icons-material';
 import { Controller, type Control } from 'react-hook-form';
+import { useRenderCount } from '../../../../hooks/useRenderCount';
 import type { FeedbackFormValues } from '../schemas/form';
 import ContentBox from '../../../../components/ContentBox';
 
@@ -35,6 +36,7 @@ export default function FeedbackItem({
   isPlaying,
   onPlayAudio,
 }: FeedbackItemProps) {
+  useRenderCount(`FeedbackItem-${index}`); // 렌더링 카운트 측정
   return (
     <ContentBox>
       <Stack spacing={3}>
