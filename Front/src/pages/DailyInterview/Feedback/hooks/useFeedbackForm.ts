@@ -56,22 +56,31 @@ const getInitialFeedbacks = (feedbackItems: FeedbackItem[], defaultContent?: str
   return initialFeedbacks;
 };
 
-export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: string) => {
-  // 1. Audio Logic
-  const { playingAudio, handlePlayAudio } = useFeedbackAudio();
-
-  // 2. Form Logic
+/**
+ * 폼 초기값 계산 Hook
+ */
+const useFeedbackDefaultValues = (feedbackItems: FeedbackItem[], defaultContent?: string) => {
   // 데이터 갱신 여부 확인 (Signature Pattern) -> ID 조합이 바뀔 때만 초기값 재계산
   const idsSignature = feedbackItems.map(q => q.id).join(',');
   
-  const defaultValues = useMemo(() => {
+  return useMemo(() => {
     if (feedbackItems.length === 0) return { feedbacks: {} };
     
     const initialValues = getInitialFeedbacks(feedbackItems, defaultContent);
     return { feedbacks: initialValues };
     // feedbackItems가 바뀌더라도 idsSignature가 같으면(즉, 같은 질문셋이면) 재계산하지 않음
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idsSignature, defaultContent]);
+};
 
+export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: string) => {
+  // 1. Initial Values Logic
+  const defaultValues = useFeedbackDefaultValues(feedbackItems, defaultContent);
+
+  // 2. Audio Logic
+  const { playingAudio, handlePlayAudio } = useFeedbackAudio();
+
+  // 3. Form Logic
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(FeedbackFormInputSchema), // Use InputSchema for validation only (no transform here)
     values: defaultValues, // 값이 변경되면 폼이 업데이트됨 (reset 효과)
