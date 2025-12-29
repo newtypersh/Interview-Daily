@@ -92,6 +92,7 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: 
   // 4. Submission Logic
   const { onSubmit, isSubmitting } = useFeedbackSubmission({ interviewId });
 
+  // form.handleSubmit을 호출하면, 데이터 검사 후 onSubmit에 전달
   const submitHandler = form.handleSubmit(onSubmit, (errors) => {
     if (errors.root) {
       alert(errors.root.message);
