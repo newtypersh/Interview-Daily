@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FeedbackFormInputSchema, type FeedbackFormValues, type FeedbackFormItem, DEFAULT_FEEDBACK_ITEM } from '../schemas/form';
 import type { FeedbackItem } from '../utils/feedbackMapper';
+import { useFeedbackSubmission } from './useFeedbackSubmission';
 
 // Zod 스키마에서 추론된 타입 사용
 export type QuestionFeedback = FeedbackFormItem;
@@ -73,7 +74,9 @@ const useFeedbackDefaultValues = (feedbackItems: FeedbackItem[], defaultContent?
   }, [idsSignature, defaultContent]);
 };
 
-export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: string) => {
+
+
+export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: string, interviewId?: string) => {
   // 1. Initial Values Logic
   const defaultValues = useFeedbackDefaultValues(feedbackItems, defaultContent);
 
@@ -86,9 +89,20 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], defaultContent?: 
     values: defaultValues, // 값이 변경되면 폼이 업데이트됨 (reset 효과)
   });
 
+  // 4. Submission Logic
+  const { onSubmit, isSubmitting } = useFeedbackSubmission({ interviewId });
+
+  const submitHandler = form.handleSubmit(onSubmit, (errors) => {
+    if (errors.root) {
+      alert(errors.root.message);
+    }
+  });
+
   return {
     form,
     playingAudio,
     handlePlayAudio,
+    submitHandler,
+    isSubmitting,
   };
 };

@@ -2,7 +2,6 @@ import { useParams, Navigate } from 'react-router-dom';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useMemo } from 'react';
 import { useFeedbackForm } from './hooks/useFeedbackForm';
-import { useFeedbackSubmission } from './hooks/useFeedbackSubmission';
 import FeedbackLayout from './components/FeedbackLayout';
 import { useInterviewAnswers } from '../../../react-query/queries/useInterviewAnswers';
 import { useFeedbackTemplatesByCategory } from '../../../react-query/queries/useFeedbackTemplates';
@@ -16,26 +15,24 @@ export default function FeedbackContainer() {
   }
 
   const { interview, isPending, error } = useInterviewAnswers(interviewId);
-  
+
+  // API 데이터를 UI 포맷으로 변환
+  const feedbackItems = useMemo(() => mapInterviewToFeedbackItems(interview?.answers), [interview?.answers]);
+
   // 카테고리 기반 템플릿 조회
   const { templates } = useFeedbackTemplatesByCategory(interview?.category);
   const templateContent = templates?.[0]?.templateText || undefined; // 첫 번째 템플릿 사용
-  
-  // API 데이터를 UI 포맷으로 변환
-  const feedbackItems = useMemo(() => mapInterviewToFeedbackItems(interview?.answers), [interview?.answers]);
 
   /* Hook Form Integration */
   const {
     form,
     playingAudio,
     handlePlayAudio,
-  } = useFeedbackForm(feedbackItems, templateContent);
+    submitHandler,
+    isSubmitting,
+  } = useFeedbackForm(feedbackItems, templateContent, interviewId);
 
-  const { control, handleSubmit } = form;
-
-  const { onSubmit, isSubmitting } = useFeedbackSubmission({
-    interviewId,
-  });
+  const { control } = form;
 
   if (isPending) {
     return (
@@ -64,11 +61,7 @@ export default function FeedbackContainer() {
       playingAudio={playingAudio}
       isSubmitting={isSubmitting}
       onPlayAudio={handlePlayAudio}
-      onSubmit={handleSubmit(onSubmit, (errors) => {
-        if (errors.root) {
-          alert(errors.root.message);
-        }
-      })}
+      onSubmit={submitHandler}
     />
   );
 }
