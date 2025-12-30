@@ -100,7 +100,7 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], interviewId: stri
   });
 
   return {
-    form,
+    control: form.control,
     playingAudio,
     handlePlayAudio,
     submitHandler,

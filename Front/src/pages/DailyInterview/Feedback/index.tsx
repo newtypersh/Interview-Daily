@@ -17,6 +17,7 @@ export default function FeedbackContainer() {
   const { interview, isPending, error } = useInterviewAnswers(interviewId);
 
   // API 데이터를 UI 포맷으로 변환
+  // interview.answers 값 변경 시 callback 함수 실행
   const feedbackItems = useMemo(() => mapInterviewToFeedbackItems(interview?.answers), [interview?.answers]);
 
   // 카테고리 기반 템플릿 조회
@@ -25,14 +26,12 @@ export default function FeedbackContainer() {
 
   /* Hook Form Integration */
   const {
-    form,
+    control,
     playingAudio,
     handlePlayAudio,
     submitHandler,
     isSubmitting,
   } = useFeedbackForm(feedbackItems, interviewId!, templateContent);
-
-  const { control } = form;
 
   if (isPending) {
     return (
