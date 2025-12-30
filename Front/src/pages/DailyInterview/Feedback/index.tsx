@@ -21,8 +21,12 @@ export default function FeedbackContainer() {
   const feedbackItems = useMemo(() => mapInterviewToFeedbackItems(interview?.answers), [interview?.answers]);
 
   // 카테고리 기반 템플릿 조회
-  const { templates } = useFeedbackTemplatesByCategory(interview?.category);
-  const templateContent = templates?.[0]?.templateText || undefined; // 첫 번째 템플릿 사용
+  const {
+    templates,
+    isPending: isTemplatePending,
+    error: templateError
+  } = useFeedbackTemplatesByCategory(interview?.category);
+  const templateContent = templates?.[0]?.templateText || ''; // 첫 번째 템플릿 사용
 
   /* Hook Form Integration */
   const {
@@ -33,7 +37,7 @@ export default function FeedbackContainer() {
     isSubmitting,
   } = useFeedbackForm(feedbackItems, interviewId!, templateContent);
 
-  if (isPending) {
+  if (isPending || (interview?.category && isTemplatePending)) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'white' }}>
         <CircularProgress />
@@ -41,7 +45,7 @@ export default function FeedbackContainer() {
     );
   }
 
-  if (error || !interview) {
+  if (error || !interview || (interview?.category && templateError)) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'white' }}>
         <Typography color="error">
