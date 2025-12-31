@@ -12,12 +12,12 @@ export const useFeedbackSubmission = ({ interviewId }: UseFeedbackSubmissionProp
   const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId);
 
   const onSubmit = (data: FeedbackFormValues) => {
-    if (isSubmitting) return; // Prevent double submission
-
-
-    // Zod Schema Transformation: Filters invalid ratings and maps to API format
+    // Zod Schema Transformation
+    // zodResolver를 통해 이미 유효성 검사가 완료된 데이터가 전달됨
+    // 데이터 포맷 변환 (객체 -> 배열)
     const payload = FeedbackFormSchema.parse(data);
 
+    // submitFeedback(variables, { onSuccess, onError })
     submitFeedback(
       { feedbacks: payload.feedbacks },
       {
