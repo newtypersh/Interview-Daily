@@ -85,7 +85,7 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], interviewId: stri
 
   // 3. Form Logic
   const form = useForm<FeedbackFormValues>({
-    resolver: zodResolver(FeedbackFormInputSchema), // Use InputSchema for validation only (no transform here)
+    resolver: zodResolver(FeedbackFormInputSchema), // Hook에서 유효성 검사 수행
     values: defaultValues, // 값이 변경되면 폼이 업데이트됨 (reset 효과)
   });
 
@@ -98,6 +98,7 @@ export const useFeedbackForm = (feedbackItems: FeedbackItem[], interviewId: stri
       alert(errors.root.message);
     }
   });
+
 
   return {
     control: form.control,
