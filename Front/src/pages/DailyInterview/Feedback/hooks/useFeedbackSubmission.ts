@@ -12,6 +12,8 @@ export const useFeedbackSubmission = ({ interviewId }: UseFeedbackSubmissionProp
   const { mutate: submitFeedback, isPending: isSubmitting } = useSubmitFeedback(interviewId);
 
   const onSubmit = (data: FeedbackFormValues) => {
+    if (isSubmitting) return; // Prevent double submission
+
 
     // Zod Schema Transformation: Filters invalid ratings and maps to API format
     const payload = FeedbackFormSchema.parse(data);
