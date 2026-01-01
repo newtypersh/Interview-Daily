@@ -10,25 +10,35 @@ export const FeedbackFormItemSchema = FeedbackItemSchema.extend({
 // 입력값 타입 (useForm에서 사용)
 export const FeedbackFormInputSchema = z.object({
   feedbacks: z.record(z.string(), FeedbackFormItemSchema),
-}).superRefine((data, ctx) => {
+})
+// superRefine: 단순 필드 제약을 넘어선 커스텀 유효성 검증을 수행합니다.
+// 데이터 전체(data)에 접근 가능하여, 여러 필드를 조합해서 검사하거나 조건부 에러를 발생시킬 수 있습니다.
+.superRefine((data, ctx) => {
   let hasError = false;
+
+  // 모든 피드백 항목을 순회하며 검사
   Object.entries(data.feedbacks).forEach(([key, item]) => {
+    // rating이 0(미선택)인 경우
     if (item.rating === 0) {
       hasError = true;
+      
+      // ctx.addIssue: 유효성 검사 실패 사실을 Zod에 알립니다.
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: '평가를 완료해주세요.',
-        path: ['feedbacks', key, 'rating'], // 구체적인 항목 위치로 에러 지정
+        code: z.ZodIssueCode.custom, // 커스텀 에러 코드
+        message: '평가를 완료해주세요.', 
+        // path: 에러가 발생한 데이터의 정확한 경로를 배열로 지정합니다.
+        // 예: ['feedbacks', 'q1', 'rating'] -> React Hook Form이 해당 path의 input에 에러를 바인딩합니다.
+        path: ['feedbacks', key, 'rating'], 
       });
     }
   });
   
-  // 전체 에러도 필요한 경우 추가 (선택 사항, 현재는 개별 항목 에러로 충분할 수 있음)
+  // 필요 시 폼 전체(root) 레벨에 에러를 추가할 수도 있습니다.
   if (hasError) {
      ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: '평가하지 않은 항목이 있습니다.',
-        path: ['root'],
+        path: ['root'], // setError('root')와 동일한 효과
      });
   }
 });
