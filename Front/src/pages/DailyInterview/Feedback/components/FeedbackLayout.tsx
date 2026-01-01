@@ -8,7 +8,7 @@ import FeedbackList from './FeedbackList';
 import type { FeedbackItem } from '../utils/feedbackMapper';
 import { useRenderCount } from '../../../../hooks/useRenderCount';
 
-type FeedbackLayoutProps = {
+export type FeedbackLayoutProps = {
   feedbackItems: FeedbackItem[];
   control: Control<FeedbackFormValues>;
   templateContent?: string;
