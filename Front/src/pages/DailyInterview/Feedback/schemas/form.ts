@@ -5,30 +5,33 @@ import { FeedbackItemSchema } from '../../../../schemas/feedback';
 export const FeedbackFormItemSchema = FeedbackItemSchema.extend({
   rating: z.number().int().min(0).max(5),
   answerId: z.string(), // 답변 식별자 추가
-}).refine(
-  (data) => {
-    // 내용이 작성되었다면 평점은 0점일 수 없음 (최소 1점)
-    if (data.content.trim().length > 0) {
-      return data.rating > 0;
-    }
-    return true;
-  },
-  {
-    message: '내용을 작성했다면 평점을 선택해주세요.',
-    path: ['rating'],
-  }
-);
+});
 
 // 입력값 타입 (useForm에서 사용)
 export const FeedbackFormInputSchema = z.object({
   feedbacks: z.record(z.string(), FeedbackFormItemSchema),
-}).refine(
-  (data) => Object.values(data.feedbacks).some((item) => item.rating > 0),
-  {
-    message: '평가를 완료하고 싶은 항목에 점수를 매겨주세요.',
-    path: ['root'], // root 에러로 설정
+}).superRefine((data, ctx) => {
+  let hasError = false;
+  Object.entries(data.feedbacks).forEach(([key, item]) => {
+    if (item.rating === 0) {
+      hasError = true;
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '평가를 완료해주세요.',
+        path: ['feedbacks', key, 'rating'], // 구체적인 항목 위치로 에러 지정
+      });
+    }
+  });
+  
+  // 전체 에러도 필요한 경우 추가 (선택 사항, 현재는 개별 항목 에러로 충분할 수 있음)
+  if (hasError) {
+     ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: '평가하지 않은 항목이 있습니다.',
+        path: ['root'],
+     });
   }
-);
+});
 
 // 최종 제출용 스키마 (변환 로직 포함)
 export const FeedbackFormSchema = FeedbackFormInputSchema.transform((data) => {
