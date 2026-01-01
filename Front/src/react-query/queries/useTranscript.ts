@@ -29,6 +29,8 @@ export const useTranscript = ({ interviewId, answerId }: UseTranscriptProps) => 
     ? interviewData.answers.find(a => a.id === answerId)?.transcriptText || ''
     : '';
 
+  // answerId가 존재하고, 텍스트가 없을 때, true
+  // !! (이중 부정) = 뒤집고 다시 뒤집기 = boolean으로 만들기
   const isTranscribing = !!answerId && !transcript;
 
   return {
