@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { uploadAnswerAudio } from '../../../apis/interview';
+import { processAndUploadAudio } from '../../../apis/interview';
 import type { UploadAudioResponse } from '../../../apis/interview';
 
 type UseAnswerSubmissionProps = {
@@ -11,15 +11,8 @@ type UseAnswerSubmissionProps = {
 export const useAnswerSubmission = ({ interviewId, onSuccess, onError }: UseAnswerSubmissionProps) => {
   const { mutate: mutateAudio, isPending: isSubmitting, error } = useMutation<UploadAudioResponse, Error, { id: string; mediaUrl: string }>({
     mutationFn: async ({ id, mediaUrl }) => {
-      if (!interviewId) throw new Error('Interview ID is missing');
-      
-      try {
-        const response = await fetch(mediaUrl);
-        const blob = await response.blob(); 
-        return uploadAnswerAudio(interviewId, id, blob);
-      } catch (err) {
-        throw new Error('Failed to process audio recording');
-      }
+      // processAndUploadAudio handles fetch(axios) and upload
+      return processAndUploadAudio(interviewId, id, mediaUrl);
     },
     onSuccess,
     onError,

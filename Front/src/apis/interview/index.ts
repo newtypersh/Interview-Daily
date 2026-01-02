@@ -62,6 +62,30 @@ export const uploadAnswerAudio = async (interviewId: string, answerId: string, b
   return result.data;
 };
 
+export const processAndUploadAudio = async (interviewId: string | null | undefined, answerId: string | null | undefined, mediaUrl: string): Promise<UploadAudioResponse> => {
+    const schema = z.object({
+        interviewId: z.string({ message: 'Interview ID is missing' }).min(1, 'Interview ID is missing'),
+        answerId: z.string({ message: 'Answer ID is missing' }).min(1, 'Answer ID is missing'),
+    });
+
+    const result = schema.safeParse({ interviewId, answerId });
+
+    if (!result.success) {
+        console.error('Validation failed:', result.error);
+        throw new Error(result.error.issues[0].message);
+    }
+    
+    // ... rest of the function
+
+    // After validation, we know these are strings
+    const validInterviewId = result.data.interviewId;
+    const validAnswerId = result.data.answerId;
+
+    const response = await api.get(mediaUrl, { responseType: 'blob' });
+    const blob = response.data; // response.data is Blob due to responseType: 'blob'
+    return uploadAnswerAudio(validInterviewId, validAnswerId, blob);
+};
+
 export const submitFeedbacks = async (interviewId: string, feedbacks: { answerId: string; rating: number; feedbackText?: string }[]): Promise<{ message: string; count: number }> => {
   const response = await api.post<{ success: { message: string; count: number } }>(`/interviews/${interviewId}/feedbacks`, { feedbacks });
   // Simple inline validation for this specific response
