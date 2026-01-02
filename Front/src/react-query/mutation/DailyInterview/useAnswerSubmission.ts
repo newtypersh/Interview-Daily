@@ -19,7 +19,10 @@ export const useAnswerSubmission = ({ interviewId, onSuccess, onError }: UseAnsw
   });
 
   const submit = (id: string | undefined, mediaUrl: string | null) => {
-    if (!id || !mediaUrl) return;
+    if (!id || !mediaUrl) {
+      onError(new Error('제출에 필요한 정보가 누락되었습니다.'));
+      return;
+    }
     mutateAudio({ id, mediaUrl });
   };
 
