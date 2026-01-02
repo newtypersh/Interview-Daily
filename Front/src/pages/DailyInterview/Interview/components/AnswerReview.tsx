@@ -20,9 +20,11 @@ export default function AnswerReview({ session, recording, submission, status, o
 
   // Auto-submit when component mounts (Review phase starts)
   useEffect(() => {
-    submit(currentQuestion?.id, mediaBlobUrl ?? null);
+    if (currentQuestion?.id && mediaBlobUrl) {
+      submit(currentQuestion.id, mediaBlobUrl);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only on mount
+  }, [mediaBlobUrl, currentQuestion?.id]);
 
   // Poll for transcript
   const { transcript, isTranscribing } = useTranscript({
