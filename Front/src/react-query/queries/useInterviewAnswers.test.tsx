@@ -4,8 +4,8 @@ import { useInterviewAnswers } from './useInterviewAnswers';
 import * as ReactQuery from '@tanstack/react-query';
 
 // Mock useQuery to inspect options
-vi.mock('@tanstack/react-query', async () => {
-    const actual = await vi.importActual('@tanstack/react-query');
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('@tanstack/react-query')>();
     return {
         ...actual,
         useQuery: vi.fn(),
