@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { useFeedbackForm } from './useFeedbackForm';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { FeedbackItem } from '../utils/feedbackMapper';
@@ -21,7 +21,12 @@ const mockFeedbackItems: FeedbackItem[] = [
     answerId: 'a1',
     order: 1,
     audioUrl: null,
-    feedbacks: [],
+    feedbacks: [
+      {
+        rating: 3,
+        feedbackText: 'Not bad',
+      }
+    ],
   },
   {
     id: 'q2',
@@ -48,13 +53,9 @@ describe('useFeedbackForm', () => {
       useFeedbackForm(mockFeedbackItems, 'interview-123')
     );
 
-    const { control } = result.current;
-    
     // 초기값 확인
-    // 참고: control 객체의 내부 상태(_defaultValues)는 직접 접근하기 어렵습니다.
-    // 따라서 실제 값이 올바르게 설정되었는지는 submit 테스트에서 검증하거나,
-    // 필요 시 getValues를 노출하여 확인할 수 있습니다.
-    // 여기서는 에러 없이 훅이 렌더링되는지 여부만 확인합니다.
+    // control 객체 존재 여부만 확인하여 훅이 정상적으로 초기화되었는지 검증
+    expect(result.current.control).toBeDefined();
   });
 
   it('should toggle audio playback correctly', () => {
@@ -115,10 +116,10 @@ describe('useFeedbackForm', () => {
     
     const submittedData = mockOnSubmit.mock.calls[0][0];
     
-    // q1 검증 (기본값)
+    // q1 검증 (초기 데이터 로드 확인)
     expect(submittedData.feedbacks.q1).toEqual(expect.objectContaining({
-        rating: 0,
-        content: '',
+        rating: 3,
+        content: 'Not bad',
         answerId: 'a1'
     }));
 
