@@ -17,7 +17,7 @@ export const useSnackbar = (): UseSnackbarReturn => {
 
   const openSnackbar = useCallback((message: string, severity: SnackbarSeverity = 'success') => {
     setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
+    setSnackbarSeverity(severity); // MUI Alert 컴포넌트의 색상과 아이콘 설정
     setSnackbarOpen(true);
   }, []);
 
