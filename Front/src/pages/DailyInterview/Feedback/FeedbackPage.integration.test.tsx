@@ -193,4 +193,43 @@ describe('FeedbackPage Integration', () => {
     const payload = mockMutate.mock.calls[0][0];
     expect(payload.feedbacks[0].rating).toBe(5);
   });
+  it('should navigate to home if interviewId is missing', () => {
+    render(
+        <QueryClientProvider client={queryClient}>
+          <MemoryRouter initialEntries={['/feedback']}>
+             <Routes>
+                {/* Route without :interviewId param matching the component's expectation if it was rendered there, 
+                    but here the component uses useParams. 
+                    If we render component at a path that doesn't provide interviewId, useParams returns empty. */}
+                <Route path="/feedback" element={<FeedbackContainer />} />
+                <Route path="/" element={<div data-testid="home-page">Home</div>} />
+             </Routes>
+          </MemoryRouter>
+        </QueryClientProvider>
+      );
+
+      expect(screen.getByTestId('home-page')).toBeInTheDocument();
+  });
+
+  it('should render loading state', () => {
+    mockUseInterviewAnswers.mockReturnValue({
+        interview: undefined,
+        isPending: true,
+        error: null,
+    });
+
+    renderPage();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('should render error state', () => {
+    mockUseInterviewAnswers.mockReturnValue({
+        interview: undefined,
+        isPending: false,
+        error: new Error('Failed'),
+    });
+
+    renderPage();
+    expect(screen.getByText('인터뷰 데이터를 불러들이는데 실패했습니다.')).toBeInTheDocument();
+  });
 });
