@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { processAndUploadAudio } from './index';
+import { processAndUploadAudio, startInterview, submitFeedbacks, completeInterview } from './index';
 import { api } from '../axios';
 
 // Mock axios instance
@@ -14,6 +14,118 @@ describe('Interview API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  describe('startInterview', () => {
+    it('should throw error if response validation fails', async () => {
+      // Mock invalid response (missing required fields like 'resultType' or 'success')
+      (api.post as any).mockResolvedValue({
+        data: {
+          wrongField: 'value'
+        }
+      });
+
+      await expect(startInterview('JOB')).rejects.toThrow('인터뷰 시작 응답 검증에 실패했습니다.');
+    });
+
+    it('should return data if response is valid', async () => {
+        const mockResponse = {
+            resultType: 'SUCCESS',
+            success: {
+                interview: {
+                    id: 'interview-1',
+                    userId: 'user-1',
+                    questionSetId: 'qs-1',
+                    status: 'IN_PROGRESS',
+                    day: '2024-01-01',
+                    interviewedAt: '2024-01-01T00:00:00Z',
+                    createdAt: '2024-01-01T00:00:00Z',
+                    updatedAt: '2024-01-01T00:00:00Z',
+                    answers: []
+                }
+            }
+        };
+
+        (api.post as any).mockResolvedValue({ data: mockResponse });
+
+        const result = await startInterview('JOB');
+        expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('submitFeedbacks', () => {
+    it('should throw error if response validation fails', async () => {
+        // Mock invalid response (missing 'message' or 'count' in 'success')
+        (api.post as any).mockResolvedValue({
+            data: {
+                success: {
+                    // missing fields
+                }
+            }
+        });
+
+        const feedbacks = [{ answerId: 'a1', rating: 5 }];
+        await expect(submitFeedbacks('interview-1', feedbacks))
+            .rejects.toThrow('피드백 제출 응답 검증에 실패했습니다.');
+    });
+
+    it('should return data if response is valid', async () => {
+        const mockResponse = {
+            success: {
+                message: 'Feedback submitted',
+                count: 1
+            }
+        };
+
+        (api.post as any).mockResolvedValue({ data: mockResponse });
+
+        const feedbacks = [{ answerId: 'a1', rating: 5 }];
+        const result = await submitFeedbacks('interview-1', feedbacks);
+        
+        expect(result).toEqual(mockResponse.success);
+    });
+  });
+
+  describe('completeInterview', () => {
+    it('should throw error if response validation fails', async () => {
+        // Mock invalid response (wrong nesting or missing data)
+        (api.post as any).mockResolvedValue({
+            data: {
+                success: {
+                    data: {
+                        // missing 'id', 'status', 'category' etc.
+                    }
+                }
+            }
+        });
+
+        await expect(completeInterview('interview-1'))
+            .rejects.toThrow('인터뷰 완료 응답 검증에 실패했습니다.');
+    });
+
+    it('should return data if response is valid', async () => {
+        const mockData = {
+            id: 'interview-1',
+            status: 'COMPLETED',
+            category: 'JOB',
+            answers: [],
+            templates: [
+                { id: 't1', content: 'feedback content' }
+            ]
+        };
+
+        const mockResponse = {
+            success: {
+                data: mockData
+            }
+        };
+
+        (api.post as any).mockResolvedValue({ data: mockResponse });
+
+        const result = await completeInterview('interview-1');
+        
+        expect(result).toEqual(mockData);
+    });
   });
 
   describe('processAndUploadAudio', () => {
