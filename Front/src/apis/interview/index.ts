@@ -91,9 +91,6 @@ export const processAndUploadAudio = async (interviewId: string | null | undefin
         throw new Error(result.error.issues[0].message);
     }
     
-    // ... rest of the function
-
-    // After validation, we know these are strings
     const validInterviewId = result.data.interviewId;
     const validAnswerId = result.data.answerId;
 
