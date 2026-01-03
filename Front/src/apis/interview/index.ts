@@ -64,14 +64,30 @@ export const uploadAnswerAudio = async (interviewId: string, answerId: string, b
 
 export const processAndUploadAudio = async (interviewId: string | null | undefined, answerId: string | null | undefined, mediaUrl: string): Promise<UploadAudioResponse> => {
     const schema = z.object({
-        interviewId: z.string({ message: 'Interview ID is missing' }).min(1, 'Interview ID is missing'),
-        answerId: z.string({ message: 'Answer ID is missing' }).min(1, 'Answer ID is missing'),
+        interviewId: z.string().min(1),
+        answerId: z.string().min(1),
     });
 
     const result = schema.safeParse({ interviewId, answerId });
 
     if (!result.success) {
         console.error('Validation failed:', result.error);
+        const errorTree = z.treeifyError(result.error);
+        
+        if (errorTree && errorTree.properties) {
+             const missingFields: string[] = [];
+             if (errorTree.properties.interviewId) {
+                missingFields.push('Interview ID');
+             }
+             if (errorTree.properties.answerId) {
+                missingFields.push('Answer ID');
+             }
+             
+             if (missingFields.length > 0) {
+                 throw new Error(`${missingFields.join(', ')} is missing`);
+             }
+        }
+        
         throw new Error(result.error.issues[0].message);
     }
     
