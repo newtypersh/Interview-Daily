@@ -72,6 +72,7 @@ export const processAndUploadAudio = async (interviewId: string | null | undefin
 
     if (!result.success) {
         console.error('Validation failed:', result.error);
+        // 에러 객체를 트리 구조로 변환
         const errorTree = z.treeifyError(result.error);
         
         if (errorTree && errorTree.properties) {
@@ -82,12 +83,12 @@ export const processAndUploadAudio = async (interviewId: string | null | undefin
              if (errorTree.properties.answerId) {
                 missingFields.push('Answer ID');
              }
-             
+             // 에러를 모아서 던짐
              if (missingFields.length > 0) {
                  throw new Error(`${missingFields.join(', ')} is missing`);
              }
         }
-        
+        // treeifyError가 제대로 동작하지 않을 경우를 대비한 안전장치
         throw new Error(result.error.issues[0].message);
     }
     
