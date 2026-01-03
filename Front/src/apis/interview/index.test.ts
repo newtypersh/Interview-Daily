@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { processAndUploadAudio, startInterview, submitFeedbacks, completeInterview } from './index';
+import { processAndUploadAudio, startInterview, submitFeedbacks, completeInterview, getInterview, getInterviewAnswers, uploadAnswerAudio } from './index';
 import { api } from '../axios';
 
 // Mock axios instance
@@ -50,6 +50,106 @@ describe('Interview API', () => {
 
         const result = await startInterview('JOB');
         expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('getInterview', () => {
+    it('should throw error if validation fails', async () => {
+        (api.get as any).mockResolvedValue({
+            data: {
+                interview: {
+                    // missing required fields
+                }
+            }
+        });
+
+        await expect(getInterview('i1')).rejects.toThrow('인터뷰 상세 조회 검증에 실패했습니다.');
+    });
+
+    it('should return data if valid', async () => {
+        const mockInterview = {
+            id: 'i1',
+            status: 'IN_PROGRESS',
+            category: 'JOB',
+            questionSetId: 'qs1',
+            userId: 'u1',
+            day: '2024-01-01',
+            interviewedAt: '2024-01-01T00:00:00Z',
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z',
+            answers: []
+        };
+        (api.get as any).mockResolvedValue({ data: { interview: mockInterview } });
+
+        const result = await getInterview('i1');
+        expect(result).toEqual({ interview: mockInterview });
+        expect(api.get).toHaveBeenCalledWith('/interviews/i1');
+    });
+  });
+
+  describe('getInterviewAnswers', () => {
+    it('should throw error if validation fails', async () => {
+        (api.get as any).mockResolvedValue({
+            data: {
+                // missing interview fields
+            }
+        });
+
+        await expect(getInterviewAnswers('i1')).rejects.toThrow('인터뷰 답변 조회 검증에 실패했습니다.');
+    });
+
+    it('should return data if valid', async () => {
+        const mockInterview = {
+            id: 'i1',
+            status: 'IN_PROGRESS',
+            category: 'JOB',
+            questionSetId: 'qs1',
+            userId: 'u1',
+            day: '2024-01-01',
+            interviewedAt: '2024-01-01T00:00:00Z',
+            // ... other fields
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z',
+            answers: []
+        };
+        (api.get as any).mockResolvedValue({ data: mockInterview });
+
+        const result = await getInterviewAnswers('i1');
+        expect(result).toEqual(mockInterview);
+        expect(api.get).toHaveBeenCalledWith('/interviews/i1/answers');
+    });
+  });
+
+  describe('uploadAnswerAudio', () => {
+    it('should throw error if validation fails', async () => {
+        (api.post as any).mockResolvedValue({
+            data: {
+                // missing answer object
+            }
+        });
+
+        const blob = new Blob([''], { type: 'audio/webm' });
+        await expect(uploadAnswerAudio('i1', 'a1', blob)).rejects.toThrow('오디오 업로드 응답 검증에 실패했습니다.');
+    });
+
+    it('should return data if valid', async () => {
+         const mockResponse = {
+             answer: {
+                 id: 'a1',
+                 audioUrl: 'http://url'
+             }
+         };
+         (api.post as any).mockResolvedValue({ data: mockResponse });
+ 
+         const blob = new Blob([''], { type: 'audio/webm' });
+         const result = await uploadAnswerAudio('i1', 'a1', blob);
+         
+         expect(result).toEqual(mockResponse);
+         expect(api.post).toHaveBeenCalledWith(
+             '/interviews/i1/answers/a1/audio',
+             expect.any(FormData),
+             expect.objectContaining({ headers: { 'Content-Type': 'multipart/form-data' } })
+         );
     });
   });
 
@@ -157,6 +257,8 @@ describe('Interview API', () => {
         await expect(processAndUploadAudio(null, null, 'blob:url'))
           .rejects.toThrow('Interview ID, Answer ID is missing');
       });
+
+
 
     it('should proceed to upload if validation passes', async () => {
         // Mock get blob
