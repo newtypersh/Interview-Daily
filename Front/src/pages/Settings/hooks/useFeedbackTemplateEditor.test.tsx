@@ -114,4 +114,26 @@ describe('useFeedbackTemplateEditor', () => {
 
     expect(mockOpenSnackbar).toHaveBeenCalledWith('템플릿이 성공적으로 저장되었습니다.', 'success');
   });
+
+  it('should show error snackbar when mutation fails', () => {
+    let mutationOptions: any = {};
+    (useUpdateFeedbackTemplate as any).mockReturnValue({
+        mutate: (_: any, options: any) => { mutationOptions = options; },
+        isPending: false,
+    });
+
+    const { result } = renderHook(() => useFeedbackTemplateEditor('JOB'));
+    const template = result.current.templates[0];
+    
+    act(() => {
+        result.current.handleSave(template);
+    });
+
+    // Trigger error manually
+    act(() => {
+        mutationOptions.onError();
+    });
+
+    expect(mockOpenSnackbar).toHaveBeenCalledWith('템플릿 저장에 실패했습니다.', 'error');
+  });
 });
