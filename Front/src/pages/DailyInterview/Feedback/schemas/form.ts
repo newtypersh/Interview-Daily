@@ -24,7 +24,7 @@ export const FeedbackFormInputSchema = z.object({
       
       // ctx.addIssue: 유효성 검사 실패 사실을 Zod에 알립니다.
       ctx.addIssue({
-        code: z.ZodIssueCode.custom, // 커스텀 에러 코드
+        code: "custom", // 커스텀 에러 코드
         message: '평가를 완료해주세요.', 
         // path: 에러가 발생한 데이터의 정확한 경로를 배열로 지정합니다.
         // 예: ['feedbacks', 'q1', 'rating'] -> React Hook Form이 해당 path의 input에 에러를 바인딩합니다.
@@ -36,7 +36,7 @@ export const FeedbackFormInputSchema = z.object({
   // 필요 시 폼 전체(root) 레벨에 에러를 추가할 수도 있습니다.
   if (hasError) {
      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: '평가하지 않은 항목이 있습니다.',
         path: ['root'], // setError('root')와 동일한 효과
      });
