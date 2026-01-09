@@ -6,6 +6,5 @@ export const useQuestionsQuery = (questionSetId: string, enabled: boolean = true
     queryKey: ['questions', questionSetId],
     queryFn: () => getQuestions(questionSetId),
     enabled,
-    staleTime: 1000 * 60 * 5,
   });
 };
