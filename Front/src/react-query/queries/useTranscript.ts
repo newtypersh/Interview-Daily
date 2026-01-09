@@ -11,6 +11,8 @@ export const useTranscript = ({ interviewId, answerId }: UseTranscriptProps) => 
     queryKey: ['interview', interviewId, 'answers'],
     queryFn: () => getInterviewAnswers(interviewId!),
     enabled: !!interviewId && !!answerId,
+    // Polling handles updates, so we don't need auto-refetch on window focus/mount
+    staleTime: Infinity, 
     refetchInterval: (query) => {
       if (!query.state.data) return 1000;
       
